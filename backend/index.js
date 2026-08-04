@@ -32,19 +32,23 @@ app.get("/", (req, res) => {
 });
 
 // Start Server
-app.listen(process.env.PORT, () => {
-    console.log(`🚀 Server is running on port ${process.env.PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(process.env.PORT || 5000, () => {
+        console.log(`🚀 Server is running on port ${process.env.PORT || 5000}`);
+    });
+}
+
+module.exports = app;
 
 
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
     const { name, email, password } = req.body;
     UserModel.create({ name, email, password })
         .then(user => res.json(user))
         .catch(err => res.json(err))
 });
 
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
     UserModel.findOne({ email:email })
         .then(user => {
@@ -67,13 +71,13 @@ app.post("/login", (req, res) => {
 });
 
 // Logout route: Clears the JWT cookie
-app.post('/logout', (req, res) => {
+app.post('/api/logout', (req, res) => {
     res.clearCookie('token');
     res.json({ message: "Logged out successfully" });
 });
 
 // Protected route: Verifies the JWT before allowing access to the dashboard
-app.get('/dashboard', (req, res) => {
+app.get('/api/dashboard', (req, res) => {
     // 1. Extract the token from the cookies
     const token = req.cookies.token;
     if (!token) {

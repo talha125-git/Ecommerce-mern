@@ -12,7 +12,7 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         // Send request with credentials so the browser stores the incoming JWT cookie
-        axios.post('http://localhost:5000/login', { email, password }, { withCredentials: true })
+        axios.post('/api/login', { email, password }, { withCredentials: true })
             .then(result => {
                 console.log(result)
                 if (result.data.message === "Login successful") {
