@@ -13,7 +13,7 @@ const Dashboard = () => {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         };
         // Automatically check if the user is authenticated
-        axios.get((import.meta.env.VITE_API_URL || '') + '/api/dashboard', config)
+        axios.get('http://localhost:5000/api/dashboard', config)
             .then(res => {
                 if (res.data.message === "Success") {
                     setUser(res.data.user);
@@ -33,7 +33,7 @@ const Dashboard = () => {
             withCredentials: true,
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         };
-        axios.post((import.meta.env.VITE_API_URL || '') + '/api/logout', {}, config)
+        axios.post('http://localhost:5000/api/logout', {}, config)
             .then(res => {
                 if (res.data.message === "Logged out successfully") {
                     localStorage.removeItem('token');
