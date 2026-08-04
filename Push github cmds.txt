@@ -1,3 +1,3 @@
 git add . 
-git commit -m "Fix Vercel backend framework detection"
+git commit -m "Fix Vercel string validation"
 git push -u origin main
