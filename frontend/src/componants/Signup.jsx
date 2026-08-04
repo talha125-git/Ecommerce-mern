@@ -11,7 +11,7 @@ const Signup = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post('/api/register', { name, email, password })
+        axios.post((import.meta.env.VITE_API_URL || '') + '/api/register', { name, email, password })
             .then(result => {
                 console.log(result)
                 navigate('/login')

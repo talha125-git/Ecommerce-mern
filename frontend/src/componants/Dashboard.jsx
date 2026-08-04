@@ -8,7 +8,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         // Automatically check if the user is authenticated by sending their cookie to the server
-        axios.get('/api/dashboard', { withCredentials: true })
+        axios.get((import.meta.env.VITE_API_URL || '') + '/api/dashboard', { withCredentials: true })
             .then(res => {
                 if (res.data.message === "Success") {
                     // Token is valid, allow access
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     const handleLogout = () => {
         // Send a request to the backend to clear the cookie
-        axios.post('/api/logout', {}, { withCredentials: true })
+        axios.post((import.meta.env.VITE_API_URL || '') + '/api/logout', {}, { withCredentials: true })
             .then(res => {
                 if (res.data.message === "Logged out successfully") {
                     navigate('/');
