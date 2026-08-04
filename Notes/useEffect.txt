@@ -1,0 +1,7 @@
+
+What it is: useEffect is a tool that tells React to run a piece of code automatically in the background right after a page loads.
+
+What it is used for: It is mostly used for fetching data from a database or checking user authentication when a page opens.
+
+Where we used it: We put it inside Dashboard.jsx. We used it so that the exact second you open the Dashboard, it automatically
+ asks the backend, "Hey, is this user's token valid?" without you having to click any buttons.
