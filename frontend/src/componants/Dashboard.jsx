@@ -7,14 +7,17 @@ const Dashboard = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        // Automatically check if the user is authenticated by sending their cookie to the server
-        axios.get((import.meta.env.VITE_API_URL || '') + '/api/dashboard', { withCredentials: true })
+        const token = localStorage.getItem('token');
+        const config = {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        };
+        // Automatically check if the user is authenticated
+        axios.get((import.meta.env.VITE_API_URL || '') + '/api/dashboard', config)
             .then(res => {
                 if (res.data.message === "Success") {
-                    // Token is valid, allow access
                     setUser(res.data.user);
                 } else {
-                    // Token is missing or invalid, kick back to login
                     navigate('/login');
                 }
             })
@@ -25,10 +28,15 @@ const Dashboard = () => {
     }, [navigate]);
 
     const handleLogout = () => {
-        // Send a request to the backend to clear the cookie
-        axios.post((import.meta.env.VITE_API_URL || '') + '/api/logout', {}, { withCredentials: true })
+        const token = localStorage.getItem('token');
+        const config = {
+            withCredentials: true,
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        };
+        axios.post((import.meta.env.VITE_API_URL || '') + '/api/logout', {}, config)
             .then(res => {
                 if (res.data.message === "Logged out successfully") {
+                    localStorage.removeItem('token');
                     navigate('/');
                 }
             })

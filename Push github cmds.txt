@@ -1,3 +1,3 @@
 git add . 
-git commit -m "Configure separate Vercel deployments"
+git commit -m "feat: implement user authentication system with JWT, HttpOnly cookies, and protected dashboard route"
 git push -u origin main

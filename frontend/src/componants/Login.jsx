@@ -16,6 +16,10 @@ const Login = () => {
             .then(result => {
                 console.log(result)
                 if (result.data.message === "Login successful") {
+                    // Store token in localStorage as fallback for cross-domain deployments
+                    if (result.data.token) {
+                        localStorage.setItem('token', result.data.token);
+                    }
                     navigate('/dashboard')
                 }
             })

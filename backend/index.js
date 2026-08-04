@@ -57,9 +57,15 @@ app.post("/api/login", (req, res) => {
                     // JWT IMPLEMENTATION: 
                     // 1. Sign a token containing the user's email and ID.
                     const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET || "jwt_secret_key", { expiresIn: "1d" });
-                    // 2. Set the token inside an HttpOnly cookie so the browser securely stores it.
-                    res.cookie("token", token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-                    res.json({ message: "Login successful" });
+                    // 2. Set the token inside an HttpOnly cookie with cross-domain support flags.
+                    res.cookie("token", token, { 
+                        httpOnly: true, 
+                        maxAge: 24 * 60 * 60 * 1000,
+                        sameSite: 'none',
+                        secure: true
+                    });
+                    // 3. Also return token in response body so frontend can store in localStorage as fallback
+                    res.json({ message: "Login successful", token });
                 } else {
                     res.json({ message: "Invalid credentials" });
                 }
@@ -72,14 +78,20 @@ app.post("/api/login", (req, res) => {
 
 // Logout route: Clears the JWT cookie
 app.post('/api/logout', (req, res) => {
-    res.clearCookie('token');
+    res.clearCookie('token', { sameSite: 'none', secure: true });
     res.json({ message: "Logged out successfully" });
 });
 
 // Protected route: Verifies the JWT before allowing access to the dashboard
 app.get('/api/dashboard', (req, res) => {
-    // 1. Extract the token from the cookies
-    const token = req.cookies.token;
+    // 1. Check cookie first, then fall back to Authorization header (for cross-domain)
+    let token = req.cookies.token;
+    if (!token) {
+        const authHeader = req.headers['authorization'];
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7);
+        }
+    }
     if (!token) {
         return res.json({ message: "No token provided" });
     }
