@@ -1,3 +1,3 @@
 git add . 
-git commit -m "add github cmds file"
+git commit -m "Update vercel.json to use new services format"
 git push -u origin main
