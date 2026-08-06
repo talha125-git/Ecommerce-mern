@@ -7,10 +7,14 @@ const Login = () => {
     const [name, setName] = useState()
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        setLoading(true)
+        setError(null)
         // Send request with credentials so the browser stores the incoming JWT cookie
         axios.post('http://localhost:5000/api/login', { email, password }, { withCredentials: true })
             .then(result => {
@@ -21,9 +25,16 @@ const Login = () => {
                         localStorage.setItem('token', result.data.token);
                     }
                     navigate('/dashboard')
+                } else {
+                    setError(result.data.message || "Login failed")
+                    setLoading(false)
                 }
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setError(err.response?.data?.message || err.message || "An error occurred during login")
+                setLoading(false)
+            })
     }
 
     return (
@@ -38,6 +49,12 @@ const Login = () => {
                 </p>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
+                    )}
+                    
                     {/* Email */}
                     <div>
                         <label className="block text-gray-700 mb-2">Email</label>
@@ -75,9 +92,10 @@ const Login = () => {
                     {/* Login Button */}
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                        disabled={loading}
+                        className={`w-full text-white py-2 rounded-lg transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                     >
-                        Login
+                        {loading ? 'Loading...' : 'Login'}
                     </button>
                 </form>
 

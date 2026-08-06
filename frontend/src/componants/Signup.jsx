@@ -7,16 +7,24 @@ const Signup = () => {
     const [name, setName] = useState()
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
     const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        setLoading(true)
+        setError(null)
         axios.post('http://localhost:5000/api/register', { name, email, password })
             .then(result => {
                 console.log(result)
                 navigate('/login')
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setError(err.response?.data?.message || err.message || "An error occurred during sign up")
+                setLoading(false)
+            })
     }
 
     return (
@@ -31,6 +39,12 @@ const Signup = () => {
                 </p>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <span className="block sm:inline">{error}</span>
+                        </div>
+                    )}
+                    
                     {/* Name */}
                     <div>
                         <label className="block text-gray-700 mb-2">Full Name</label>
@@ -67,9 +81,10 @@ const Signup = () => {
                     {/* Button */}
                     <button
                         type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                        disabled={loading}
+                        className={`w-full text-white py-2 rounded-lg transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                     >
-                        Sign Up
+                        {loading ? 'Loading...' : 'Sign Up'}
                     </button>
                 </form>
 
