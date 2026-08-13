@@ -16,7 +16,7 @@ const Login = () => {
         setLoading(true)
         setError(null)
         // Send request with credentials so the browser stores the incoming JWT cookie
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const API_URL = import.meta.env.VITE_API_URL || '';
         axios.post(`${API_URL}/api/login`, { email, password }, { withCredentials: true })
             .then(result => {
                 console.log(result)
