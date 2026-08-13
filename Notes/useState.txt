@@ -1,0 +1,30 @@
+In React, useState is a special function (called a "Hook") that allows your component to remember things and update the user interface when those things change.
+
+Think of it as giving your component a memory for specific variables. When a variable created by useState changes, React automatically re-renders the screen to show the updated value.
+
+Here is why we used it in your form:
+
+1. The loading State
+javascript
+const [loading, setLoading] = useState(false);
+What it means: We created a variable named loading that starts as false. setLoading is the function we use to change its value.
+How we used it:
+When you click submit, we run setLoading(true).
+Because the state changed, React re-renders the button, changes its text to "Loading...", and disables it.
+Once the server responds, we run setLoading(false), and the button goes back to normal.
+2. The error State
+javascript
+const [error, setError] = useState(null);
+What it means: We created a variable named error that starts as null (empty).
+How we used it:
+If the server says "Invalid email or password", we run setError("Invalid email or password").
+Because the state changed, React re-renders the form and displays the red error box at the top.
+If you try logging in again, we run setError(null) to clear the error box while waiting for the next response.
+3. The existing email and password States
+You were already using useState for the form inputs:
+
+javascript
+const [email, setEmail] = useState();
+Every time you type a letter in the email box, the onChange event fires setEmail(e.target.value). This continuously updates the email state so that when you finally click "Login", React remembers exactly what you typed and sends it to the server.
+
+Without useState, React wouldn't know when your data changes, and the screen (like the loading button or the error text) would never update!

@@ -15,7 +15,8 @@ const Signup = () => {
         e.preventDefault()
         setLoading(true)
         setError(null)
-        axios.post('http://localhost:5000/api/register', { name, email, password })
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        axios.post(`${API_URL}/api/register`, { name, email, password })
             .then(result => {
                 console.log(result)
                 navigate('/login')

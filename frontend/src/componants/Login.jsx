@@ -4,7 +4,7 @@ import axios from "axios";
 
 const Login = () => {
 
-    const [name, setName] = useState()
+
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [loading, setLoading] = useState(false)
@@ -16,7 +16,8 @@ const Login = () => {
         setLoading(true)
         setError(null)
         // Send request with credentials so the browser stores the incoming JWT cookie
-        axios.post('http://localhost:5000/api/login', { email, password }, { withCredentials: true })
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        axios.post(`${API_URL}/api/login`, { email, password }, { withCredentials: true })
             .then(result => {
                 console.log(result)
                 if (result.data.message === "Login successful") {
