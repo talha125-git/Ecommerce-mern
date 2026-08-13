@@ -42,14 +42,11 @@ if (process.env.NODE_ENV !== 'production') {
     });
 }
 
-module.exports = app;
-
-
 app.post("/api/register", (req, res) => {
     const { name, email, password } = req.body;
     UserModel.create({ name, email, password })
         .then(user => res.json(user))
-        .catch(err => res.json(err))
+        .catch(err => res.status(500).json({ message: "Database Error: " + (err.message || "Unknown error"), error: err }))
 });
 
 app.post("/api/login", (req, res) => {
@@ -77,7 +74,7 @@ app.post("/api/login", (req, res) => {
                 res.json({ message: "Email is not registered" });
             }
         })
-        .catch(err => res.json(err))
+        .catch(err => res.status(500).json({ message: "Database Error: " + (err.message || "Unknown error"), error: err }))
 });
 
 // Logout route: Clears the JWT cookie
@@ -107,3 +104,5 @@ app.get('/api/dashboard', (req, res) => {
         return res.json({ message: "Success", user: decoded }); // Token is valid!
     });
 });
+
+module.exports = app;
