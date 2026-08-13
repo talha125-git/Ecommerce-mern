@@ -58,7 +58,7 @@ const Dashboard = () => {
             </nav>
             <main className="grow flex items-center justify-center">
                 <div className="bg-white p-10 rouned-xl shadow-lg max-w-lg w-full text-center">
-                    <h2 className="text-3xl font-semibold text-gray-800 mb-4">Welcome to your Dashboard{user && user.email ? `, ${user.email}` : ''}!</h2>
+                    <h2 className="text-3xl font-semibold text-gray-800 mb-4">Welcome to your Dashboard{user ? `, ${user.name || user.email}` : ''}!</h2>
                     <p className="text-gray-600">You have successfully logged in. This is a protected area.</p>
                 </div>
             </main>

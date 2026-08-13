@@ -57,7 +57,7 @@ app.post("/api/login", (req, res) => {
                 if (user.password === password) {
                     // JWT IMPLEMENTATION: 
                     // 1. Sign a token containing the user's email and ID.
-                    const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET || "jwt_secret_key", { expiresIn: "1d" });
+                    const token = jwt.sign({ email: user.email, name: user.name, id: user._id }, process.env.JWT_SECRET || "jwt_secret_key", { expiresIn: "1d" });
                     // 2. Set the token inside an HttpOnly cookie with cross-domain support flags.
                     res.cookie("token", token, { 
                         httpOnly: true, 
