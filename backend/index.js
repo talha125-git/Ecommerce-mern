@@ -11,8 +11,12 @@ app.use(express.json());
 // Parse cookies attached to the client request object
 app.use(cookieParser());
 // Allow requests from frontend and permit cookies/credentials to be sent back and forth
+const allowedOrigins = ["http://localhost:5173"];
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: allowedOrigins,
     credentials: true
 }));
 
