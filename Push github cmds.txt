@@ -1,3 +1,3 @@
 git add . 
-git commit -m "change hoem pages"   
+git commit -m "feat: add ProductList, AboutUs, and HeroSlider components to the homepage"   
 git push -u origin main

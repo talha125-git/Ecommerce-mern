@@ -37,7 +37,7 @@ export default function AboutUs() {
   ];
 
   return (
-    <section id="about" className="py-16 sm:py-20 bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-900/50 dark:via-background dark:to-slate-900/50 rounded-3xl my-12 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+    <section id="about" className="py-16 sm:py-20 bg-linear-to-b from-slate-50 via-white to-slate-50 dark:from-slate-900/50 dark:via-background dark:to-slate-900/50 rounded-3xl my-12 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
         {/* Header Badge & Title */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-16">
@@ -61,9 +61,9 @@ export default function AboutUs() {
               <img
                 src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop"
                 alt="Crafting Sneaker Quality"
-                className="w-full h-[440px] object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-110 object-cover hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
               
               <div className="absolute bottom-6 left-6 right-6 text-white p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20">
                 <p className="text-xs uppercase font-semibold text-amber-300 tracking-wider">Our Commitment</p>

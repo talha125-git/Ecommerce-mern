@@ -87,7 +87,7 @@ export default function HeroSlider() {
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Background Image Carousel with Overlay */}
-      <div className="relative min-h-[480px] sm:min-h-[540px] lg:min-h-[600px] flex items-center">
+      <div className="relative min-h-120 sm:min-h-135 lg:min-h-150 flex items-center">
         {slides.map((s, idx) => (
           <div
             key={s.id}
@@ -101,8 +101,8 @@ export default function HeroSlider() {
               className="w-full h-full object-cover object-center scale-105 transition-transform duration-10000 ease-linear"
             />
             {/* Gradient Overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-r ${s.bgGradient} mix-blend-multiply opacity-90`} />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            <div className={`absolute inset-0 bg-linear-to-r ${s.bgGradient} mix-blend-multiply opacity-90`} />
+            <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
           </div>
         ))}
 

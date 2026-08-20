@@ -98,7 +98,7 @@ export default function ProductList() {
           onClick={() => setActiveTab("hot")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${
             activeTab === "hot"
-              ? "bg-gradient-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-500/25 scale-105"
+              ? "bg-linear-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-500/25 scale-105"
               : "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100"
           }`}
         >
@@ -114,7 +114,7 @@ export default function ProductList() {
           onClick={() => setActiveTab("new")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${
             activeTab === "new"
-              ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
+              ? "bg-linear-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
               : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100"
           }`}
         >
@@ -163,7 +163,7 @@ export default function ProductList() {
           {/* Search & Sort Dropdown */}
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
             {/* Search Input */}
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative flex-1 min-w-50">
               <input
                 type="text"
                 placeholder="Search catalog..."
@@ -194,7 +194,7 @@ export default function ProductList() {
 
       {/* Active Tab Notice Banner */}
       {activeTab === "hot" && (
-        <div className="max-w-7xl mx-auto bg-gradient-to-r from-red-500/10 via-amber-500/10 to-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto bg-linear-to-r from-red-500/10 via-amber-500/10 to-red-500/10 border border-red-500/20 rounded-2xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Flame className="h-6 w-6 text-red-600 animate-bounce" />
             <div>
@@ -212,7 +212,7 @@ export default function ProductList() {
       )}
 
       {activeTab === "new" && (
-        <div className="max-w-7xl mx-auto bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto bg-linear-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Sparkles className="h-6 w-6 text-emerald-600" />
             <div>
