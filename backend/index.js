@@ -26,15 +26,31 @@ app.use(cors({
     credentials: true
 }));
 
-// MongoDB Connection
-mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
+// Serverless MongoDB Connection Handler
+let isConnected = false;
+const connectDB = async () => {
+    if (isConnected && mongoose.connection.readyState === 1) return;
+    if (!process.env.MONGO_URI) {
+        console.error("❌ MONGO_URI environment variable is missing!");
+        return;
+    }
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        isConnected = true;
         console.log("✅ MongoDB Connected Successfully");
-    })
-    .catch((err) => {
-        console.log("❌ MongoDB Connection Error:", err);
-    });
+    } catch (err) {
+        console.error("❌ MongoDB Connection Error:", err);
+    }
+};
+
+// Middleware: ensure database connection is ready before processing API requests
+app.use(async (req, res, next) => {
+    if (req.path === "/") return next();
+    if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+    }
+    next();
+});
 
 // Test Route
 app.get("/", (req, res) => {
