@@ -7,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function Cart() {
+export default function CartPage() {
   const { cart } = useCart();
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 

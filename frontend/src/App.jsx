@@ -1,16 +1,26 @@
-
 import './App.css'
-import Signup from './componants/Signup'
-import Login from './componants/Login'
-import Dashboard from './componants/Dashboard'
-import Home from './componants/Home'
-import Cart from './componants/Cart'
-import ProductDetails from './componants/ProductDetails'
+
+// ── Auth Pages ──
+import LoginPage from './pages/auth/LoginPage'
+import SignupPage from './pages/auth/SignupPage'
+
+// ── User / Store Pages ──
+import HomePage from './pages/user/HomePage'
+import CartPage from './pages/user/CartPage'
+import ProductDetailsPage from './pages/user/ProductDetailsPage'
+
+// ── Admin Pages ──
+import DashboardPage from './pages/admin/DashboardPage'
+
+// ── Layout ──
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+
+// ── Providers & Router ──
 import { CartProvider } from './context/CartContext'
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 
+// Layout wrapper for the public storefront (header + footer)
 const StoreLayout = () => (
   <div className="antialiased flex flex-col min-h-screen">
     <Header />
@@ -26,15 +36,28 @@ function App() {
     <CartProvider>
       <BrowserRouter>
         <Routes>
+          {/* ═══════════════════════════════════
+              User / Store Routes
+              (wrapped in Header + Footer layout)
+          ═══════════════════════════════════ */}
           <Route element={<StoreLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/product/:id" element={<ProductDetailsPage />} />
           </Route>
-          
-          <Route path="/register" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* ═══════════════════════════════════
+              Auth Routes
+              (standalone – no header/footer)
+          ═══════════════════════════════════ */}
+          <Route path="/register" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* ═══════════════════════════════════
+              Admin Routes
+              (standalone – separate layout)
+          ═══════════════════════════════════ */}
+          <Route path="/admin/dashboard" element={<DashboardPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>

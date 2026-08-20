@@ -35,23 +35,47 @@ export default function Header() {
     setIsMobileOpen(false);
   }, []);
 
-  const isActivePath = (path) => pathname === path;
+  const isActivePath = (path) => {
+    if (path.includes("#")) {
+      return pathname === "/" && window.location.hash === path.substring(path.indexOf("#"));
+    }
+    return pathname === path;
+  };
 
-  const navItems = [];
+  const navItems = [
+    { href: "/", label: "Home" },
+    // { href: "/#hot-products", label: "Hot Products" },
+    // { href: "/#new-arrivals", label: "New Arrivals" },
+    { href: "/#products", label: "All Products" },
+    { href: "/#about", label: "About Us" },
+  ];
+
+  const handleNavClick = (e, href) => {
+    setIsMobileOpen(false);
+    if (href.includes("#")) {
+      const hash = href.substring(href.indexOf("#"));
+      if (pathname === "/") {
+        e.preventDefault();
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  };
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg"
-          : "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
-      }`}
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
+        ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg"
+        : "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
+        }`}
     >
       <div className="container mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8 lg:space-x-12">
             <Link
-              className="text-2xl tracking-tight text-gray-900 hover:text-gray-700 transition-colors"
+              className="text-2xl tracking-tight text-gray-900 hover:text-gray-700 transition-colors font-extrabold"
               to="/"
               aria-label="BloomShop Home"
             >
@@ -67,11 +91,11 @@ export default function Header() {
                 <Link
                   key={href}
                   to={href}
-                  className={`relative py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    isActivePath(href)
-                      ? "bg-orange-100 shadow-md"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                  onClick={(e) => handleNavClick(e, href)}
+                  className={`relative py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-200 ${isActivePath(href)
+                    ? "bg-primary/10 text-primary shadow-sm"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
                   aria-current={isActivePath(href) ? "page" : undefined}
                 >
                   {label}
@@ -174,12 +198,11 @@ export default function Header() {
                 <Link
                   key={href}
                   to={href}
-                  onClick={closeMobileMenu}
-                  className={`text-sm font-medium py-2 px-3 rounded-lg transition-all ${
-                    isActivePath(href)
-                      ? "bg-orange-100"
-                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                  onClick={(e) => handleNavClick(e, href)}
+                  className={`text-sm font-medium py-2 px-3 rounded-lg transition-all ${isActivePath(href)
+                    ? "bg-orange-100"
+                    : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
                   aria-current={isActivePath(href) ? "page" : undefined}
                 >
                   {label}

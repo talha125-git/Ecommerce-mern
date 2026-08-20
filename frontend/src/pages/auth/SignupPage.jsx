@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useState } from "react";
+import axios from "axios"
+import { Link, useNavigate } from "react-router-dom"
 
-const Login = () => {
+const SignupPage = () => {
 
-
+    const [name, setName] = useState()
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [loading, setLoading] = useState(false)
@@ -15,25 +15,15 @@ const Login = () => {
         e.preventDefault()
         setLoading(true)
         setError(null)
-        // Send request with credentials so the browser stores the incoming JWT cookie
         const API_URL = import.meta.env.VITE_API_URL || '';
-        axios.post(`${API_URL}/api/login`, { email, password }, { withCredentials: true })
+        axios.post(`${API_URL}/api/register`, { name, email, password })
             .then(result => {
                 console.log(result)
-                if (result.data.message === "Login successful") {
-                    // Store token in localStorage as fallback for cross-domain deployments
-                    if (result.data.token) {
-                        localStorage.setItem('token', result.data.token);
-                    }
-                    navigate('/dashboard')
-                } else {
-                    setError(result.data.message || "Login failed")
-                    setLoading(false)
-                }
+                navigate('/login')
             })
             .catch(err => {
                 console.log(err)
-                setError(err.response?.data?.message || err.message || "An error occurred during login")
+                setError(err.response?.data?.message || err.message || "An error occurred during sign up")
                 setLoading(false)
             })
     }
@@ -42,11 +32,11 @@ const Login = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
-                    Welcome Back
+                    Create Account
                 </h1>
 
                 <p className="text-center text-gray-500 mb-6">
-                    Login to your account
+                    Sign up to continue
                 </p>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -56,6 +46,17 @@ const Login = () => {
                         </div>
                     )}
                     
+                    {/* Name */}
+                    <div>
+                        <label className="block text-gray-700 mb-2">Full Name</label>
+                        <input
+                            onChange={(e) => setName(e.target.value)}
+                            type="text"
+                            placeholder="Enter your name"
+                            className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+
                     {/* Email */}
                     <div>
                         <label className="block text-gray-700 mb-2">Email</label>
@@ -78,32 +79,20 @@ const Login = () => {
                         />
                     </div>
 
-                    {/* Remember Me & Forgot Password */}
-                    <div className="flex items-center justify-between text-sm">
-                        <label className="flex items-center gap-2 text-gray-600">
-                            <input type="checkbox" />
-                            Remember Me
-                        </label>
-
-                        <a href="#" className="text-blue-600 hover:underline">
-                            Forgot Password?
-                        </a>
-                    </div>
-
-                    {/* Login Button */}
+                    {/* Button */}
                     <button
                         type="submit"
                         disabled={loading}
                         className={`w-full text-white py-2 rounded-lg transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                     >
-                        {loading ? 'Loading...' : 'Login'}
+                        {loading ? 'Loading...' : 'Sign Up'}
                     </button>
                 </form>
 
                 <p className="text-center text-gray-600 mt-5">
-                    Don't have an account?{" "}
-                    <Link to="/register" className="text-blue-600 cursor-pointer hover:underline">
-                        Sign Up
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-blue-600 cursor-pointer hover:underline">
+                        Login
                     </Link>
                 </p>
             </div>
@@ -111,4 +100,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default SignupPage;

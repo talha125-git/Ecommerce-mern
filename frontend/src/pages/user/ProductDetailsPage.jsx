@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { ArrowLeft, Check, Heart, ShoppingCart, Truck, Shield, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function ProductDetails() {
+export default function ProductDetailsPage() {
   const { id } = useParams();
   const product = products.find((p) => p.id === parseInt(id));
 
@@ -93,7 +93,6 @@ export default function ProductDetails() {
           </div>
 
           <div className="space-y-6 pt-8 border-t border-border">
-
             {/*  + - btn */}
             <div className="flex items-center w-fit border border-border rounded-lg">
               <Button

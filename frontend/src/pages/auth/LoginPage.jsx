@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios"
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom";
-const Signup = () => {
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-    const [name, setName] = useState()
+const LoginPage = () => {
+
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [loading, setLoading] = useState(false)
@@ -16,14 +15,22 @@ const Signup = () => {
         setLoading(true)
         setError(null)
         const API_URL = import.meta.env.VITE_API_URL || '';
-        axios.post(`${API_URL}/api/register`, { name, email, password })
+        axios.post(`${API_URL}/api/login`, { email, password }, { withCredentials: true })
             .then(result => {
                 console.log(result)
-                navigate('/login')
+                if (result.data.message === "Login successful") {
+                    if (result.data.token) {
+                        localStorage.setItem('token', result.data.token);
+                    }
+                    navigate('/admin/dashboard')
+                } else {
+                    setError(result.data.message || "Login failed")
+                    setLoading(false)
+                }
             })
             .catch(err => {
                 console.log(err)
-                setError(err.response?.data?.message || err.message || "An error occurred during sign up")
+                setError(err.response?.data?.message || err.message || "An error occurred during login")
                 setLoading(false)
             })
     }
@@ -32,11 +39,11 @@ const Signup = () => {
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
-                    Create Account
+                    Welcome Back
                 </h1>
 
                 <p className="text-center text-gray-500 mb-6">
-                    Sign up to continue
+                    Login to your account
                 </p>
 
                 <form className="space-y-4" onSubmit={handleSubmit}>
@@ -46,17 +53,6 @@ const Signup = () => {
                         </div>
                     )}
                     
-                    {/* Name */}
-                    <div>
-                        <label className="block text-gray-700 mb-2">Full Name</label>
-                        <input
-                            onChange={(e) => setName(e.target.value)}
-                            type="text"
-                            placeholder="Enter your name"
-                            className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
                     {/* Email */}
                     <div>
                         <label className="block text-gray-700 mb-2">Email</label>
@@ -79,20 +75,32 @@ const Signup = () => {
                         />
                     </div>
 
-                    {/* Button */}
+                    {/* Remember Me & Forgot Password */}
+                    <div className="flex items-center justify-between text-sm">
+                        <label className="flex items-center gap-2 text-gray-600">
+                            <input type="checkbox" />
+                            Remember Me
+                        </label>
+
+                        <a href="#" className="text-blue-600 hover:underline">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    {/* Login Button */}
                     <button
                         type="submit"
                         disabled={loading}
                         className={`w-full text-white py-2 rounded-lg transition ${loading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                     >
-                        {loading ? 'Loading...' : 'Sign Up'}
+                        {loading ? 'Loading...' : 'Login'}
                     </button>
                 </form>
 
                 <p className="text-center text-gray-600 mt-5">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-blue-600 cursor-pointer hover:underline">
-                        Login
+                    Don't have an account?{" "}
+                    <Link to="/register" className="text-blue-600 cursor-pointer hover:underline">
+                        Sign Up
                     </Link>
                 </p>
             </div>
@@ -100,4 +108,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default LoginPage;
