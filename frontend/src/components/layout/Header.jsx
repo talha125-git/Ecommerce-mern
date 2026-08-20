@@ -36,6 +36,9 @@ export default function Header() {
   }, []);
 
   const isActivePath = (path) => {
+    if (path === "/" || path === "/#hero-slider") {
+      return pathname === "/" && (!window.location.hash || window.location.hash === "" || window.location.hash === "#hero-slider");
+    }
     if (path.includes("#")) {
       return pathname === "/" && window.location.hash === path.substring(path.indexOf("#"));
     }
@@ -52,6 +55,15 @@ export default function Header() {
 
   const handleNavClick = (e, href) => {
     setIsMobileOpen(false);
+
+    if (href === "/" || href === "/#hero-slider") {
+      if (pathname === "/") {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      return;
+    }
+
     if (href.includes("#")) {
       const hash = href.substring(href.indexOf("#"));
       if (pathname === "/") {
