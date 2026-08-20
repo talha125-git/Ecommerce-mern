@@ -43,7 +43,7 @@ export default function Header() {
   };
 
   const navItems = [
-    { href: "/", label: "Home" },
+    { href: "/#hero-slider", label: "Home" },
     // { href: "/#hot-products", label: "Hot Products" },
     // { href: "/#new-arrivals", label: "New Arrivals" },
     { href: "/#products", label: "All Products" },
@@ -66,6 +66,7 @@ export default function Header() {
 
   return (
     <header
+      id="header"
       className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
         ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg"
         : "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"

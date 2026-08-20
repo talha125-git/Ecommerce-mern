@@ -82,6 +82,7 @@ export default function HeroSlider() {
 
   return (
     <div 
+    id="hero-slider"
       className="relative w-full overflow-hidden bg-slate-950 text-white rounded-2xl md:rounded-3xl shadow-2xl mb-12"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
