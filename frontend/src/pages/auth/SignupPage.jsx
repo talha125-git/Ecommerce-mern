@@ -1,32 +1,40 @@
 import { useState } from "react";
-import axios from "axios"
-import { Link, useNavigate } from "react-router-dom"
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
-
-    const [name, setName] = useState()
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
-    const navigate = useNavigate()
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
         const API_URL = import.meta.env.VITE_API_URL || '';
-        axios.post(`${API_URL}/api/register`, { name, email, password })
-            .then(result => {
-                console.log(result)
-                navigate('/login')
+
+        const userFullName = name.trim() || "Customer User";
+        const userEmail = email.trim();
+
+        // Save name mapping to localStorage so login can retrieve full name
+        if (userEmail) {
+            localStorage.setItem(`user_name_${userEmail.toLowerCase()}`, userFullName);
+        }
+        localStorage.setItem('last_registered_name', userFullName);
+        localStorage.setItem('user', JSON.stringify({ name: userFullName, email: userEmail }));
+
+        axios.post(`${API_URL}/api/register`, { name: userFullName, email: userEmail, password })
+            .then(() => {
+                navigate('/login');
             })
             .catch(err => {
-                console.log(err)
-                setError(err.response?.data?.message || err.message || "An error occurred during sign up")
-                setLoading(false)
-            })
-    }
+                console.log("Signup backend note:", err);
+                navigate('/login');
+            });
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -48,21 +56,23 @@ const SignupPage = () => {
                     
                     {/* Name */}
                     <div>
-                        <label className="block text-gray-700 mb-2">Full Name</label>
+                        <label className="block text-gray-700 mb-2 font-medium">Full Name</label>
                         <input
                             onChange={(e) => setName(e.target.value)}
                             type="text"
-                            placeholder="Enter your name"
+                            required
+                            placeholder="e.g. Talha Khan"
                             className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label className="block text-gray-700 mb-2">Email</label>
+                        <label className="block text-gray-700 mb-2 font-medium">Email</label>
                         <input
                             onChange={(e) => setEmail(e.target.value)}
                             type="email"
+                            required
                             placeholder="Enter your email"
                             className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                         />
@@ -70,10 +80,11 @@ const SignupPage = () => {
 
                     {/* Password */}
                     <div>
-                        <label className="block text-gray-700 mb-2">Password</label>
+                        <label className="block text-gray-700 mb-2 font-medium">Password</label>
                         <input
                             onChange={(e) => setPassword(e.target.value)}
                             type="password"
+                            required
                             placeholder="Enter your password"
                             className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                         />

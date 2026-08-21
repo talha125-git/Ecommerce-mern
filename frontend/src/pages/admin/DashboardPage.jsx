@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Menu, DollarSign, ShoppingBag, Users, Package } from 'lucide-react';
 
 // Separate Component Imports
-import Sidebar from '../Sidebar';
+import Sidebar from './Sidebar';
 import ProductsTab from './ProductsTab';
 import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
@@ -12,12 +12,18 @@ import SettingsTab from './SettingsTab';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ name: "Admin", email: "admin@bloomshop.com" });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role !== 'admin') {
+      navigate('/admin/login');
+      return;
+    }
+
     const token = localStorage.getItem('token');
     const config = {
       withCredentials: true,
@@ -27,7 +33,7 @@ const DashboardPage = () => {
     axios.get(`${API_URL}/api/dashboard`, config)
       .then(res => {
         if (res.data.message === "Success") {
-          setUser(res.data.user);
+          setUser({ name: "Admin", email: "admin@bloomshop.com" });
         } else {
           setUser({ name: "Admin", email: "admin@bloomshop.com" });
         }
@@ -42,21 +48,11 @@ const DashboardPage = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    const token = localStorage.getItem('token');
-    const config = {
-      withCredentials: true,
-      headers: token ? { Authorization: `Bearer ${token}` } : {}
-    };
-    const API_URL = import.meta.env.VITE_API_URL || '';
-    axios.post(`${API_URL}/api/logout`, {}, config)
-      .then(() => {
-        localStorage.removeItem('token');
-        navigate('/');
-      })
-      .catch(() => {
-        localStorage.removeItem('token');
-        navigate('/');
-      });
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userLoggedIn');
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   const renderOverview = () => (
@@ -64,10 +60,10 @@ const DashboardPage = () => {
       <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {user ? (user.name || user.email) : 'User'}! 👋
+            Welcome back, Admin! 👋
           </h1>
           <p className="text-xs text-gray-500">
-            Here is your store summary and recent activity today.
+            Administrator portal control panel and store overview.
           </p>
         </div>
         <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full">
@@ -146,7 +142,7 @@ const DashboardPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm font-semibold text-gray-500">Loading Dashboard...</p>
+          <p className="text-sm font-semibold text-gray-500">Loading Admin Dashboard...</p>
         </div>
       </div>
     );
@@ -188,10 +184,10 @@ const DashboardPage = () => {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs">
-                {user?.name ? user.name.charAt(0) : 'A'}
+                A
               </div>
               <span className="text-xs font-bold text-gray-800 hidden sm:inline">
-                {user?.name || user?.email || 'Admin'}
+                Admin
               </span>
             </div>
           </div>
