@@ -10,7 +10,7 @@ import CartPage from './pages/user/CartPage'
 import ProductDetailsPage from './pages/user/ProductDetailsPage'
 
 // ── Admin Pages ──
-import DashboardPage from './pages/admin/DashboardPage'
+import DashboardPage from './pages/admin/admin_pages/DashboardPage'
 
 // ── Layout ──
 import Header from './components/layout/Header'
@@ -58,6 +58,7 @@ function App() {
               (standalone – separate layout)
           ═══════════════════════════════════ */}
           <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
