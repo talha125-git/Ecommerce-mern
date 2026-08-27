@@ -224,7 +224,7 @@ export default function HeroSlider() {
                 onClick={() => handleScrollTo(slide.ctaPrimaryTarget)}
                 className="bg-white text-slate-950 hover:bg-slate-100 font-bold px-7 py-6 text-base rounded-xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group cursor-pointer"
               >
-                {slide.ctaPrimary}
+                {slide.ctaPrimary || "Shop Hot Products"}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button
@@ -233,7 +233,7 @@ export default function HeroSlider() {
                 onClick={() => handleScrollTo(slide.ctaSecondaryTarget)}
                 className="border-white/40 text-white bg-white/10 backdrop-blur-md hover:bg-white/20 font-semibold px-7 py-6 text-base rounded-xl transition-all duration-300 cursor-pointer"
               >
-                {slide.ctaSecondary}
+                {slide.ctaSecondary || "Explore Collection"}
               </Button>
             </div>
           </div>

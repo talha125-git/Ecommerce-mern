@@ -27,7 +27,34 @@ app.use(cors({
         return callback(null, true);
     },
     credentials: true
-}));
+// Serverless MongoDB Connection Handler
+let isConnected = false;
+const connectDB = async () => {
+    if (isConnected && mongoose.connection.readyState === 1) return;
+    if (!process.env.MONGO_URI) {
+        console.error("❌ MONGO_URI environment variable is missing!");
+        return;
+    }
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        isConnected = true;
+        console.log("✅ MongoDB Connected Successfully");
+    } catch (err) {
+        console.error("❌ MongoDB Connection Error:", err);
+    }
+};
+
+// Immediate DB connection on startup
+connectDB();
+
+// Middleware: ensure database connection is ready before processing API requests
+app.use(async (req, res, next) => {
+    if (req.path === "/") return next();
+    if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+    }
+    next();
+});
 
 // Configure Cloudinary with environment variables
 cloudinary.config({
@@ -117,31 +144,7 @@ app.post("/api/slides", async (req, res) => {
     }
 });
 
-// Serverless MongoDB Connection Handler
-let isConnected = false;
-const connectDB = async () => {
-    if (isConnected && mongoose.connection.readyState === 1) return;
-    if (!process.env.MONGO_URI) {
-        console.error("❌ MONGO_URI environment variable is missing!");
-        return;
-    }
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        isConnected = true;
-        console.log("✅ MongoDB Connected Successfully");
-    } catch (err) {
-        console.error("❌ MongoDB Connection Error:", err);
-    }
-};
 
-// Middleware: ensure database connection is ready before processing API requests
-app.use(async (req, res, next) => {
-    if (req.path === "/") return next();
-    if (mongoose.connection.readyState !== 1) {
-        await connectDB();
-    }
-    next();
-});
 
 // Test Route
 app.get("/", (req, res) => {

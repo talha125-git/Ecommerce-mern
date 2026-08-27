@@ -228,12 +228,19 @@ export default function SliderTab() {
     setActiveSlideIndex(newIndex);
   };
 
-  const handleResetDefaults = () => {
-    if (confirm("Reset slider settings to default slides?")) {
+  const handleResetDefaults = async () => {
+    if (confirm("Reset slider settings to default 3 slides?")) {
       setSlides(DEFAULT_SLIDES);
       setActiveSlideIndex(0);
-      localStorage.removeItem('admin_hero_slides');
+      localStorage.setItem('admin_hero_slides', JSON.stringify(DEFAULT_SLIDES));
       window.dispatchEvent(new Event('hero-slides-updated'));
+
+      try {
+        const API_URL = import.meta.env.VITE_API_URL || '';
+        await axios.post(`${API_URL}/api/slides`, { slides: DEFAULT_SLIDES });
+      } catch (err) {
+        console.warn("Could not sync reset defaults to database:", err);
+      }
     }
   };
 
