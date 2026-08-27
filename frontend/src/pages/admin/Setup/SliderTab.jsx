@@ -129,6 +129,35 @@ export default function SliderTab() {
     setSlides(updated);
   };
 
+  const compressImage = (base64Str, maxWidth = 1200, maxHeight = 800, quality = 0.75) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(base64Str);
+    });
+  };
+
   const handleImageFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -138,28 +167,25 @@ export default function SliderTab() {
 
     const reader = new FileReader();
     reader.onload = async () => {
-      const base64Data = reader.result;
+      const rawBase64 = reader.result;
+      const optimizedBase64 = await compressImage(rawBase64);
+
+      handleUpdateCurrentSlide('image', optimizedBase64);
+      setUploadNotice('Image optimized and attached to slide');
 
       try {
         const API_URL = import.meta.env.VITE_API_URL || '';
-        const res = await axios.post(`${API_URL}/api/upload-slider-image`, {
-          imageBase64: base64Data,
-          imageName: file.name.split('.')[0]
-        });
-
-        if (res.data && res.data.url) {
-          const publicUrl = res.data.url;
-          handleUpdateCurrentSlide('image', publicUrl);
-          setUploadNotice(`Saved to public folder: ${publicUrl}`);
-        } else {
-          // Fallback to base64 if server didn't return URL
-          handleUpdateCurrentSlide('image', base64Data);
-          setUploadNotice('Image updated (stored locally)');
+        if (API_URL) {
+          const res = await axios.post(`${API_URL}/api/upload-slider-image`, {
+            imageBase64: optimizedBase64,
+            imageName: file.name.split('.')[0]
+          });
+          if (res.data && res.data.url && !res.data.url.startsWith('/uploads')) {
+            handleUpdateCurrentSlide('image', res.data.url);
+          }
         }
       } catch (err) {
-        console.warn("Backend upload endpoint unreachable, saving image locally:", err);
-        handleUpdateCurrentSlide('image', base64Data);
-        setUploadNotice('Image saved locally as fallback');
+        console.warn("Backend upload notice:", err);
       } finally {
         setUploading(false);
       }
