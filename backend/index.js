@@ -27,6 +27,8 @@ app.use(cors({
         return callback(null, true);
     },
     credentials: true
+}));
+
 // Serverless MongoDB Connection Handler
 let isConnected = false;
 const connectDB = async () => {
