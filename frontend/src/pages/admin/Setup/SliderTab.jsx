@@ -94,6 +94,20 @@ export default function SliderTab() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [uploadNotice, setUploadNotice] = useState('');
 
+  useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL || '';
+    axios.get(`${API_URL}/api/slides`)
+      .then(res => {
+        if (res.data && res.data.slides && res.data.slides.length > 0) {
+          setSlides(res.data.slides);
+          localStorage.setItem('admin_hero_slides', JSON.stringify(res.data.slides));
+        }
+      })
+      .catch(err => {
+        console.warn("Could not fetch slides from database, using local fallback:", err);
+      });
+  }, []);
+
   const currentSlide = slides[activeSlideIndex] || slides[0] || DEFAULT_SLIDES[0];
 
   const getImageUrl = (url) => {
@@ -153,9 +167,17 @@ export default function SliderTab() {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveAllSlides = () => {
+  const handleSaveAllSlides = async () => {
     localStorage.setItem('admin_hero_slides', JSON.stringify(slides));
     window.dispatchEvent(new Event('hero-slides-updated'));
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      await axios.post(`${API_URL}/api/slides`, { slides });
+    } catch (err) {
+      console.warn("Could not sync slides to MongoDB backend:", err);
+    }
+
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
   };

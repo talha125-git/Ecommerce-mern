@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const UserModel = require("./models/Users");
+const SliderModel = require("./models/Slider");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
@@ -69,6 +70,42 @@ app.post("/api/upload-slider-image", (req, res) => {
     } catch (err) {
         console.error("❌ Error uploading image:", err);
         return res.status(500).json({ message: "Failed to save image", error: err.message });
+    }
+});
+
+// GET /api/slides: Fetch saved slides from MongoDB database
+app.get("/api/slides", async (req, res) => {
+    try {
+        const doc = await SliderModel.findOne({ key: "hero_slider" });
+        if (doc && doc.slides && doc.slides.length > 0) {
+            return res.json({ slides: doc.slides });
+        }
+        return res.json({ slides: null });
+    } catch (err) {
+        console.error("❌ Error fetching slides:", err);
+        return res.status(500).json({ message: "Failed to fetch slides", error: err.message });
+    }
+});
+
+// POST /api/slides: Save/Update slides in MongoDB database
+app.post("/api/slides", async (req, res) => {
+    try {
+        const { slides } = req.body;
+        if (!Array.isArray(slides)) {
+            return res.status(400).json({ message: "Slides array is required" });
+        }
+
+        const doc = await SliderModel.findOneAndUpdate(
+            { key: "hero_slider" },
+            { slides: slides, updatedAt: new Date() },
+            { new: true, upsert: true }
+        );
+
+        console.log("✅ Saved slides to MongoDB database successfully");
+        return res.json({ message: "Slides updated successfully", slides: doc.slides });
+    } catch (err) {
+        console.error("❌ Error saving slides:", err);
+        return res.status(500).json({ message: "Failed to save slides to database", error: err.message });
     }
 });
 

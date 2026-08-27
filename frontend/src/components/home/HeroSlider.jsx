@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Flame, Zap, Sliders } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -75,6 +76,20 @@ export default function HeroSlider() {
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
+    // 1. Fetch live slides from MongoDB database
+    const API_URL = import.meta.env.VITE_API_URL || '';
+    axios.get(`${API_URL}/api/slides`)
+      .then(res => {
+        if (res.data && res.data.slides && res.data.slides.length > 0) {
+          setSlides(res.data.slides);
+          localStorage.setItem('admin_hero_slides', JSON.stringify(res.data.slides));
+        }
+      })
+      .catch(err => {
+        console.warn("Could not fetch database slides on storefront:", err);
+      });
+
+    // 2. Listen for local storage/event updates
     const handleSlidesUpdate = () => {
       const saved = localStorage.getItem('admin_hero_slides');
       if (saved) {
