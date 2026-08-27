@@ -77,7 +77,7 @@ export default function HeroSlider() {
 
   useEffect(() => {
     // 1. Fetch live slides from MongoDB database
-    const API_URL = import.meta.env.VITE_API_URL || '';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://ecommerce-mern-backend.vercel.app';
     axios.get(`${API_URL}/api/slides`)
       .then(res => {
         if (res.data && res.data.slides && res.data.slides.length > 0) {

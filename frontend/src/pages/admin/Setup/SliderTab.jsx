@@ -95,7 +95,7 @@ export default function SliderTab() {
   const [uploadNotice, setUploadNotice] = useState('');
 
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL || '';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://ecommerce-mern-backend.vercel.app';
     axios.get(`${API_URL}/api/slides`)
       .then(res => {
         if (res.data && res.data.slides && res.data.slides.length > 0) {
@@ -115,7 +115,7 @@ export default function SliderTab() {
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
       return url;
     }
-    const API_URL = import.meta.env.VITE_API_URL || '';
+    const API_URL = import.meta.env.VITE_API_URL || 'https://ecommerce-mern-backend.vercel.app';
     return `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
@@ -174,7 +174,7 @@ export default function SliderTab() {
       setUploadNotice('Image optimized and attached to slide');
 
       try {
-        const API_URL = import.meta.env.VITE_API_URL || '';
+        const API_URL = import.meta.env.VITE_API_URL || 'https://ecommerce-mern-backend.vercel.app';
         if (API_URL) {
           const res = await axios.post(`${API_URL}/api/upload-slider-image`, {
             imageBase64: optimizedBase64,
@@ -198,7 +198,7 @@ export default function SliderTab() {
     window.dispatchEvent(new Event('hero-slides-updated'));
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://ecommerce-mern-backend.vercel.app';
       await axios.post(`${API_URL}/api/slides`, { slides });
     } catch (err) {
       console.warn("Could not sync slides to MongoDB backend:", err);
