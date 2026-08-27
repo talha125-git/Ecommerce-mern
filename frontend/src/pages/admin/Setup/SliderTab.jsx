@@ -77,23 +77,14 @@ const GRADIENTS = [
 ];
 
 export default function SliderTab() {
-  const [slides, setSlides] = useState(() => {
-    const saved = localStorage.getItem('admin_hero_slides');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Error parsing saved slides:", e);
-      }
-    }
-    return DEFAULT_SLIDES;
-  });
-
+  const [slides, setSlides] = useState(DEFAULT_SLIDES);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [uploadNotice, setUploadNotice] = useState('');
 
+  // Fetch slides from MongoDB on mount
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || '';
     axios.get(`${API_URL}/api/slides`)
@@ -104,7 +95,15 @@ export default function SliderTab() {
         }
       })
       .catch(err => {
-        console.warn("Could not fetch slides from database, using local fallback:", err);
+        console.warn("Could not fetch slides from database:", err);
+        // Fallback to localStorage
+        const saved = localStorage.getItem('admin_hero_slides');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) setSlides(parsed);
+          } catch (e) { /* ignore */ }
+        }
       });
   }, []);
 
@@ -112,11 +111,7 @@ export default function SliderTab() {
 
   const getImageUrl = (url) => {
     if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
-      return url;
-    }
-    const API_URL = import.meta.env.VITE_API_URL || '';
-    return `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+    return url;
   };
 
   const handleUpdateCurrentSlide = (field, value) => {
@@ -129,63 +124,33 @@ export default function SliderTab() {
     setSlides(updated);
   };
 
-  const compressImage = (base64Str, maxWidth = 1200, maxHeight = 800, quality = 0.75) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.src = base64Str;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
-
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width);
-          width = maxWidth;
-        }
-        if (height > maxHeight) {
-          width = Math.round((width * maxHeight) / height);
-          height = maxHeight;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.onerror = () => resolve(base64Str);
-    });
-  };
-
+  // Upload image to Cloudinary via backend
   const handleImageFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
-    setUploadNotice('');
+    setUploadNotice('Uploading to Cloudinary...');
 
     const reader = new FileReader();
     reader.onload = async () => {
-      const rawBase64 = reader.result;
-      const optimizedBase64 = await compressImage(rawBase64);
-
-      handleUpdateCurrentSlide('image', optimizedBase64);
-      setUploadNotice('Image optimized and attached to slide');
+      const base64Data = reader.result;
 
       try {
         const API_URL = import.meta.env.VITE_API_URL || '';
-        if (API_URL) {
-          const res = await axios.post(`${API_URL}/api/upload-slider-image`, {
-            imageBase64: optimizedBase64,
-            imageName: file.name.split('.')[0]
-          });
-          if (res.data && res.data.url && !res.data.url.startsWith('/uploads')) {
-            handleUpdateCurrentSlide('image', res.data.url);
-          }
+        const res = await axios.post(`${API_URL}/api/upload-slider-image`, {
+          imageBase64: base64Data,
+        });
+
+        if (res.data && res.data.url) {
+          handleUpdateCurrentSlide('image', res.data.url);
+          setUploadNotice('✅ Uploaded to Cloudinary successfully!');
+        } else {
+          setUploadNotice('⚠️ Upload returned no URL');
         }
       } catch (err) {
-        console.warn("Backend upload notice:", err);
+        console.error("Cloudinary upload error:", err);
+        setUploadNotice('❌ Upload failed - check API key settings');
       } finally {
         setUploading(false);
       }
@@ -193,19 +158,30 @@ export default function SliderTab() {
     reader.readAsDataURL(file);
   };
 
+  // Save all slides to MongoDB
   const handleSaveAllSlides = async () => {
-    localStorage.setItem('admin_hero_slides', JSON.stringify(slides));
-    window.dispatchEvent(new Event('hero-slides-updated'));
+    setSaving(true);
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || '';
-      await axios.post(`${API_URL}/api/slides`, { slides });
-    } catch (err) {
-      console.warn("Could not sync slides to MongoDB backend:", err);
-    }
+      const res = await axios.post(`${API_URL}/api/slides`, { slides });
 
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+      if (res.data && res.data.slides) {
+        setSlides(res.data.slides);
+      }
+
+      // Also update localStorage for same-tab instant refresh
+      localStorage.setItem('admin_hero_slides', JSON.stringify(slides));
+      window.dispatchEvent(new Event('hero-slides-updated'));
+
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error("Failed to save slides to MongoDB:", err);
+      alert("Failed to save. Please check your backend connection.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleAddNewSlide = () => {
@@ -294,18 +270,19 @@ export default function SliderTab() {
           </button>
           <button
             onClick={handleSaveAllSlides}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition"
+            disabled={saving}
+            className={`px-4 py-2 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition ${saving ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'}`}
           >
             {saveSuccess ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            {saveSuccess ? 'Saved Live!' : 'Save Slider Changes'}
+            {saving ? 'Saving to Database...' : saveSuccess ? 'Saved Live!' : 'Save Slider Changes'}
           </button>
         </div>
       </div>
 
       {saveSuccess && (
         <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-between animate-in fade-in">
-          <span>✅ Slider settings saved! Changes are live on the Storefront Home page.</span>
-          <span className="text-[10px] font-mono bg-emerald-200/60 px-2 py-0.5 rounded">Saved to Local Storage & Public Uploads</span>
+          <span>✅ Slider settings saved to MongoDB! Changes are live on all devices.</span>
+          <span className="text-[10px] font-mono bg-emerald-200/60 px-2 py-0.5 rounded">Synced: MongoDB + Cloudinary</span>
         </div>
       )}
 

@@ -6,9 +6,7 @@ const UserModel = require("./models/Users");
 const SliderModel = require("./models/Slider");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-
-const path = require("path");
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -31,45 +29,55 @@ app.use(cors({
     credentials: true
 }));
 
-// Upload directory path in frontend/public/uploads
-const uploadDir = path.join(__dirname, "../frontend/public/uploads");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-app.use("/uploads", express.static(uploadDir));
+// Configure Cloudinary with environment variables
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "xcpimhvz",
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Endpoint to upload slider picture and save it into frontend/public/uploads
-app.post("/api/upload-slider-image", (req, res) => {
+// Endpoint to upload slider image to Cloudinary cloud storage
+app.post("/api/upload-slider-image", async (req, res) => {
     try {
-        const { imageBase64, imageName } = req.body;
+        const { imageBase64 } = req.body;
         if (!imageBase64) {
             return res.status(400).json({ message: "No image data provided" });
         }
 
-        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-        const buffer = Buffer.from(base64Data, 'base64');
+        // Check if Cloudinary credentials are set correctly
+        const hasCredentials = process.env.CLOUDINARY_API_KEY && 
+                               process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+                               process.env.CLOUDINARY_API_SECRET &&
+                               process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
 
-        const extMatch = imageBase64.match(/^data:image\/(\w+);base64,/);
-        const ext = extMatch ? (extMatch[1] === 'jpeg' ? 'jpg' : extMatch[1]) : 'jpg';
-        const sanitizedName = (imageName || 'slider-bg')
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, '-')
-            .replace(/-+/g, '-');
-        const filename = `${sanitizedName}-${Date.now()}.${ext}`;
-        const filePath = path.join(uploadDir, filename);
+        if (!hasCredentials) {
+            console.warn("⚠️ Cloudinary API keys not configured. Falling back to direct Base64 embedding.");
+            return res.json({
+                message: "Cloudinary credentials not configured, fell back to base64",
+                url: imageBase64
+            });
+        }
 
-        fs.writeFileSync(filePath, buffer);
-        console.log(`✅ Saved image to public folder: ${filePath}`);
+        // Upload base64 image directly to Cloudinary
+        const result = await cloudinary.uploader.upload(imageBase64, {
+            folder: "ecommerce/sliders",
+            resource_type: "image",
+            transformation: [
+                { width: 1400, height: 800, crop: "limit", quality: "auto", fetch_format: "auto" }
+            ]
+        });
 
-        const publicUrl = `/uploads/${filename}`;
+        console.log(`✅ Image uploaded to Cloudinary: ${result.secure_url}`);
         return res.json({
-            message: "Image saved successfully to public folder",
-            url: publicUrl,
-            filename: filename
+            message: "Image uploaded to Cloudinary successfully",
+            url: result.secure_url,
         });
     } catch (err) {
-        console.error("❌ Error uploading image:", err);
-        return res.status(500).json({ message: "Failed to save image", error: err.message });
+        console.error("❌ Cloudinary upload error, falling back to base64:", err);
+        return res.json({
+            message: "Cloudinary upload failed, fell back to base64",
+            url: req.body.imageBase64
+        });
     }
 });
 
