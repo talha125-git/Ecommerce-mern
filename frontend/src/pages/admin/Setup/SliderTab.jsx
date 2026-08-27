@@ -74,6 +74,13 @@ const GRADIENTS = [
   { label: "Emerald & Teal", value: "from-emerald-700/90 via-teal-800/80 to-slate-900" },
   { label: "Purple & Rose Velvet", value: "from-purple-700/90 via-pink-800/80 to-slate-950" },
   { label: "Dark Onyx & Crimson", value: "from-red-800/90 via-rose-950/90 to-slate-950" },
+  { label: "Cyberpunk Cyan & Violet", value: "from-cyan-600/90 via-indigo-800/85 to-purple-950" },
+  { label: "Golden Sunset & Amber", value: "from-yellow-600/90 via-amber-700/85 to-zinc-950" },
+  { label: "Midnight Aurora & Sky", value: "from-teal-600/90 via-sky-800/85 to-indigo-950" },
+  { label: "Electric Fuchsia & Magenta", value: "from-fuchsia-700/90 via-purple-800/85 to-slate-950" },
+  { label: "Deep Ocean & Navy", value: "from-sky-700/90 via-blue-900/90 to-slate-950" },
+  { label: "Lush Forest & Lime", value: "from-lime-600/90 via-emerald-800/85 to-slate-950" },
+  { label: "Volcanic Flame & Blood Orange", value: "from-amber-500/90 via-orange-700/85 to-red-950" },
 ];
 
 export default function SliderTab() {
