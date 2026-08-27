@@ -6,8 +6,12 @@ const UserModel = require("./models/Users");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
+const path = require("path");
+const fs = require("fs");
+
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Parse cookies attached to the client request object
 app.use(cookieParser());
 // Allow requests from frontend and permit cookies/credentials to be sent back and forth
@@ -25,6 +29,48 @@ app.use(cors({
     },
     credentials: true
 }));
+
+// Upload directory path in frontend/public/uploads
+const uploadDir = path.join(__dirname, "../frontend/public/uploads");
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+app.use("/uploads", express.static(uploadDir));
+
+// Endpoint to upload slider picture and save it into frontend/public/uploads
+app.post("/api/upload-slider-image", (req, res) => {
+    try {
+        const { imageBase64, imageName } = req.body;
+        if (!imageBase64) {
+            return res.status(400).json({ message: "No image data provided" });
+        }
+
+        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        const extMatch = imageBase64.match(/^data:image\/(\w+);base64,/);
+        const ext = extMatch ? (extMatch[1] === 'jpeg' ? 'jpg' : extMatch[1]) : 'jpg';
+        const sanitizedName = (imageName || 'slider-bg')
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, '-')
+            .replace(/-+/g, '-');
+        const filename = `${sanitizedName}-${Date.now()}.${ext}`;
+        const filePath = path.join(uploadDir, filename);
+
+        fs.writeFileSync(filePath, buffer);
+        console.log(`✅ Saved image to public folder: ${filePath}`);
+
+        const publicUrl = `/uploads/${filename}`;
+        return res.json({
+            message: "Image saved successfully to public folder",
+            url: publicUrl,
+            filename: filename
+        });
+    } catch (err) {
+        console.error("❌ Error uploading image:", err);
+        return res.status(500).json({ message: "Failed to save image", error: err.message });
+    }
+});
 
 // Serverless MongoDB Connection Handler
 let isConnected = false;

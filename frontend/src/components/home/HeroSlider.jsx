@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Flame, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Flame, Zap, Sliders } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const slides = [
+const defaultSlides = [
   {
     id: 1,
     tag: "SUMMER DROP 2025",
-    tagIcon: Flame,
+    tagIcon: "Flame",
     title: "Step Into Next-Gen Style & Pure Comfort",
     subtitle: "Experience unmatched cushioning and ergonomic designs crafted for urban explorers.",
     badge: "30% OFF SPECIAL",
@@ -21,7 +22,7 @@ const slides = [
   {
     id: 2,
     tag: "JUST RELEASED",
-    tagIcon: Sparkles,
+    tagIcon: "Sparkles",
     title: "Fresh Arrivals Crafted For Distinction",
     subtitle: "Elevate your streetwear aesthetic with contemporary silhouettes and premium leather finishes.",
     badge: "NEW ARRIVALS",
@@ -36,7 +37,7 @@ const slides = [
   {
     id: 3,
     tag: "HIGH PERFORMANCE",
-    tagIcon: Zap,
+    tagIcon: "Zap",
     title: "Unstoppable Energy & Responsive Motion",
     subtitle: "Built for speed, durability, and supreme agility whether on the track or the streets.",
     badge: "LIMITED EDITION",
@@ -50,59 +51,132 @@ const slides = [
   },
 ];
 
+const iconMap = {
+  Flame: Flame,
+  Sparkles: Sparkles,
+  Zap: Zap,
+};
+
 export default function HeroSlider() {
+  const [slides, setSlides] = useState(() => {
+    const saved = localStorage.getItem('admin_hero_slides');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        console.error("Error reading saved slides:", e);
+      }
+    }
+    return defaultSlides;
+  });
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  useEffect(() => {
+    const handleSlidesUpdate = () => {
+      const saved = localStorage.getItem('admin_hero_slides');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setSlides(parsed);
+            setCurrentSlide(0);
+            return;
+          }
+        } catch (e) {
+          console.error("Error parsing updated slides:", e);
+        }
+      }
+      setSlides(defaultSlides);
+    };
+
+    window.addEventListener('hero-slides-updated', handleSlidesUpdate);
+    window.addEventListener('storage', handleSlidesUpdate);
+    return () => {
+      window.removeEventListener('hero-slides-updated', handleSlidesUpdate);
+      window.removeEventListener('storage', handleSlidesUpdate);
+    };
   }, []);
+
+  const nextSlide = useCallback(() => {
+    if (!slides || slides.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides]);
 
   const prevSlide = useCallback(() => {
+    if (!slides || slides.length === 0) return;
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+  }, [slides]);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !slides || slides.length === 0) return;
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
     return () => clearInterval(interval);
-  }, [nextSlide, isPaused]);
+  }, [nextSlide, isPaused, slides]);
 
   const handleScrollTo = (targetId) => {
+    if (!targetId) return;
     const element = document.querySelector(targetId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  const slide = slides[currentSlide];
-  const TagIcon = slide.tagIcon;
+  if (!slides || slides.length === 0) return null;
+
+  const safeIndex = currentSlide < slides.length ? currentSlide : 0;
+  const slide = slides[safeIndex] || slides[0];
+
+  const TagIcon = (typeof slide.tagIcon === 'string' ? iconMap[slide.tagIcon] : slide.tagIcon) || Sparkles;
+  const isAdmin = localStorage.getItem('userRole') === 'admin';
+
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    const API_URL = import.meta.env.VITE_API_URL || '';
+    return `${API_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
 
   return (
     <div 
-    id="hero-slider"
+      id="hero-slider"
       className="relative w-full overflow-hidden bg-slate-950 text-white rounded-2xl md:rounded-3xl shadow-2xl mb-12"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
+      {/* Admin Quick Edit Button Path */}
+      {isAdmin && (
+        <Link
+          to="/admin/dashboard?tab=slider"
+          className="absolute top-4 right-4 z-40 px-3.5 py-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white rounded-full text-xs font-bold shadow-lg backdrop-blur-md border border-emerald-400/30 flex items-center gap-1.5 transition-all hover:scale-105 cursor-pointer"
+        >
+          <Sliders className="w-3.5 h-3.5" />
+          <span>Edit Slider in Admin</span>
+        </Link>
+      )}
+
       {/* Background Image Carousel with Overlay */}
       <div className="relative min-h-120 sm:min-h-135 lg:min-h-150 flex items-center">
         {slides.map((s, idx) => (
           <div
-            key={s.id}
+            key={s.id || idx}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              idx === currentSlide ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
+              idx === safeIndex ? "opacity-100 z-10 pointer-events-auto" : "opacity-0 z-0 pointer-events-none"
             }`}
           >
             <img
-              src={s.image}
+              src={getImageUrl(s.image)}
               alt={s.title}
               className="w-full h-full object-cover object-center scale-105 transition-transform duration-10000 ease-linear"
             />
             {/* Gradient Overlay */}
-            <div className={`absolute inset-0 bg-linear-to-r ${s.bgGradient} mix-blend-multiply opacity-90`} />
+            <div className={`absolute inset-0 bg-linear-to-r ${s.bgGradient || 'from-slate-950/90 to-slate-900'} mix-blend-multiply opacity-90`} />
             <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/40 to-transparent" />
           </div>
         ))}
@@ -133,7 +207,7 @@ export default function HeroSlider() {
               <Button
                 size="lg"
                 onClick={() => handleScrollTo(slide.ctaPrimaryTarget)}
-                className="bg-white text-slate-950 hover:bg-slate-100 font-bold px-7 py-6 text-base rounded-xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group"
+                className="bg-white text-slate-950 hover:bg-slate-100 font-bold px-7 py-6 text-base rounded-xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 group cursor-pointer"
               >
                 {slide.ctaPrimary}
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -142,7 +216,7 @@ export default function HeroSlider() {
                 size="lg"
                 variant="outline"
                 onClick={() => handleScrollTo(slide.ctaSecondaryTarget)}
-                className="border-white/40 text-white bg-white/10 backdrop-blur-md hover:bg-white/20 font-semibold px-7 py-6 text-base rounded-xl transition-all duration-300"
+                className="border-white/40 text-white bg-white/10 backdrop-blur-md hover:bg-white/20 font-semibold px-7 py-6 text-base rounded-xl transition-all duration-300 cursor-pointer"
               >
                 {slide.ctaSecondary}
               </Button>
@@ -154,14 +228,14 @@ export default function HeroSlider() {
         <button
           onClick={prevSlide}
           aria-label="Previous Slide"
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/40 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/10 transition-all duration-200 hover:scale-110 focus:outline-none"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/40 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/10 transition-all duration-200 hover:scale-110 focus:outline-none cursor-pointer"
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
         <button
           onClick={nextSlide}
           aria-label="Next Slide"
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/40 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/10 transition-all duration-200 hover:scale-110 focus:outline-none"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-slate-900/40 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/10 transition-all duration-200 hover:scale-110 focus:outline-none cursor-pointer"
         >
           <ChevronRight className="h-6 w-6" />
         </button>
@@ -170,11 +244,11 @@ export default function HeroSlider() {
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 bg-slate-950/60 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
           {slides.map((s, idx) => (
             <button
-              key={s.id}
+              key={s.id || idx}
               onClick={() => setCurrentSlide(idx)}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 ${
-                idx === currentSlide ? "w-8 bg-white" : "w-2.5 bg-white/40 hover:bg-white/70"
+              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === safeIndex ? "w-8 bg-white" : "w-2.5 bg-white/40 hover:bg-white/70"
               }`}
             />
           ))}
@@ -183,3 +257,4 @@ export default function HeroSlider() {
     </div>
   );
 }
+

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Search, Menu, DollarSign, ShoppingBag, Users, Package } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon } from 'lucide-react';
 
 // Separate Component Imports
 import Sidebar from './Sidebar';
@@ -9,13 +9,44 @@ import ProductsTab from './ProductsTab';
 import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
 import SettingsTab from './SettingsTab';
+import SliderTab from './Setup/SliderTab';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTabParam = searchParams.get('tab') || 'overview';
   const [user, setUser] = useState({ name: "Admin", email: "admin@bloomshop.com" });
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState(currentTabParam);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [frontendDropdownOpen, setFrontendDropdownOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
+
+  // Keep activeTab in sync with URL search parameter
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSearchParams({ tab: tabId }, { replace: true });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setFrontendDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const role = localStorage.getItem('userRole');
@@ -124,6 +155,8 @@ const DashboardPage = () => {
     switch (activeTab) {
       case 'overview':
         return renderOverview();
+      case 'slider':
+        return <SliderTab />;
       case 'products':
         return <ProductsTab />;
       case 'orders':
@@ -153,7 +186,7 @@ const DashboardPage = () => {
       {/* Sidebar Component */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
         handleLogout={handleLogout}
@@ -182,6 +215,77 @@ const DashboardPage = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Header Dropdown for Frontend Pages */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setFrontendDropdownOpen(!frontendDropdownOpen)}
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold shadow-xs transition cursor-pointer"
+              >
+                <Globe className="w-4 h-4 text-emerald-400" />
+                <span>Frontend Setup</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${frontendDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {frontendDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 py-2 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider border-b border-gray-100 mb-1">
+                    Manage Storefront 
+                  </div>
+
+                  {/* Home Slider Option */}
+                  <button
+                    onClick={() => {
+                      handleTabChange('slider');
+                      setFrontendDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition text-left cursor-pointer ${activeTab === 'slider'
+                        ? 'bg-emerald-50 text-emerald-800 font-bold border-l-4 border-emerald-500'
+                        : 'text-gray-700 hover:bg-gray-50 font-medium'
+                      }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                        <Sliders className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900">Home Slider</div>
+                        <div className="text-[10px] text-gray-500">Edit titles, text & bg picture</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-extrabold">Active</span>
+                  </button>
+
+                  {/* Featured Products */}
+                  <div className="px-3 py-2 text-xs text-gray-400 opacity-60 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-1.5 rounded-lg bg-gray-100 text-gray-400">
+                        <Sparkles className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-600">Featured Products</div>
+                        <div className="text-[10px] text-gray-400">Homepage grid</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] px-1 py-0.5 bg-gray-100 text-gray-400 rounded-md font-bold">Soon</span>
+                  </div>
+
+                  {/* Banner */}
+                  <div className="px-3 py-2 text-xs text-gray-400 opacity-60 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-1.5 rounded-lg bg-gray-100 text-gray-400">
+                        <ImageIcon className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-gray-600">Promo Banner</div>
+                        <div className="text-[10px] text-gray-400">Header strip banner</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] px-1 py-0.5 bg-gray-100 text-gray-400 rounded-md font-bold">Soon</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/20 text-primary font-bold flex items-center justify-center text-xs">
                 A
