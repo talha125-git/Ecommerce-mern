@@ -1,3 +1,3 @@
-git add . 
-git commit -m "feat: implement backend authentication with JWT and add admin slider management features"   
-git push -u origin main
+git add .
+git commit -m "feat: sync hero slider data with MongoDB database for cross-device persistence"
+git push origin main
