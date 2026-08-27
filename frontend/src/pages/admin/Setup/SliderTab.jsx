@@ -80,7 +80,7 @@ const GRADIENTS = [
   { label: "Electric Fuchsia & Magenta", value: "from-fuchsia-700/90 via-purple-800/85 to-slate-950" },
   { label: "Deep Ocean & Navy", value: "from-sky-700/90 via-blue-900/90 to-slate-950" },
   { label: "Lush Forest & Lime", value: "from-lime-600/90 via-emerald-800/85 to-slate-950" },
-  { label: "Volcanic Flame & Blood Orange", value: "from-amber-500/90 via-orange-700/85 to-red-950" },
+  // { label: "Volcanic Flame & Blood Orange", value: "from-amber-500/90 via-orange-700/85 to-red-950" },
 ];
 
 export default function SliderTab() {
