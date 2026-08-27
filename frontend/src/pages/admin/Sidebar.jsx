@@ -20,7 +20,6 @@ export default function Sidebar({
 }) {
   const navTabs = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'slider', label: 'Home Slider', icon: Sliders, badge: 'CMS' },
     { id: 'products', label: 'Products', icon: Package, badge: '24' },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '12' },
     { id: 'customers', label: 'Customers', icon: Users },
