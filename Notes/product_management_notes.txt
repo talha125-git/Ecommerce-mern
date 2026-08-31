@@ -1,0 +1,61 @@
+====================================================================
+            DYNAMIC PRODUCT MANAGEMENT SYSTEM - TECHNICAL NOTES
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. OVERVIEW & OBJECTIVE
+--------------------------------------------------------------------
+Implemented a dynamic Product Management System allowing store administrators 
+to create, edit, delete, and view catalog footwear items, featuring 
+dynamic category selection, dual-mode image uploading (laptop/mobile file 
+upload to Cloudinary + web image URL link), rating & review count controls, 
+and real-time storefront synchronization.
+
+2. BACKEND ARCHITECTURE & IMPLEMENTATION
+--------------------------------------------------------------------
+- Mongoose Product Schema (`backend/models/Product.js`):
+  * Fields: name, category, price, originalPrice, description, image, 
+    stock, rating, reviewsCount, isNew, isHot, badge, sizes, colors.
+
+- Cloudinary Image Upload Endpoint (`backend/index.js`):
+  * POST /api/upload-product-image: Accepts Base64 image payload from 
+    laptop/mobile uploads, uploads file to Cloudinary under folder 
+    'ecommerce/products', and returns hosted secure URL.
+
+- Product REST API Endpoints (`backend/index.js`):
+  * GET /api/products: Fetches all products from MongoDB (auto-seeds 
+    default catalog if collection is empty).
+  * POST /api/products: Adds a new product to MongoDB.
+  * PUT /api/products/:id: Updates product details by ID.
+  * DELETE /api/products/:id: Deletes a product by ID.
+
+3. FRONTEND ADMIN DASHBOARD IMPLEMENTATION (`ProductsTab.jsx`)
+--------------------------------------------------------------------
+- Dynamic Category Selection:
+  * Category dropdown in Add/Edit product modal dynamically fetches and 
+    displays ALL active store categories from `/api/categories`.
+
+- Dual-Mode Image Input (Laptop/Mobile Browse + Image URL Link):
+  * Mode 1: [ Upload Device File ] - Browse and select image files directly 
+    from laptop or mobile storage. Uploads to Cloudinary with real-time 
+    progress indicator.
+  * Mode 2: [ Image URL Link ] - Direct web image URL input.
+  * Live Thumbnail Preview with quick remove button.
+
+- Rating ⭐ & Review Count 💬 Customization:
+  * Rating input (1.0 to 5.0 stars, e.g. 4.7)
+  * Reviews Count input (e.g. 88)
+
+- Product Table & Filtering:
+  * Table view showing product image, name, category, price, badges, 
+    stock, and edit/delete action buttons.
+  * Filter catalog by category pills and search box.
+
+4. STOREFRONT INTEGRATION (`ProductList.jsx` & `ProductCard.jsx`)
+--------------------------------------------------------------------
+- ProductList fetches products dynamically from `/api/products`.
+- ProductCard renders product price, category, image, discount %, badges, 
+  and star rating with total reviews count (e.g. ⭐ 4.7 (88)).
+
+====================================================================

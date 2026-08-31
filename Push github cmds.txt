@@ -1,3 +1,3 @@
 git add .
-git commit -m "docs: add technical documentation for the MERN hero slider control system architecture"
+git commit -m "add category and products dynamic"
 git push origin main

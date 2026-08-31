@@ -8,6 +8,7 @@ import {
   Store, 
   LogOut, 
   Sliders,
+  Tag,
   X 
 } from 'lucide-react';
 
@@ -21,10 +22,12 @@ export default function Sidebar({
   const navTabs = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Products', icon: Package, badge: '24' },
+    { id: 'categories', label: 'Categories', icon: Tag },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '12' },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
+
 
   return (
     <>

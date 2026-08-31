@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon, Tag } from 'lucide-react';
 
 // Separate Component Imports
 import Sidebar from './Sidebar';
@@ -10,6 +10,7 @@ import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
 import SettingsTab from './SettingsTab';
 import SliderTab from './Setup/SliderTab';
+import CategoryTab from './Setup/CategoryTab';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -157,6 +158,8 @@ const DashboardPage = () => {
         return renderOverview();
       case 'slider':
         return <SliderTab />;
+      case 'categories':
+        return <CategoryTab />;
       case 'products':
         return <ProductsTab />;
       case 'orders':
@@ -227,7 +230,7 @@ const DashboardPage = () => {
               </button>
 
               {frontendDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-60 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 py-2 animate-in fade-in zoom-in-95 duration-150">
+                <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 py-2 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-3 py-1.5 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider border-b border-gray-100 mb-1">
                     Manage Storefront 
                   </div>
@@ -255,6 +258,29 @@ const DashboardPage = () => {
                     <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-extrabold">Active</span>
                   </button>
 
+                  {/* Category Setup Option */}
+                  <button
+                    onClick={() => {
+                      handleTabChange('categories');
+                      setFrontendDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 text-xs transition text-left cursor-pointer ${activeTab === 'categories'
+                        ? 'bg-emerald-50 text-emerald-800 font-bold border-l-4 border-emerald-500'
+                        : 'text-gray-700 hover:bg-gray-50 font-medium'
+                      }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700">
+                        <Tag className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-gray-900">Category Setup</div>
+                        <div className="text-[10px] text-gray-500">Manage & add dynamic categories</div>
+                      </div>
+                    </div>
+                    <span className="text-[9px] px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-extrabold">Active</span>
+                  </button>
+
                   {/* Featured Products */}
                   <div className="px-3 py-2 text-xs text-gray-400 opacity-60 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -268,6 +294,7 @@ const DashboardPage = () => {
                     </div>
                     <span className="text-[9px] px-1 py-0.5 bg-gray-100 text-gray-400 rounded-md font-bold">Soon</span>
                   </div>
+
 
                   {/* Banner */}
                   <div className="px-3 py-2 text-xs text-gray-400 opacity-60 flex items-center justify-between">

@@ -1,0 +1,55 @@
+====================================================================
+           DYNAMIC CATEGORY MANAGEMENT SYSTEM - TECHNICAL NOTES
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. OVERVIEW & OBJECTIVE
+--------------------------------------------------------------------
+Implemented a fully dynamic, real-time Category Management System to 
+give store administrators complete control over product catalog category 
+filters directly from the admin dashboard and reflect live updates on 
+the storefront.
+
+2. BACKEND ARCHITECTURE & IMPLEMENTATION
+--------------------------------------------------------------------
+- Mongoose Schema (`backend/models/Category.js`):
+  * Fields: key ("store_categories"), categories (Array of objects with 
+    id, name, slug, active, isDefault, icon, description), updatedAt.
+
+- Backend API Endpoints (`backend/index.js`):
+  * GET /api/categories: Fetches category list from MongoDB. If DB is 
+    empty, auto-seeds default categories (All, Running, Casual, Retro, 
+    Performance, Lifestyle, High Top, Training).
+  * POST /api/categories: Saves updated or newly created categories to 
+    MongoDB.
+  * POST /api/categories/reset: Resets store categories back to factory 
+    defaults.
+
+- Key Bug Fix:
+  * Resolved 'ReferenceError: Cannot access app before initialization' by 
+    moving category route handlers after 'const app = express();' and 
+    middleware configuration.
+
+3. FRONTEND ADMIN DASHBOARD IMPLEMENTATION
+--------------------------------------------------------------------
+- Admin Component (`frontend/src/pages/admin/Setup/CategoryTab.jsx`):
+  * Provides a complete UI to view, add, edit, toggle visibility 
+    (Active / Hidden), and delete categories.
+  * Live Storefront Preview bar displaying active category pills.
+  * Modal dialog for creating custom categories and assigning dynamic 
+    Lucide icons (Grid, Zap, Smile, Sparkles, Activity, Compass, etc.).
+  * Reset to Defaults & Save Changes button with database persistence.
+
+- Admin Navigation Integration (`DashboardPage.jsx` & `Sidebar.jsx`):
+  * Integrated Category Setup into the "Frontend Setup" top header dropdown.
+  * Added "Categories" tab with Tag icon to the Admin Sidebar.
+
+4. STOREFRONT INTEGRATION (`frontend/src/components/home/ProductList.jsx`)
+--------------------------------------------------------------------
+- ProductList now fetches active store categories dynamically from 
+  `/api/categories`.
+- Filter pills on the storefront render active categories in real-time, 
+  ensuring full synchronization between Admin setup and Storefront UI.
+
+====================================================================

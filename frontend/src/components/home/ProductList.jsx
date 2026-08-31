@@ -1,15 +1,60 @@
 import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 import productsData from "@/data/products.json";
 import ProductCard from "./ProductCard";
 import { Flame, Sparkles, SlidersHorizontal, Search, Tag, Grid } from "lucide-react";
+
+const DEFAULT_CAT_NAMES = ["All", "Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
 
 export default function ProductList() {
   const [activeTab, setActiveTab] = useState("all"); // "all", "hot", "new", "sale"
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("featured");
+  const [dynamicCategories, setDynamicCategories] = useState(DEFAULT_CAT_NAMES);
+  const [productsList, setProductsList] = useState(productsData);
   const location = useLocation();
+
+  const API_URL = import.meta.env.VITE_API_URL || "";
+
+  // Fetch dynamic categories from backend
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/categories`)
+      .then((res) => {
+        if (res.data && Array.isArray(res.data.categories)) {
+          const activeCatNames = res.data.categories
+            .filter((cat) => cat.active)
+            .map((cat) => cat.name);
+          if (activeCatNames.length > 0) {
+            // Ensure "All" is always first
+            const hasAll = activeCatNames.includes("All");
+            const finalCats = hasAll
+              ? ["All", ...activeCatNames.filter((c) => c !== "All")]
+              : ["All", ...activeCatNames];
+            setDynamicCategories(finalCats);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("Could not fetch categories from server, fallback to default:", err);
+      });
+  }, []);
+
+  // Fetch dynamic products from backend
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/products`)
+      .then((res) => {
+        if (res.data && Array.isArray(res.data.products) && res.data.products.length > 0) {
+          setProductsList(res.data.products);
+        }
+      })
+      .catch((err) => {
+        console.log("Could not fetch products from server, using local fallback:", err);
+      });
+  }, []);
 
   // Listen to hash changes in URL (e.g. #hot-products or #new-arrivals)
   useEffect(() => {
@@ -20,15 +65,11 @@ export default function ProductList() {
     }
   }, [location.hash]);
 
-  // Extract unique categories
-  const categories = useMemo(() => {
-    const cats = ["All", ...new Set(productsData.map((p) => p.category).filter(Boolean))];
-    return cats;
-  }, []);
+  const categories = dynamicCategories;
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
-    return productsData
+    return productsList
       .filter((product) => {
         // Tab Filter
         if (activeTab === "hot" && !product.isHot && product.badge !== "HOT" && product.badge !== "BESTSELLER") return false;
@@ -42,7 +83,7 @@ export default function ProductList() {
         if (
           searchQuery &&
           !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !product.description.toLowerCase().includes(searchQuery.toLowerCase())
+          !(product.description || "").toLowerCase().includes(searchQuery.toLowerCase())
         ) {
           return false;
         }
@@ -55,10 +96,11 @@ export default function ProductList() {
         if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
         return 0; // featured
       });
-  }, [activeTab, selectedCategory, searchQuery, sortBy]);
+  }, [productsList, activeTab, selectedCategory, searchQuery, sortBy]);
 
-  const hotProductsCount = productsData.filter((p) => p.isHot || p.badge === "HOT" || p.badge === "BESTSELLER").length;
-  const newArrivalsCount = productsData.filter((p) => p.isNew || p.badge === "NEW").length;
+  const hotProductsCount = productsList.filter((p) => p.isHot || p.badge === "HOT" || p.badge === "BESTSELLER").length;
+  const newArrivalsCount = productsList.filter((p) => p.isNew || p.badge === "NEW").length;
+
 
   return (
     <section id="products" className="py-12 space-y-10 scroll-mt-24">
@@ -89,7 +131,7 @@ export default function ProductList() {
           <Grid className="h-4 w-4" />
           <span>All Products</span>
           <span className="ml-1 px-2 py-0.5 rounded-full text-xs bg-white/20 text-current font-extrabold">
-            {productsData.length}
+            {productsList.length}
           </span>
         </button>
 
