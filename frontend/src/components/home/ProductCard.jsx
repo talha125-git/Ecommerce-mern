@@ -45,6 +45,8 @@ export default function ProductCard({ product }) {
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
+  const productId = product._id || product.id;
+
   return (
     <Card className="group overflow-hidden bg-card border border-border/80 hover:border-primary/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 rounded-2xl flex flex-col justify-between">
       <div className="relative overflow-hidden bg-muted/30">
@@ -90,7 +92,7 @@ export default function ProductCard({ product }) {
         </Button>
 
         {/* Image & Quick View Link */}
-        <Link to={`/product/${product.id}`} className="block relative">
+        <Link to={`/product/${productId}`} className="block relative">
           <div className="aspect-square overflow-hidden bg-muted">
             {!imageError ? (
               <img
@@ -140,7 +142,7 @@ export default function ProductCard({ product }) {
           </div>
 
           {/* Product Name */}
-          <Link to={`/product/${product.id}`}>
+          <Link to={`/product/${productId}`}>
             <h3 className="font-bold text-foreground text-lg line-clamp-1 hover:text-primary transition-colors">
               {product.name}
             </h3>

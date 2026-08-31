@@ -1,14 +1,16 @@
 import { useParams, Link } from "react-router-dom";
-import { useState } from "react";
-import products from "@/data/products.json";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import productsData from "@/data/products.json";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import { ArrowLeft, Check, Heart, ShoppingCart, Truck, Shield, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Check, Heart, ShoppingCart, Truck, Shield, Minus, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
-  const product = products.find((p) => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -16,6 +18,43 @@ export default function ProductDetailsPage() {
   const [quantity, setQuantity] = useState(1);
 
   const { addToCart } = useCart();
+  const API_URL = import.meta.env.VITE_API_URL || "";
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setLoading(true);
+    axios
+      .get(`${API_URL}/api/products`)
+      .then((res) => {
+        const allProducts = (res.data && Array.isArray(res.data.products) && res.data.products.length > 0)
+          ? res.data.products
+          : productsData;
+
+        const found = allProducts.find(
+          (p) => String(p._id) === String(id) || String(p.id) === String(id)
+        );
+        setProduct(found || null);
+      })
+      .catch((err) => {
+        console.warn("Could not fetch products from server, using static fallback:", err);
+        const found = productsData.find(
+          (p) => String(p._id) === String(id) || String(p.id) === String(id)
+        );
+        setProduct(found || null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-32 text-center flex flex-col items-center justify-center space-y-3">
+        <Loader2 className="w-10 h-10 animate-spin text-slate-900 mx-auto" />
+        <p className="text-sm font-bold text-gray-500">Loading product details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -36,7 +75,7 @@ export default function ProductDetailsPage() {
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
     addToCart({
-      id: product.id,
+      id: product._id || product.id,
       name: product.name,
       price: product.price,
       image: product.image,

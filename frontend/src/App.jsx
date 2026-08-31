@@ -20,7 +20,19 @@ import Footer from './components/layout/Footer'
 
 // ── Providers & Router ──
 import { CartProvider } from './context/CartContext'
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom'
+
+// Scroll To Top on Route Navigation
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Dynamic Dashboard Redirect component based on role
 const DashboardRedirect = () => {
@@ -46,6 +58,7 @@ function App() {
   return (
     <CartProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* ═══════════════════════════════════
               User / Store Routes

@@ -1,3 +1,3 @@
 git add .
-git commit -m "add category and products dynamic"
+git commit -m "fix product detail page "
 git push origin main
