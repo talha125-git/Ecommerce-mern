@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingBag, 
-  Users, 
-  Settings, 
-  Store, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingBag,
+  Users,
+  Settings,
+  Store,
+  LogOut,
   Sliders,
   Tag,
-  X 
+  X
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -23,7 +23,7 @@ export default function Sidebar({
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Products', icon: Package, badge: '24' },
     { id: 'categories', label: 'Categories', icon: Tag },
-    { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '12' },
+    { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '' },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
@@ -41,9 +41,8 @@ export default function Sidebar({
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-gray-900 text-gray-300 flex flex-col justify-between border-r border-gray-800 transition-transform duration-200 ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-64 bg-gray-900 text-gray-300 flex flex-col justify-between border-r border-gray-800 transition-transform duration-200 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         <div>
           {/* Logo Header */}
@@ -74,11 +73,10 @@ export default function Sidebar({
                     setActiveTab(tab.id);
                     setMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
-                    isActive
-                      ? 'bg-primary text-gray-950 font-bold shadow-sm'
-                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60'
-                  }`}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${isActive
+                    ? 'bg-primary text-gray-950 font-bold shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800/60'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4" />
@@ -86,9 +84,8 @@ export default function Sidebar({
                   </div>
                   {tab.badge && (
                     <span
-                      className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
-                        isActive ? 'bg-gray-950 text-primary' : 'bg-gray-800 text-gray-300'
-                      }`}
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${isActive ? 'bg-gray-950 text-primary' : 'bg-gray-800 text-gray-300'
+                        }`}
                     >
                       {tab.badge}
                     </span>

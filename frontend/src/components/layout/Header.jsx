@@ -85,11 +85,10 @@ export default function Header() {
   return (
     <header
       id="header"
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-lg"
           : "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
-      }`}
+        }`}
     >
       <div className="container mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
@@ -112,11 +111,10 @@ export default function Header() {
                   key={href}
                   to={href}
                   onClick={(e) => handleNavClick(e, href)}
-                  className={`relative py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                    isActivePath(href)
+                  className={`relative py-2 px-3 rounded-lg text-sm font-semibold transition-all duration-200 ${isActivePath(href)
                       ? "bg-primary/10 text-primary shadow-sm"
                       : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
+                    }`}
                   aria-current={isActivePath(href) ? "page" : undefined}
                 >
                   {label}
@@ -259,11 +257,10 @@ export default function Header() {
                   key={href}
                   to={href}
                   onClick={(e) => handleNavClick(e, href)}
-                  className={`text-sm font-medium py-2 px-3 rounded-lg transition-all ${
-                    isActivePath(href)
+                  className={`text-sm font-medium py-2 px-3 rounded-lg transition-all ${isActivePath(href)
                       ? "bg-orange-100"
                       : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
+                    }`}
                   aria-current={isActivePath(href) ? "page" : undefined}
                 >
                   {label}

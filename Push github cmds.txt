@@ -1,3 +1,3 @@
 git add .
-git commit -m "fix product detail page "
+git commit -m "feat: implement checkout system with MongoDB order schema and frontend order flow "
 git push origin main

@@ -9,6 +9,7 @@ import SignupPage from './pages/auth/SignupPage'
 import HomePage from './pages/user/HomePage'
 import CartPage from './pages/user/CartPage'
 import ProductDetailsPage from './pages/user/ProductDetailsPage'
+import CheckoutPage from './pages/user/CheckoutPage'
 import UserDashboardPage from './pages/user/user_dashboard/UserDashboardPage'
 
 // ── Admin Pages ──
@@ -68,6 +69,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Route>
 
           {/* ═══════════════════════════════════

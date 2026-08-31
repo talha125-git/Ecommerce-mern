@@ -6,6 +6,7 @@ const UserModel = require("./models/Users");
 const SliderModel = require("./models/Slider");
 const CategoryModel = require("./models/Category");
 const ProductModel = require("./models/Product");
+const OrderModel = require("./models/Order");
 
 const DEFAULT_CATEGORIES = [
   { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
@@ -445,6 +446,112 @@ app.get('/api/dashboard', (req, res) => {
         }
         return res.json({ message: "Success", user: decoded }); // Token is valid!
     });
+});
+
+// GET /api/customers: Fetch all registered users from MongoDB
+app.get("/api/customers", async (req, res) => {
+    try {
+        const customers = await UserModel.find({}, "-password").sort({ createdAt: -1 });
+        return res.json({ customers });
+    } catch (err) {
+        console.error("❌ Error fetching customers:", err);
+        return res.status(500).json({ message: "Failed to fetch customers", error: err.message });
+    }
+});
+
+// DELETE /api/customers/:id: Delete a registered customer
+app.delete("/api/customers/:id", async (req, res) => {
+    try {
+        const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
+        if (!deletedUser) {
+            return res.status(404).json({ message: "Customer not found" });
+        }
+        return res.json({ message: "Customer account deleted successfully" });
+    } catch (err) {
+        console.error("❌ Error deleting customer:", err);
+        return res.status(500).json({ message: "Failed to delete customer", error: err.message });
+    }
+});
+
+// ═════════════════════════════════════════════════════════════
+// ORDER MANAGEMENT REST API ENDPOINTS
+// ═════════════════════════════════════════════════════════════
+
+// GET /api/orders: Fetch all orders from MongoDB (sorted by newest first)
+app.get("/api/orders", async (req, res) => {
+    try {
+        const orders = await OrderModel.find().sort({ createdAt: -1 });
+        return res.json({ orders });
+    } catch (err) {
+        console.error("❌ Error fetching orders:", err);
+        return res.status(500).json({ message: "Failed to fetch orders", error: err.message });
+    }
+});
+
+// POST /api/orders: Save a new order when customer places order at checkout
+app.post("/api/orders", async (req, res) => {
+    try {
+        const { orderId, customer, items, totalAmount, paymentMethod } = req.body;
+        if (!orderId || !customer || !items || !totalAmount) {
+            return res.status(400).json({ message: "Missing required order details" });
+        }
+
+        const newOrder = await OrderModel.create({
+            orderId,
+            customer,
+            items,
+            totalAmount: Number(totalAmount),
+            paymentMethod: paymentMethod || "card",
+            status: "Pending",
+        });
+
+        console.log(`✅ Order "${newOrder.orderId}" created successfully for ${customer.fullName}`);
+        return res.status(201).json({ message: "Order placed successfully", order: newOrder });
+    } catch (err) {
+        console.error("❌ Error saving order:", err);
+        return res.status(500).json({ message: "Failed to place order", error: err.message });
+    }
+});
+
+// PUT /api/orders/:id/status: Update an order status (Pending -> Processing -> Shipped -> Delivered -> Cancelled)
+app.put("/api/orders/:id/status", async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!status) {
+            return res.status(400).json({ message: "Status is required" });
+        }
+
+        const updatedOrder = await OrderModel.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+
+        console.log(`✅ Order "${updatedOrder.orderId}" status updated to ${status}`);
+        return res.json({ message: "Order status updated successfully", order: updatedOrder });
+    } catch (err) {
+        console.error("❌ Error updating order status:", err);
+        return res.status(500).json({ message: "Failed to update order status", error: err.message });
+    }
+});
+
+// DELETE /api/orders/:id: Delete an order
+app.delete("/api/orders/:id", async (req, res) => {
+    try {
+        const deletedOrder = await OrderModel.findByIdAndDelete(req.params.id);
+        if (!deletedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+        console.log(`✅ Order "${deletedOrder.orderId}" deleted successfully`);
+        return res.json({ message: "Order deleted successfully" });
+    } catch (err) {
+        console.error("❌ Error deleting order:", err);
+        return res.status(500).json({ message: "Failed to delete order", error: err.message });
+    }
 });
 
 module.exports = app;

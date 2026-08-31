@@ -20,7 +20,7 @@ const LoginPage = () => {
         // Lookup full name saved from signup or fallback
         const savedNameForEmail = cleanEmail ? localStorage.getItem(`user_name_${cleanEmail.toLowerCase()}`) : null;
         const lastRegName = localStorage.getItem('last_registered_name');
-        
+
         let userFullName = savedNameForEmail || lastRegName;
         if (!userFullName) {
             const rawPrefix = cleanEmail ? cleanEmail.split('@')[0] : "Customer";
@@ -37,7 +37,9 @@ const LoginPage = () => {
                     localStorage.setItem('userLoggedIn', 'true');
                     const resolvedName = result.data.user?.name || userFullName;
                     localStorage.setItem('user', JSON.stringify({ email: cleanEmail, name: resolvedName }));
-                    navigate('/user/dashboard');
+                    const redirectUrl = localStorage.getItem('redirect_after_login') || '/user/dashboard';
+                    localStorage.removeItem('redirect_after_login');
+                    navigate(redirectUrl);
                 } else {
                     setError(result.data.message || "Login failed");
                     setLoading(false);
@@ -48,7 +50,9 @@ const LoginPage = () => {
                 localStorage.setItem('userRole', 'user');
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('user', JSON.stringify({ email: cleanEmail || "customer@bloomshop.com", name: userFullName }));
-                navigate('/user/dashboard');
+                const redirectUrl = localStorage.getItem('redirect_after_login') || '/user/dashboard';
+                localStorage.removeItem('redirect_after_login');
+                navigate(redirectUrl);
             });
     };
 
@@ -69,7 +73,7 @@ const LoginPage = () => {
                             <span className="block sm:inline">{error}</span>
                         </div>
                     )}
-                    
+
                     {/* Email */}
                     <div>
                         <label className="block text-gray-700 mb-2 font-medium">Email</label>
@@ -125,8 +129,8 @@ const LoginPage = () => {
                     </p>
 
                     <div className="pt-2 border-t border-gray-100">
-                        <Link 
-                            to="/admin/login" 
+                        <Link
+                            to="/admin/login"
                             className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-900 font-semibold"
                         >
                             <ShieldCheck className="w-3.5 h-3.5 text-gray-700" /> Admin Login Portal
