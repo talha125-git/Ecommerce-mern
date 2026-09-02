@@ -1,0 +1,47 @@
+================================================================================
+  MERN E-COMMERCE TECHNICAL NOTES: CUSTOMER AUTHENTICATION & ADMIN MANAGEMENT
+================================================================================
+Created: 2026-08-31
+
+OVERVIEW:
+This document details the authentication gate for checkout, session profile autofill,
+role-switching controls, and dynamic registered customer management in the Admin Dashboard.
+
+--------------------------------------------------------------------------------
+1. CHECKOUT AUTHENTICATION GATE & AUTOFILL
+--------------------------------------------------------------------------------
+- File Location: frontend/src/pages/user/CheckoutPage.jsx
+- Login Enforcement Gate:
+  * Inspects localStorage session (userLoggedIn, token, or user object).
+  * If user is NOT logged in: Displays an "Account Required" gate card requiring the user to Log In or Sign Up first.
+  * Smart Redirect: Saves redirect destination (localStorage.setItem("redirect_after_login", "/checkout")) so after successful login/signup, the user is navigated straight back to CheckoutPage.
+  * Session Profile Autofill: Automatically populates full name and email into shipping form fields from active user session.
+
+--------------------------------------------------------------------------------
+2. DYNAMIC REGISTERED CUSTOMERS IN ADMIN DASHBOARD
+--------------------------------------------------------------------------------
+- File Location: frontend/src/pages/admin/CustomersTab.jsx
+- Backend REST Endpoints (backend/index.js):
+  * GET /api/customers: Fetches all registered customer user accounts from MongoDB (UserModel).
+  * DELETE /api/customers/:id: Allows administrators to remove customer user accounts.
+- Features:
+  * Removed all legacy hardcoded dummy users.
+  * Displays user profile cards with initial avatars, name, email, registration date, and order stats.
+  * Cross-references /api/orders to compute total orders placed per customer email.
+  * Header displays live count badge ("👥 X Signed Up Users").
+  * Includes customer search bar (by name or email).
+
+--------------------------------------------------------------------------------
+3. BI-DIRECTIONAL ROLE SWITCHER & NAVIGATION
+--------------------------------------------------------------------------------
+- Login Pages (frontend/src/pages/auth/LoginPage.jsx & AdminLoginPage.jsx):
+  * Integrated top tab switcher: [ 👤 Customer Login ] ↔ [ 🛡️ Admin Login ].
+  * Single-click role switching between customer login and admin login portals.
+- Main Storefront Header (frontend/src/components/layout/Header.jsx):
+  * Displays role-specific dashboard action pills:
+    - Admin Session: [ 🛡️ Admin Dashboard ] and [ 👤 User View ]
+    - Customer Session: [ 👤 My Account ] and [ 🛡️ Admin Portal ]
+- Admin Sidebar (frontend/src/pages/admin/Sidebar.jsx):
+  * Added footer shortcut button: [ 👤 Customer Login / User Mode ] for instant switching to customer view.
+
+================================================================================
