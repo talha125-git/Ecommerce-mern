@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon, Tag } from 'lucide-react';
+import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon, Tag, RefreshCw, ArrowUpRight, ArrowRight } from 'lucide-react';
 
 // Separate Component Imports
 import Sidebar from './Sidebar';
@@ -22,7 +22,67 @@ const DashboardPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [frontendDropdownOpen, setFrontendDropdownOpen] = useState(false);
 
+  // Dynamic Store Statistics State
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    ordersCount: 0,
+    pendingOrdersCount: 0,
+    deliveredOrdersCount: 0,
+    customersCount: 0,
+    productsCount: 0,
+    inStockCount: 0,
+    recentOrders: [],
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
+
   const dropdownRef = useRef(null);
+
+  // Fetch Real Dynamic Statistics from Backend MongoDB APIs
+  const fetchDashboardStats = async () => {
+    setStatsLoading(true);
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || '';
+      const [ordersRes, productsRes, customersRes] = await Promise.allSettled([
+        axios.get(`${API_URL}/api/orders`),
+        axios.get(`${API_URL}/api/products`),
+        axios.get(`${API_URL}/api/customers`),
+      ]);
+
+      const orders = ordersRes.status === 'fulfilled' && ordersRes.value.data?.orders ? ordersRes.value.data.orders : [];
+      const products = productsRes.status === 'fulfilled' && productsRes.value.data?.products ? productsRes.value.data.products : [];
+      const customers = customersRes.status === 'fulfilled' && customersRes.value.data?.customers ? customersRes.value.data.customers : [];
+
+      const totalRevenue = orders.reduce((sum, ord) => {
+        if (ord.status !== 'Cancelled') {
+          return sum + (Number(ord.totalAmount) || 0);
+        }
+        return sum;
+      }, 0);
+
+      const pendingOrdersCount = orders.filter(o => o.status === 'Pending' || !o.status).length;
+      const deliveredOrdersCount = orders.filter(o => o.status === 'Delivered').length;
+      const inStockCount = products.filter(p => p.stock === undefined || p.stock > 0).length;
+
+      setStats({
+        totalRevenue,
+        ordersCount: orders.length,
+        pendingOrdersCount,
+        deliveredOrdersCount,
+        customersCount: customers.length,
+        productsCount: products.length,
+        inStockCount,
+        recentOrders: orders.slice(0, 5),
+      });
+    } catch (err) {
+      console.error("Error fetching dashboard stats:", err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
 
   // Keep activeTab in sync with URL search parameter
   useEffect(() => {
@@ -87,6 +147,21 @@ const DashboardPage = () => {
     navigate('/');
   };
 
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "Shipped":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "Processing":
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      case "Cancelled":
+        return "bg-rose-50 text-rose-700 border-rose-200";
+      default: // Pending
+        return "bg-purple-50 text-purple-700 border-purple-200";
+    }
+  };
+
   const renderOverview = () => (
     <div className="space-y-6 animate-in fade-in duration-200">
       <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -95,16 +170,27 @@ const DashboardPage = () => {
             Welcome back, Admin! 👋
           </h1>
           <p className="text-xs text-gray-500">
-            Administrator portal control panel and store overview.
+            Real-time administrator metrics, orders summary, and database statistics.
           </p>
         </div>
-        <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-full">
-          ● Store Live
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchDashboardStats}
+            disabled={statsLoading}
+            className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${statsLoading ? "animate-spin" : ""}`} />
+            <span>Refresh Stats</span>
+          </button>
+          <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold rounded-xl flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Live Store
+          </span>
+        </div>
       </div>
 
-      {/* Metric Cards */}
+      {/* Metric Cards with Real Values */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Revenue Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-gray-500">
             <span className="text-xs font-bold uppercase tracking-wider">Revenue</span>
@@ -112,10 +198,22 @@ const DashboardPage = () => {
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-gray-900">$12,450.00</div>
-          <p className="text-[11px] text-emerald-600 font-semibold">+14.2% from last month</p>
+          <div className="text-2xl font-black text-gray-900">
+            {statsLoading ? (
+              <div className="h-8 w-28 bg-gray-100 animate-pulse rounded-lg" />
+            ) : (
+              `$${stats.totalRevenue.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            )}
+          </div>
+          <p className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+            <ArrowUpRight className="w-3.5 h-3.5" /> Total real store earnings
+          </p>
         </div>
 
+        {/* Orders Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-gray-500">
             <span className="text-xs font-bold uppercase tracking-wider">Orders</span>
@@ -123,10 +221,19 @@ const DashboardPage = () => {
               <ShoppingBag className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-gray-900">148</div>
-          <p className="text-[11px] text-gray-400">12 pending fulfillment</p>
+          <div className="text-2xl font-black text-gray-900">
+            {statsLoading ? (
+              <div className="h-8 w-16 bg-gray-100 animate-pulse rounded-lg" />
+            ) : (
+              stats.ordersCount
+            )}
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            {stats.pendingOrdersCount} pending fulfillment
+          </p>
         </div>
 
+        {/* Customers Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-gray-500">
             <span className="text-xs font-bold uppercase tracking-wider">Customers</span>
@@ -134,10 +241,17 @@ const DashboardPage = () => {
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-gray-900">320</div>
-          <p className="text-[11px] text-gray-400">24 new signups this week</p>
+          <div className="text-2xl font-black text-gray-900">
+            {statsLoading ? (
+              <div className="h-8 w-16 bg-gray-100 animate-pulse rounded-lg" />
+            ) : (
+              stats.customersCount
+            )}
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">Registered customer accounts</p>
         </div>
 
+        {/* Products Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-gray-500">
             <span className="text-xs font-bold uppercase tracking-wider">Products</span>
@@ -145,8 +259,16 @@ const DashboardPage = () => {
               <Package className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-gray-900">24</div>
-          <p className="text-[11px] text-gray-400">In stock items</p>
+          <div className="text-2xl font-black text-gray-900">
+            {statsLoading ? (
+              <div className="h-8 w-16 bg-gray-100 animate-pulse rounded-lg" />
+            ) : (
+              stats.productsCount
+            )}
+          </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            {stats.inStockCount} in stock catalog items
+          </p>
         </div>
       </div>
     </div>
