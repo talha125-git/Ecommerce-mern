@@ -68,9 +68,9 @@ export default function AboutPage() {
               <img
                 src={data.image}
                 alt="About BloomShop"
-                className="w-full h-[28rem] object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-112 object-cover hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 text-white p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20">
                 <p className="text-xs uppercase font-semibold text-amber-300 tracking-wider">{data.quoteBadge}</p>
                 <p className="text-sm font-medium mt-1 text-slate-100">"{data.quote}"</p>
