@@ -1,0 +1,35 @@
+====================================================================
+      NOTE 05: CUSTOMER AUTHENTICATION & MANAGEMENT
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. OVERVIEW & OBJECTIVE
+--------------------------------------------------------------------
+Implemented a complete Customer Authentication and Administration system, 
+enforcing a mandatory login gate before checkout, automatic profile 
+information pre-filling on the checkout form, real-time user management 
+in the Admin Dashboard, and bi-directional role switching.
+
+2. AUTHENTICATION & CHECKOUT FLOW
+--------------------------------------------------------------------
+- Login Protection at Checkout (`CheckoutPage.jsx`):
+  * If an unauthenticated guest user clicks "Proceed to Checkout", the system 
+    prompts them to log in or register before completing the order.
+  * Pre-filling Customer Data: Upon logging in, saved profile information 
+    (Full Name, Email, Phone, Address) automatically populates checkout fields.
+
+3. ADMIN CUSTOMER MANAGEMENT (`CustomersTab.jsx`)
+--------------------------------------------------------------------
+- Registered Accounts Management:
+  * Admins can view all registered user accounts fetched from `/api/customers`.
+  * Table displaying user Avatar, Full Name, Email, Account Registration Date, 
+    Total Orders Placed, Total Amount Spent, and Account Actions.
+  * Delete User function: Admins can remove user accounts via `/api/customers/:id`.
+
+4. BI-DIRECTIONAL ROLE SWITCHING
+--------------------------------------------------------------------
+- Seamless switching between User Dashboard (`/user/dashboard`) and Admin 
+  Dashboard (`/admin/dashboard`) based on authenticated session permissions.
+
+====================================================================

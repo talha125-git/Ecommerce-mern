@@ -1,5 +1,5 @@
 ====================================================================
-           DYNAMIC CATEGORY MANAGEMENT SYSTEM - TECHNICAL NOTES
+         NOTE 03: DYNAMIC CATEGORY MANAGEMENT SYSTEM
 ====================================================================
 Date: 2026-08-31
 Project: Tech Track SHouse - MERN E-Commerce Application

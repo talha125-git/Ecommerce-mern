@@ -1,5 +1,5 @@
 ====================================================================
-            DYNAMIC PRODUCT MANAGEMENT SYSTEM - TECHNICAL NOTES
+         NOTE 02: DYNAMIC PRODUCT MANAGEMENT SYSTEM
 ====================================================================
 Date: 2026-08-31
 Project: Tech Track SHouse - MERN E-Commerce Application

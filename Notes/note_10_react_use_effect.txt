@@ -1,0 +1,24 @@
+====================================================================
+          NOTE 10: REACT USEEFFECT HOOK REFERENCE
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. WHAT IT IS
+--------------------------------------------------------------------
+useEffect is a React hook that runs side-effects automatically in the 
+background after a component renders or when its dependencies change.
+
+2. WHAT IT IS USED FOR
+--------------------------------------------------------------------
+- Fetching initial data from backend APIs on page load.
+- Validating session tokens or checking user authentication status.
+- Subscribing to window events or timer intervals.
+
+3. EXAMPLE IN APPLICATION
+--------------------------------------------------------------------
+Inside DashboardPage.jsx & HeroSlider.jsx:
+- Automatically triggers backend requests (`axios.get`) as soon as the 
+  page opens without requiring user click interactions.
+
+====================================================================

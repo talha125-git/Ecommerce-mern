@@ -1,0 +1,40 @@
+====================================================================
+           NOTE 04: REAL-TIME ORDER MANAGEMENT SYSTEM
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. OVERVIEW & OBJECTIVE
+--------------------------------------------------------------------
+Implemented a complete Order Management System allowing customers to place 
+orders from the checkout page and administrators to track, filter, update 
+order statuses (Pending, Processing, Shipped, Delivered, Cancelled), and 
+delete orders directly from the Admin Dashboard.
+
+2. BACKEND ARCHITECTURE & IMPLEMENTATION
+--------------------------------------------------------------------
+- Mongoose Order Schema (`backend/models/Order.js`):
+  * Fields: orderId, customer (name, email, phone, address, city, postalCode), 
+    items (array of purchased products with qty & price), subtotal, shippingFee, 
+    discount, totalAmount, status, paymentMethod, createdAt.
+
+- Order REST API Endpoints (`backend/index.js`):
+  * GET /api/orders: Fetches all orders stored in MongoDB Atlas.
+  * POST /api/orders: Creates a new order document upon customer checkout.
+  * PUT /api/orders/:id/status: Updates order status in database.
+  * DELETE /api/orders/:id: Permanently removes an order record.
+
+3. FRONTEND ADMIN DASHBOARD IMPLEMENTATION (`OrdersTab.jsx`)
+--------------------------------------------------------------------
+- Order Tracking & Filters:
+  * Metric cards displaying total orders, pending orders, and total revenue.
+  * Search bar (by Order ID, Customer Name, or Email) and status filter pills.
+- Status Management:
+  * Dropdown selector per order allowing admins to update status in real-time.
+  * Visual status badges with color coding (Yellow: Pending, Blue: Processing, 
+    Purple: Shipped, Green: Delivered, Red: Cancelled).
+- Order Modal & Invoice Detail View:
+  * Detailed modal breakdown showing customer shipping info, items purchased, 
+    quantities, itemized prices, and subtotal calculation.
+
+====================================================================

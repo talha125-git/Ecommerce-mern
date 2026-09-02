@@ -1,0 +1,30 @@
+====================================================================
+      NOTE 08: FOOTER PAGES & STOREFRONT ROUTING INTEGRATION
+====================================================================
+Date: September 2, 2026
+Project: MERN Ecommerce (BloomShop)
+
+1. FOOTER PAGES CREATION & ROUTE REGISTRATION
+--------------------------------------------------------------------
+- Created 6 dedicated standalone user pages in `frontend/src/pages/user/`:
+  * ShopPage.jsx: Full product catalog with real-time text search, category dropdown filtering, price/name sorting, and grid layout.
+  * ContactPage.jsx: Customer support page featuring contact cards (Address, Phone, Email, Hours) and an interactive submission form.
+  * AboutPage.jsx: Dedicated About Us page fetching live dynamic content from `/api/about` endpoint.
+  * PrivacyPolicyPage.jsx: Clear, structured disclosure of data collection, usage, and security practices.
+  * TermsPage.jsx: Full terms & conditions detailing orders, returns, refunds, and liability.
+  * CookiePolicyPage.jsx: Essential, analytics, and preference cookie policy breakdown with management instructions.
+- Route Registration in `App.jsx`:
+  * Registered routes `/shop`, `/contact`, `/about`, `/privacy`, `/terms`, `/cookies` inside `StoreLayout` (wrapped in Header & Footer).
+- Footer Link Updates in `Footer.jsx`:
+  * Updated all `href` values across footer columns (Shop, Customer Care, Company, Legal) with correct `/` routes.
+
+2. SHOP PAGE BLANK SCREEN BUG FIX
+--------------------------------------------------------------------
+- Problem: Clicking the Shop link rendered a blank page.
+- Root Cause: Backend endpoint `/api/products` returns `{ products: [...] }`. Calling `.filter()` directly on the returned object caused a JavaScript runtime exception (`products.filter is not a function`).
+- Solution:
+  * Implemented safe array extraction checking `Array.isArray(res.data?.products)`.
+  * Added fallback to `productsData` (`@/data/products.json`) ensuring the catalog renders cleanly even if offline or if database is empty.
+  * Added defensive null-checking for search and category filters.
+
+====================================================================

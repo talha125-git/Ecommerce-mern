@@ -1,0 +1,29 @@
+====================================================================
+           NOTE 09: REACT USESTATE HOOK REFERENCE
+====================================================================
+Date: 2026-08-31
+Project: Tech Track SHouse - MERN E-Commerce Application
+
+1. WHAT IT IS
+--------------------------------------------------------------------
+In React, useState is a special function (called a "Hook") that allows 
+your component to remember state variables and update the user interface 
+automatically when those variables change.
+
+2. USAGE IN FORMS & COMPONENTS
+--------------------------------------------------------------------
+1. The loading State:
+   const [loading, setLoading] = useState(false);
+   - When submit button is clicked, `setLoading(true)` runs.
+   - React re-renders the button to show "Loading..." and disables it.
+   - Once the server responds, `setLoading(false)` restores the button.
+
+2. The error State:
+   const [error, setError] = useState(null);
+   - Stores runtime error strings to display alert boxes in the UI.
+
+3. Form Input Binding:
+   const [email, setEmail] = useState("");
+   - Updates state on every keystroke (`onChange={(e) => setEmail(e.target.value)}`).
+
+====================================================================

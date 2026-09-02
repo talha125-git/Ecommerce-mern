@@ -1,5 +1,5 @@
 ====================================================================
-           NOTE 1: SHOPPING CART FIX & DYNAMIC ADMIN DASHBOARD
+      NOTE 06: SHOPPING CART FIX & DYNAMIC ADMIN DASHBOARD
 ====================================================================
 Date: September 2, 2026
 Project: MERN Ecommerce (BloomShop)

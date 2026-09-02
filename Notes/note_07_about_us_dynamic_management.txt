@@ -1,5 +1,5 @@
 ====================================================================
-        NOTE 2: DYNAMIC ABOUT US SECTION & ADMIN FRONTEND SETUP
+      NOTE 07: DYNAMIC ABOUT US SECTION & ADMIN FRONTEND SETUP
 ====================================================================
 Date: September 2, 2026
 Project: MERN Ecommerce (BloomShop)
