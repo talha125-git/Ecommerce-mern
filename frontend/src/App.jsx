@@ -10,6 +10,12 @@ import HomePage from './pages/user/HomePage'
 import CartPage from './pages/user/CartPage'
 import ProductDetailsPage from './pages/user/ProductDetailsPage'
 import CheckoutPage from './pages/user/CheckoutPage'
+import ShopPage from './pages/user/ShopPage'
+import ContactPage from './pages/user/ContactPage'
+import AboutPage from './pages/user/AboutPage'
+import PrivacyPolicyPage from './pages/user/PrivacyPolicyPage'
+import TermsPage from './pages/user/TermsPage'
+import CookiePolicyPage from './pages/user/CookiePolicyPage'
 import UserDashboardPage from './pages/user/user_dashboard/UserDashboardPage'
 
 // ── Admin Pages ──
@@ -67,6 +73,12 @@ function App() {
           ═══════════════════════════════════ */}
           <Route element={<StoreLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/cookies" element={<CookiePolicyPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />

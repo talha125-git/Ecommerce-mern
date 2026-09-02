@@ -1,3 +1,3 @@
 git add .
-git commit -m "move notes to notes folder "
+git commit -m "add footer all pages "
 git push origin main

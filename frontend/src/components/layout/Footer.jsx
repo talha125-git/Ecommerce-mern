@@ -27,37 +27,37 @@ export default function Footer() {
     {
       title: "Shop",
       links: [
-        { href: "shop", label: "All Products" },
-        { href: "shop", label: "New Arrivals" },
-        { href: "shop", label: "Sale" },
-        { href: "shop", label: "Featured" },
+        { href: "/shop", label: "All Products" },
+        { href: "/shop", label: "New Arrivals" },
+        { href: "/shop", label: "Sale" },
+        { href: "/shop", label: "Featured" },
       ],
     },
     {
       title: "Customer Care",
       links: [
-        { href: "contact", label: "Contact Us" },
-        { href: "/", label: "Help Center" },
-        { href: "/", label: "Shipping Info" },
-        { href: "/", label: "Returns & Exchanges" },
+        { href: "/contact", label: "Contact Us" },
+        { href: "/contact", label: "Help Center" },
+        { href: "/terms", label: "Shipping Info" },
+        { href: "/terms", label: "Returns & Exchanges" },
       ],
     },
     {
       title: "Company",
       links: [
-        { href: "about", label: "About Us" },
-        { href: "/", label: "Careers" },
-        { href: "/", label: "Blog" },
-        { href: "/", label: "Press" },
+        { href: "/about", label: "About Us" },
+        { href: "/contact", label: "Careers" },
+        { href: "/about", label: "Blog" },
+        { href: "/about", label: "Press" },
       ],
     },
     {
       title: "Legal",
       links: [
-        { href: "/", label: "Privacy Policy" },
-        { href: "/", label: "Terms & Conditions" },
-        { href: "/", label: "Cookie Policy" },
-        { href: "/", label: "Accessibility" },
+        { href: "/privacy", label: "Privacy Policy" },
+        { href: "/terms", label: "Terms & Conditions" },
+        { href: "/cookies", label: "Cookie Policy" },
+        { href: "/privacy", label: "Accessibility" },
       ],
     },
   ];
