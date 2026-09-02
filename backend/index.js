@@ -7,6 +7,50 @@ const SliderModel = require("./models/Slider");
 const CategoryModel = require("./models/Category");
 const ProductModel = require("./models/Product");
 const OrderModel = require("./models/Order");
+const AboutModel = require("./models/About");
+
+const DEFAULT_ABOUT_SECTION = {
+  key: "about_us_section",
+  badge: "About BloomShop",
+  title: "Where Modern Style Meets Uncompromised Comfort",
+  description: "Founded with a passion for elevated footwear, BloomShop merges aesthetic innovation with day-long ergonomic support. We craft shoes for those who walk with confidence.",
+  subTitle: "Built for the Street, Designed for the Future",
+  subDescription: "Whether you're hitting the pavement, training for your next milestone, or making a sleek fashion statement, our curated sneaker lineup delivers optimum support without compromising on trendsetting design.",
+  quote: "Every stitch is calculated for maximum durability and timeless visual appeal.",
+  quoteBadge: "Our Commitment",
+  image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+  buttonText: "Explore Products",
+  bullet1: "Ethically Sourced Materials",
+  bullet2: "Rigorous 12-Point Quality Checks",
+  stats: [
+    { label: "Happy Shoppers", value: "50,000+" },
+    { label: "Original Models", value: "250+" },
+    { label: "Avg Rating", value: "4.9 ★" },
+    { label: "Global Stores", value: "18 Outlets" }
+  ],
+  features: [
+    {
+      title: "Premium Craftsmanship",
+      description: "Engineered with high-grade breathable mesh, genuine leather, and ultra-responsive soles.",
+      color: "text-amber-500 bg-amber-50 dark:bg-amber-950/30"
+    },
+    {
+      title: "Express Delivery",
+      description: "Fast and reliable worldwide shipping with full real-time order tracking.",
+      color: "text-blue-500 bg-blue-50 dark:bg-blue-950/30"
+    },
+    {
+      title: "100% Authentic Guarantee",
+      description: "Every pair undergoes rigorous quality inspection before leaving our warehouse.",
+      color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30"
+    },
+    {
+      title: "Hassle-Free Returns",
+      description: "30-day effortless return policy with instant refunds or size exchanges.",
+      color: "text-purple-500 bg-purple-50 dark:bg-purple-950/30"
+    }
+  ]
+};
 
 const DEFAULT_CATEGORIES = [
   { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
@@ -181,6 +225,83 @@ app.post("/api/upload-product-image", async (req, res) => {
             message: "Cloudinary upload failed, fell back to base64",
             url: req.body.imageBase64
         });
+    }
+});
+
+// Endpoint to upload About Us image to Cloudinary (or fallback base64)
+app.post("/api/upload-about-image", async (req, res) => {
+    try {
+        const { imageBase64 } = req.body;
+        if (!imageBase64) {
+            return res.status(400).json({ message: "No image data provided" });
+        }
+
+        const hasCredentials = process.env.CLOUDINARY_API_KEY && 
+                               process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+                               process.env.CLOUDINARY_API_SECRET &&
+                               process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
+
+        if (!hasCredentials) {
+            return res.json({
+                message: "Cloudinary credentials not configured, fell back to base64",
+                url: imageBase64
+            });
+        }
+
+        const result = await cloudinary.uploader.upload(imageBase64, {
+            folder: "ecommerce/about",
+            resource_type: "image",
+            transformation: [
+                { width: 1200, height: 1200, crop: "limit", quality: "auto", fetch_format: "auto" }
+            ]
+        });
+
+        console.log(`✅ About image uploaded to Cloudinary: ${result.secure_url}`);
+        return res.json({
+            message: "About image uploaded to Cloudinary successfully",
+            url: result.secure_url,
+        });
+    } catch (err) {
+        console.error("❌ Cloudinary upload error:", err);
+        return res.json({
+            message: "Cloudinary upload failed, fell back to base64",
+            url: req.body.imageBase64
+        });
+    }
+});
+
+// GET /api/about: Fetch saved About section details (seed default if empty)
+app.get("/api/about", async (req, res) => {
+    try {
+        let doc = await AboutModel.findOne({ key: "about_us_section" });
+        if (!doc) {
+            console.log("ℹ️ Seeding default About Us section into MongoDB database...");
+            doc = await AboutModel.create(DEFAULT_ABOUT_SECTION);
+        }
+        return res.json({ about: doc });
+    } catch (err) {
+        console.error("❌ Error fetching About section:", err);
+        return res.status(500).json({ message: "Failed to fetch About section", about: DEFAULT_ABOUT_SECTION, error: err.message });
+    }
+});
+
+// POST /api/about: Save/Update About section details in MongoDB database
+app.post("/api/about", async (req, res) => {
+    try {
+        const updateData = { ...req.body, updatedAt: new Date() };
+        delete updateData._id;
+
+        const doc = await AboutModel.findOneAndUpdate(
+            { key: "about_us_section" },
+            updateData,
+            { new: true, upsert: true }
+        );
+
+        console.log("✅ Saved About Us section to MongoDB database successfully");
+        return res.json({ message: "About Us section updated successfully", about: doc });
+    } catch (err) {
+        console.error("❌ Error saving About section:", err);
+        return res.status(500).json({ message: "Failed to save About section", error: err.message });
     }
 });
 

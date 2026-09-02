@@ -9,6 +9,7 @@ import {
   LogOut,
   Sliders,
   Tag,
+  Info,
   X
 } from 'lucide-react';
 
@@ -23,6 +24,7 @@ export default function Sidebar({
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Products', icon: Package, badge: '' },
     { id: 'categories', label: 'Categories', icon: Tag },
+    // { id: 'about', label: 'About Us', icon: Info },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '' },
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'settings', label: 'Settings', icon: Settings },
