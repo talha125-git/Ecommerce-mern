@@ -99,7 +99,7 @@ export default function CheckoutPage() {
         country: formData.country || "Pakistan",
       },
       items: cart.map((item) => ({
-        id: String(item.id),
+        id: String(item._id || item.id),
         name: item.name,
         price: item.price,
         quantity: item.quantity,
@@ -538,12 +538,14 @@ export default function CheckoutPage() {
               {/* Product Items List */}
               <div className="divide-y divide-border max-h-60 overflow-y-auto pr-1">
                 {cart.map((item, idx) => (
-                  <div key={item.id || idx} className="py-3 flex items-center justify-between gap-3 text-xs">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-12 h-12 rounded-xl object-cover border border-border shrink-0"
-                    />
+                  <div key={item._id || item.id || idx} className="py-3 flex items-center justify-between gap-3 text-xs">
+                    <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-muted border border-border">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover aspect-square"
+                      />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-foreground truncate">{item.name}</div>
                       <div className="text-muted-foreground text-[11px]">

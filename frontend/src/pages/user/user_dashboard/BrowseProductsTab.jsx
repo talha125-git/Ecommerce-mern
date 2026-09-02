@@ -12,17 +12,20 @@ export default function BrowseProductsTab({ productsList, wishlist, handleToggle
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {productsList.map((prod) => {
-          const isWishlisted = wishlist.some((w) => w.id === prod.id);
+          const prodId = prod._id || prod.id;
+          const isWishlisted = wishlist.some((w) => (w._id || w.id) === prodId);
           return (
             <div
-              key={prod.id}
+              key={prodId}
               className="border border-gray-200 rounded-2xl p-4 flex gap-4 items-center shadow-2xs hover:shadow-xs transition"
             >
-              <img
-                src={prod.image}
-                alt={prod.name}
-                className="w-20 h-20 object-cover rounded-xl shrink-0"
-              />
+              <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-muted border border-gray-100">
+                <img
+                  src={prod.image}
+                  alt={prod.name}
+                  className="w-full h-full object-cover aspect-square"
+                />
+              </div>
               <div className="space-y-1 flex-1">
                 <span className="text-[10px] font-bold uppercase text-primary tracking-wider">
                   {prod.cat}
@@ -33,7 +36,8 @@ export default function BrowseProductsTab({ productsList, wishlist, handleToggle
                   <Button
                     onClick={() =>
                       addToCart({
-                        id: prod.id,
+                        id: prodId,
+                        _id: prodId,
                         name: prod.name,
                         price: prod.price,
                         image: prod.image,

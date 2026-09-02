@@ -21,8 +21,11 @@ export default function ProductCard({ product }) {
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
 
+    const targetId = product._id || product.id;
+
     addToCart({
-      id: product.id,
+      id: targetId,
+      _id: targetId,
       name: product.name,
       price: product.price,
       image: product.image,

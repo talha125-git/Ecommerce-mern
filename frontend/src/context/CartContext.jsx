@@ -9,7 +9,16 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      try {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) {
+          // Clean up any items that lost their ID
+          const sanitized = parsed.filter((item) => item && (item.id || item._id));
+          setCart(sanitized);
+        }
+      } catch (e) {
+        console.error("Error parsing cart from localStorage:", e);
+      }
     }
   }, []);
 
@@ -18,25 +27,33 @@ export const CartProvider = ({ children }) => {
   }, [cart]);
 
   const addToCart = (item) => {
+    const itemId = item._id || item.id;
+    if (!itemId) {
+      console.warn("Item missing valid id or _id when adding to cart:", item);
+      return;
+    }
+
     setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
+      const existingItem = prevCart.find(
+        (cartItem) => String(cartItem._id || cartItem.id) === String(itemId)
+      );
 
       const quantityToAdd = item.quantity || 1;
 
       if (existingItem) {
         return prevCart.map((cartItem) =>
-          cartItem.id === item.id
+          String(cartItem._id || cartItem.id) === String(itemId)
             ? { ...cartItem, quantity: cartItem.quantity + quantityToAdd }
             : cartItem
         );
       }
 
-      return [...prevCart, { ...item, quantity: quantityToAdd }];
+      return [...prevCart, { ...item, id: itemId, _id: itemId, quantity: quantityToAdd }];
     });
   };
 
   const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => prevCart.filter((item) => String(item._id || item.id) !== String(id)));
   };
 
   const clearCart = () => {
@@ -47,7 +64,9 @@ export const CartProvider = ({ children }) => {
   const updateQuantity = (id, quantity) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+        String(item._id || item.id) === String(id)
+          ? { ...item, quantity: Math.max(1, quantity) }
+          : item
       )
     );
   };

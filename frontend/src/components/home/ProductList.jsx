@@ -275,7 +275,7 @@ export default function ProductList() {
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product._id || product.id} product={product} />
           ))
         ) : (
           <div className="col-span-full flex flex-col items-center justify-center py-20 text-center bg-card rounded-2xl border border-dashed border-border p-8">

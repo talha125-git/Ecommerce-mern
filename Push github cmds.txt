@@ -1,3 +1,3 @@
 git add .
-git commit -m "docs: add technical documentation for customer authentication, role management, and dynamic order processing systems"
+git commit -m "make correct cart product "
 git push origin main

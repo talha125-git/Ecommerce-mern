@@ -74,8 +74,10 @@ export default function ProductDetailsPage() {
   const handleAddToCart = async () => {
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
+    const targetId = product._id || product.id;
     addToCart({
-      id: product._id || product.id,
+      id: targetId,
+      _id: targetId,
       name: product.name,
       price: product.price,
       image: product.image,

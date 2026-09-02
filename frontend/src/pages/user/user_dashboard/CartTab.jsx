@@ -21,46 +21,51 @@ export default function CartTab({ cart, updateQuantity, removeFromCart, cartSubt
       ) : (
         <div className="space-y-4">
           <div className="divide-y divide-gray-100">
-            {cart.map((item) => (
-              <div key={item.id} className="py-3 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  {item.image && (
-                    <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded-xl" />
-                  )}
-                  <div>
-                    <h4 className="font-bold text-xs text-gray-900">{item.name}</h4>
-                    <p className="text-xs text-gray-500">${item.price} each</p>
+            {cart.map((item) => {
+              const itemId = item._id || item.id;
+              return (
+                <div key={itemId} className="py-3 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    {item.image && (
+                      <div className="w-14 h-14 shrink-0 rounded-xl overflow-hidden bg-muted border border-gray-200">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover aspect-square" />
+                      </div>
+                    )}
+                    <div>
+                      <h4 className="font-bold text-xs text-gray-900">{item.name}</h4>
+                      <p className="text-xs text-gray-500">${item.price} each</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden text-xs">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden text-xs">
+                      <button
+                        onClick={() => updateQuantity(itemId, item.quantity - 1)}
+                        className="px-2 py-1 hover:bg-gray-100"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </button>
+                      <span className="px-3 font-bold">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(itemId, item.quantity + 1)}
+                        className="px-2 py-1 hover:bg-gray-100"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </button>
+                    </div>
+                    <span className="font-bold text-xs text-gray-900 w-16 text-right">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="px-2 py-1 hover:bg-gray-100"
+                      onClick={() => removeFromCart(itemId)}
+                      className="text-gray-400 hover:text-rose-600"
                     >
-                      <Minus className="w-3 h-3" />
-                    </button>
-                    <span className="px-3 font-bold">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 hover:bg-gray-100"
-                    >
-                      <Plus className="w-3 h-3" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
-                  <span className="font-bold text-xs text-gray-900 w-16 text-right">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </span>
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="text-gray-400 hover:text-rose-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
