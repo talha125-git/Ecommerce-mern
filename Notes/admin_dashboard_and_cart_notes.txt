@@ -1,0 +1,26 @@
+====================================================================
+           NOTE 1: SHOPPING CART FIX & DYNAMIC ADMIN DASHBOARD
+====================================================================
+Date: September 2, 2026
+Project: MERN Ecommerce (BloomShop)
+
+1. SHOPPING CART ID NORMALIZATION & DUPLICATION FIX
+--------------------------------------------------------------------
+- Problem: Adding different items to cart caused duplicate quantities or select issues due to MongoDB `_id` vs standard `id` field mismatches.
+- Solution: Standardized ID identification using the pattern `item._id || item.id` across:
+  * CartContext.jsx (addToCart, removeFromCart, updateQuantity)
+  * ProductCard.jsx & ProductList.jsx
+  * CartItem.jsx & CheckoutPage.jsx
+- Standardized product card image container styling using Tailwind CSS (`aspect-square`, `object-cover`, `rounded-2xl`) for visual consistency.
+
+2. DYNAMIC ADMIN DASHBOARD METRICS
+--------------------------------------------------------------------
+- Connected the Admin Dashboard Overview page to live MongoDB data endpoints:
+  * Total Revenue: Calculated sum of all completed order total amounts from `/api/orders`.
+  * Total Orders: Live count of orders stored in database.
+  * Customers: Live count of registered shopper accounts from `/api/customers`.
+  * Products: Total catalog count & in-stock item count from `/api/products`.
+- Implemented `fetchDashboardStats()` with loading indicators (`statsLoading`) and manual "Refresh Stats" trigger.
+- UI Decluttering: Removed the "Recent Customer Orders" box from the Overview tab as requested to maintain a clean, metrics-focused landing screen.
+
+====================================================================
