@@ -1,0 +1,190 @@
+============================================================
+  NOTE 11 — CART, ORDER, WISHLIST PERSISTENCE & SYNC
+  Date: Sep 3, 2026
+  Project: MERN Ecommerce (talha125-git/Ecommerce-mern)
+============================================================
+
+------------------------------------------------------------
+1. REAL ORDER HISTORY IN USER DASHBOARD
+------------------------------------------------------------
+PROBLEM:
+  User dashboard showed dummy/hardcoded order data.
+
+WHAT WAS DONE:
+  - Replaced useState([...dummyOrders]) with a real fetchUserOrders() function
+  - Fetches all orders from GET /api/orders and filters by logged-in user email
+  - Falls back to localStorage key "user_orders_[email]" to catch orders
+    that did not persist to MongoDB
+  - Dashboard shows a loading spinner while fetching
+  - Shows empty state with "Start Shopping" button if no orders exist
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/UserDashboardPage.jsx
+  - frontend/src/pages/user/CheckoutPage.jsx
+    -> Now saves placed order to localStorage as backup on every checkout
+
+------------------------------------------------------------
+2. ADMIN STATUS BADGES SYNC TO USER DASHBOARD
+------------------------------------------------------------
+PROBLEM:
+  When admin changed an order to "Delivered", the user's
+  dashboard did not reflect the change.
+
+WHAT WAS DONE:
+  - Rewrote OrdersTab.jsx (user side) to use real status from API
+  - 5 dynamic badge types with icons and colors:
+      Delivered  -> green  (CheckCircle icon)
+      Shipped    -> blue   (Truck icon)
+      Processing -> amber  (spinning RefreshCw icon)
+      Pending    -> purple (Clock icon)
+      Cancelled  -> red    (XCircle icon)
+  - Admin changes order status via dropdown in admin panel
+  - API updates MongoDB status field
+  - User refreshes dashboard -> sees updated badge live
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/OrdersTab.jsx (full rewrite)
+
+------------------------------------------------------------
+3. STATUS FILTER TABS IN ORDER HISTORY
+------------------------------------------------------------
+PROBLEM:
+  No way to filter orders by status in the user dashboard.
+
+WHAT WAS DONE:
+  - Added a tab bar above the orders table:
+      [All Orders] [Pending] [Processing] [Shipped] [Delivered] [Cancelled]
+  - Each tab shows a live count badge (e.g., "Delivered (2)")
+  - Clicking a tab filters the table instantly
+  - Empty state shown per filter with a "View All Orders" fallback button
+  - Active tab color matches the status badge color
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/OrdersTab.jsx
+
+------------------------------------------------------------
+4. PERSISTENT WISHLIST (localStorage, per user account)
+------------------------------------------------------------
+PROBLEM:
+  Wishlist had dummy hardcoded products (Floral Dress, Leather Bag)
+  and was lost on page refresh.
+
+WHAT WAS DONE:
+  - Removed all dummy wishlist items
+  - Wishlist now stored in localStorage under key: user_wishlist_[email]
+  - Loads automatically when user logs in (reads from their email key)
+  - All add/remove operations save back to localStorage immediately
+  - Each user account has their own separate wishlist
+  - Starts empty (no dummy data)
+
+localStorage Key Pattern:
+  user_wishlist_john@example.com  -> [{id, name, price, image}, ...]
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/UserDashboardPage.jsx
+  - frontend/src/pages/user/user_dashboard/WishlistTab.jsx
+
+------------------------------------------------------------
+5. HEART BUTTON ON HOME PAGE -> SAVES TO WISHLIST
+------------------------------------------------------------
+PROBLEM:
+  The heart button on product cards was purely visual (local
+  component state only, lost on refresh, not connected to anything).
+
+WHAT WAS DONE:
+  - Wired ProductCard heart button to read/write the same
+    localStorage wishlist key as the dashboard
+  - Heart state initialized from localStorage on mount:
+      -> Filled red heart = product already in wishlist
+      -> Hollow heart    = not saved yet
+  - Clicking heart saves product to user_wishlist_[email]
+  - Product immediately appears in dashboard Wishlist tab
+  - Shows "Added to Wishlist" toast popup for 1.8 seconds
+  - Toggling again removes it from localStorage and dashboard
+  - Fires custom browser event "wishlist-updated" so the dashboard
+    re-reads the wishlist live without needing a page reload
+
+HOW THE SYNC WORKS:
+  ProductCard clicks heart
+    -> writes to localStorage
+    -> fires window event "wishlist-updated"
+       -> UserDashboardPage listener triggers loadWishlist()
+          -> setWishlist(updated items)
+             -> WishlistTab re-renders with new product
+
+FILES CHANGED:
+  - frontend/src/components/home/ProductCard.jsx
+  - frontend/src/pages/user/user_dashboard/UserDashboardPage.jsx
+
+------------------------------------------------------------
+6. REMOVED "BROWSE PRODUCTS" TAB FROM USER DASHBOARD
+------------------------------------------------------------
+PROBLEM:
+  There was a "Browse Products" tab inside the user dashboard
+  showing a small hardcoded product list. User asked to remove it.
+
+WHAT WAS DONE:
+  - Removed { id: "products", label: "Browse Products" } from UserSidebar
+  - Removed BrowseProductsTab import and its switch case from dashboard
+  - Removed productsList dummy array
+  - Dashboard now defaults to Cart tab on open (was "products")
+  - Wishlist empty state now shows a "Go to Store" link (/) instead
+    of an in-dashboard browse button
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/UserSidebar.jsx
+  - frontend/src/pages/user/user_dashboard/UserDashboardPage.jsx
+  - frontend/src/pages/user/user_dashboard/WishlistTab.jsx
+
+------------------------------------------------------------
+7. BUG FIX — BLANK PAGE (TEMPORAL DEAD ZONE CRASH)
+------------------------------------------------------------
+PROBLEM:
+  After the wishlist changes, dashboard showed blank page.
+  Browser console error:
+    "Uncaught ReferenceError: Cannot access 'profileData'
+     before initialization at UserDashboardPage.jsx:70"
+
+ROOT CAUSE:
+  A useEffect at line ~63 referenced profileData.email in its
+  dependency array, but the profileData useState declaration
+  was 14 lines BELOW it. JavaScript "const" cannot be accessed
+  before its declaration (Temporal Dead Zone / TDZ rule).
+
+  Wrong order:
+    line 63: useEffect(..., [profileData.email])  <- uses it
+    line 77: const [profileData] = useState(...)  <- declares it
+
+FIX:
+  Moved profileData and profileSaved state declarations to
+  the TOP of the component, before all helpers and effects
+  that reference them.
+
+  Correct order:
+    line 38: const [profileData] = useState(...)  <- declares first
+    line 63: useEffect(..., [profileData.email])  <- uses after
+
+FILES CHANGED:
+  - frontend/src/pages/user/user_dashboard/UserDashboardPage.jsx
+
+------------------------------------------------------------
+GIT COMMITS MADE TODAY
+------------------------------------------------------------
+1. Replace dummy orders with real order history and admin status badge sync
+2. Add status badge filter tabs with live counters to user order history
+3. Persistent user wishlist with localStorage sync, remove dummy data
+4. Connect home page heart button to persistent user wishlist, remove Browse Products tab
+5. Fix TDZ crash: move profileData state above wishlist useEffect
+
+------------------------------------------------------------
+KEY localStorage KEYS USED IN THIS PROJECT
+------------------------------------------------------------
+user_wishlist_[email]   -> User saved wishlist items (array)
+user_orders_[email]     -> Local backup of placed orders (array)
+user_cart_[email]       -> Persistent cart items (array)
+user                    -> Logged-in user object { name, email }
+token                   -> Auth token
+userRole                -> "admin" or "user"
+userLoggedIn            -> "true" / "false"
+
+============================================================
