@@ -37,10 +37,13 @@ export default function UserDashboardPage() {
 
   // Profile form state — declared early so wishlist helpers can reference profileData.email
   const [profileData, setProfileData] = useState({
-    name: "Alex Morgan",
-    email: "alex.morgan@example.com",
-    phone: "+1 (555) 234-5678",
-    address: "742 Evergreen Terrace, Springfield, OR"
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    country: "Pakistan"
   });
   const [profileSaved, setProfileSaved] = useState(false);
 
@@ -147,9 +150,19 @@ export default function UserDashboardPage() {
       try {
         const parsed = JSON.parse(savedUserStr);
         setUser(parsed);
-        if (parsed.name) {
-          setProfileData(prev => ({ ...prev, name: parsed.name, email: parsed.email || prev.email }));
-        }
+        const emailKey = parsed.email ? `user_profile_${parsed.email.toLowerCase()}` : null;
+        const profileSavedObj = emailKey ? JSON.parse(localStorage.getItem(emailKey) || "{}") : {};
+
+        setProfileData({
+          name: parsed.name || profileSavedObj.name || "",
+          email: parsed.email || profileSavedObj.email || "",
+          phone: parsed.phone || profileSavedObj.phone || "",
+          address: parsed.address || profileSavedObj.address || "",
+          city: parsed.city || profileSavedObj.city || "",
+          postalCode: parsed.postalCode || profileSavedObj.postalCode || "",
+          country: parsed.country || profileSavedObj.country || "Pakistan"
+        });
+
         // Load wishlist for this user
         if (parsed.email) loadWishlist(parsed.email);
       } catch (e) {
@@ -187,12 +200,34 @@ export default function UserDashboardPage() {
   };
 
   const handleSaveProfile = (e) => {
-    e.preventDefault();
-    localStorage.setItem("user", JSON.stringify({ name: profileData.name, email: profileData.email }));
+    if (e && e.preventDefault) e.preventDefault();
+    const updatedProfile = {
+      name: profileData.name,
+      email: profileData.email,
+      phone: profileData.phone,
+      address: profileData.address,
+      city: profileData.city,
+      postalCode: profileData.postalCode,
+      country: profileData.country || "Pakistan"
+    };
+
+    // Save under primary "user" key
+    const currentSession = JSON.parse(localStorage.getItem("user") || "{}");
+    localStorage.setItem("user", JSON.stringify({ ...currentSession, ...updatedProfile }));
+
+    // Save under user-specific profile key
     if (profileData.email) {
+      const profileKey = `user_profile_${profileData.email.toLowerCase()}`;
+      localStorage.setItem(profileKey, JSON.stringify(updatedProfile));
       localStorage.setItem(`user_name_${profileData.email.toLowerCase()}`, profileData.name);
     }
-    localStorage.setItem("last_registered_name", profileData.name);
+    if (profileData.name) {
+      localStorage.setItem("last_registered_name", profileData.name);
+    }
+
+    // Trigger custom event for real-time sync with other open components/checkout
+    window.dispatchEvent(new Event("profile-updated"));
+
     setProfileSaved(true);
     setTimeout(() => setProfileSaved(false), 3000);
   };
