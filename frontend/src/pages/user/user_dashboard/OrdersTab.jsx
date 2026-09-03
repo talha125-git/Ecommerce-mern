@@ -17,7 +17,45 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveTab }) {
+  const [selectedStatus, setSelectedStatus] = useState("All");
   const [expandedId, setExpandedId] = useState(null);
+
+  const statusTabs = [
+    { id: "All", label: "All Orders", icon: Package },
+    { id: "Pending", label: "Pending", icon: Clock },
+    { id: "Processing", label: "Processing", icon: RefreshCw },
+    { id: "Shipped", label: "Shipped", icon: Truck },
+    { id: "Delivered", label: "Delivered", icon: CheckCircle2 },
+    { id: "Cancelled", label: "Cancelled", icon: XCircle },
+  ];
+
+  const getCount = (statusId) => {
+    if (!orders || !Array.isArray(orders)) return 0;
+    if (statusId === "All") return orders.length;
+    return orders.filter((o) => (o.status || "Pending") === statusId).length;
+  };
+
+  const filteredOrders = (orders || []).filter((ord) => {
+    if (selectedStatus === "All") return true;
+    return (ord.status || "Pending") === selectedStatus;
+  });
+
+  const getTabActiveClass = (tabId) => {
+    switch (tabId) {
+      case "Delivered":
+        return "bg-emerald-600 text-white shadow-xs font-bold";
+      case "Shipped":
+        return "bg-blue-600 text-white shadow-xs font-bold";
+      case "Processing":
+        return "bg-amber-600 text-white shadow-xs font-bold";
+      case "Cancelled":
+        return "bg-rose-600 text-white shadow-xs font-bold";
+      case "Pending":
+        return "bg-purple-600 text-white shadow-xs font-bold";
+      default:
+        return "bg-slate-900 text-white shadow-xs font-bold";
+    }
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -68,12 +106,46 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
         <button
           onClick={fetchUserOrders}
           disabled={loading}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh Orders</span>
         </button>
       </div>
+
+      {/* Filter Tabs by Status Badges */}
+      {orders && orders.length > 0 && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-gray-100 pt-1">
+          {statusTabs.map((tab) => {
+            const Icon = tab.icon;
+            const count = getCount(tab.id);
+            const isActive = selectedStatus === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedStatus(tab.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? getTabActiveClass(tab.id)
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 font-medium"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{tab.label}</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive
+                      ? "bg-white/25 text-white"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {loading ? (
         <div className="text-center py-16 space-y-3 border border-gray-200 rounded-2xl bg-white">
@@ -96,6 +168,20 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
             Start Shopping
           </Button>
         </div>
+      ) : filteredOrders.length === 0 ? (
+        <div className="text-center py-12 space-y-2 border border-dashed border-gray-200 rounded-2xl bg-white">
+          <Clock className="w-10 h-10 text-gray-300 mx-auto" />
+          <h4 className="text-sm font-bold text-gray-900">No "{selectedStatus}" Orders Found</h4>
+          <p className="text-xs text-gray-500">You don't have any orders with status "{selectedStatus}".</p>
+          <Button
+            onClick={() => setSelectedStatus("All")}
+            variant="outline"
+            size="sm"
+            className="rounded-xl cursor-pointer font-bold text-xs"
+          >
+            View All Orders ({orders.length})
+          </Button>
+        </div>
       ) : (
         <div className="space-y-4">
           <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-2xs">
@@ -112,7 +198,7 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {orders.map((ord) => {
+                  {filteredOrders.map((ord) => {
                     const orderMongoId = ord._id || ord.orderId;
                     const orderCode = ord.orderId || (ord._id ? `#${ord._id.substring(0, 8)}` : "#ORD");
                     const dateStr = ord.createdAt
