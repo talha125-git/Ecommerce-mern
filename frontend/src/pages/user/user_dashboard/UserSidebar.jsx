@@ -3,7 +3,6 @@ import {
   ShoppingBag,
   ShoppingCart,
   Heart,
-  CreditCard,
   Package,
   User
 } from "lucide-react";
@@ -13,7 +12,6 @@ export default function UserSidebar({ activeTab, setActiveTab, profileData, cart
     { id: "products", label: "Browse Products", icon: ShoppingBag },
     { id: "cart", label: "Cart", icon: ShoppingCart, badge: cartCount },
     { id: "wishlist", label: "Wishlist", icon: Heart, badge: wishlistCount },
-    { id: "checkout", label: "Checkout", icon: CreditCard },
     { id: "orders", label: "My Orders", icon: Package, badge: ordersCount },
     { id: "profile", label: "Profile", icon: User },
   ];

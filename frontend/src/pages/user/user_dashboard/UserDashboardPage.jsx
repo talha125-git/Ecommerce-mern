@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { LogOut, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,15 +9,30 @@ import UserSidebar from "./UserSidebar";
 import BrowseProductsTab from "./BrowseProductsTab";
 import CartTab from "./CartTab";
 import WishlistTab from "./WishlistTab";
-import CheckoutTab from "./CheckoutTab";
 import OrdersTab from "./OrdersTab";
 import ProfileTab from "./ProfileTab";
 
 export default function UserDashboardPage() {
   const navigate = useNavigate();
-  const { cart, addToCart, removeFromCart, updateQuantity } = useCart();
-  const [activeTab, setActiveTab] = useState("products");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { cart, addToCart, removeFromCart, updateQuantity, clearCart } = useCart();
+  
+  const initialTab = searchParams.get("tab") || "products";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [user, setUser] = useState(null);
+
+  // Sync activeTab with URL search params when changed
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    setSearchParams({ tab: tabId }, { replace: true });
+  };
+
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
 
   // Sample Wishlist state
   const [wishlist, setWishlist] = useState([
@@ -69,9 +84,9 @@ export default function UserDashboardPage() {
   };
 
   const handleToggleWishlist = (product) => {
-    const exists = wishlist.some(item => item.id === product.id);
+    const exists = wishlist.some(item => (item._id || item.id) === (product._id || product.id));
     if (exists) {
-      setWishlist(wishlist.filter(item => item.id !== product.id));
+      setWishlist(wishlist.filter(item => (item._id || item.id) !== (product._id || product.id)));
     } else {
       setWishlist([...wishlist, product]);
     }
@@ -97,6 +112,7 @@ export default function UserDashboardPage() {
   ];
 
   const cartSubtotal = cart?.reduce((acc, item) => acc + (item.price * item.quantity), 0) || 0;
+  const cartTotalItems = cart?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
   const renderActiveTab = () => {
     switch (activeTab) {
@@ -107,6 +123,7 @@ export default function UserDashboardPage() {
             wishlist={wishlist}
             handleToggleWishlist={handleToggleWishlist}
             addToCart={addToCart}
+            setActiveTab={handleTabChange}
           />
         );
       case "cart":
@@ -115,8 +132,9 @@ export default function UserDashboardPage() {
             cart={cart}
             updateQuantity={updateQuantity}
             removeFromCart={removeFromCart}
+            clearCart={clearCart}
             cartSubtotal={cartSubtotal}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleTabChange}
           />
         );
       case "wishlist":
@@ -127,8 +145,6 @@ export default function UserDashboardPage() {
             addToCart={addToCart}
           />
         );
-      case "checkout":
-        return <CheckoutTab profileData={profileData} cartSubtotal={cartSubtotal} />;
       case "orders":
         return <OrdersTab orders={orders} />;
       case "profile":
@@ -147,6 +163,7 @@ export default function UserDashboardPage() {
             wishlist={wishlist}
             handleToggleWishlist={handleToggleWishlist}
             addToCart={addToCart}
+            setActiveTab={handleTabChange}
           />
         );
     }
@@ -168,11 +185,11 @@ export default function UserDashboardPage() {
 
           <div className="flex items-center gap-3">
             <Link to="/">
-              <Button variant="outline" size="sm" className="text-xs gap-1.5 rounded-xl">
+              <Button variant="outline" size="sm" className="text-xs gap-1.5 rounded-xl cursor-pointer">
                 <Store className="w-3.5 h-3.5" /> Back to Store
               </Button>
             </Link>
-            <Button onClick={handleLogout} variant="destructive" size="sm" className="text-xs gap-1.5 rounded-xl">
+            <Button onClick={handleLogout} variant="destructive" size="sm" className="text-xs gap-1.5 rounded-xl cursor-pointer">
               <LogOut className="w-3.5 h-3.5" /> Logout
             </Button>
           </div>
@@ -184,9 +201,9 @@ export default function UserDashboardPage() {
         {/* Modular Sidebar Component */}
         <UserSidebar
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleTabChange}
           profileData={profileData}
-          cartCount={cart?.length || 0}
+          cartCount={cartTotalItems}
           wishlistCount={wishlist.length}
           ordersCount={orders.length}
         />
@@ -199,3 +216,4 @@ export default function UserDashboardPage() {
     </div>
   );
 }
+
