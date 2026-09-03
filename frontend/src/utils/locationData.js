@@ -2,12 +2,11 @@ import axios from "axios";
 
 // Comprehensive Postal Code dictionary for Pakistani Cities
 export const PAKISTAN_POSTAL_CODES = {
+  // Islamabad Capital Territory
   "Islamabad": "44000",
-  "Peshawar": "25000",
-  "Shabqadar": "24630",
-  "Charsadda": "24460",
+
+  // Punjab
   "Lahore": "54000",
-  "Karachi": "74000",
   "Faisalabad": "38000",
   "Rawalpindi": "46000",
   "Gujranwala": "52250",
@@ -34,7 +33,6 @@ export const PAKISTAN_POSTAL_CODES = {
   "Jhelum": "49600",
   "Chakwal": "48800",
   "Attock": "43600",
-  "Attock City": "43600",
   "Bhakkar": "30000",
   "Layyah": "31200",
   "Toba Tek Singh": "36050",
@@ -45,7 +43,6 @@ export const PAKISTAN_POSTAL_CODES = {
   "Muridke": "39000",
   "Taxila": "47080",
   "Daska": "51100",
-  "Goira": "36100",
   "Samundri": "38300",
   "Jaranwala": "37200",
   "Chishtian": "62350",
@@ -59,15 +56,18 @@ export const PAKISTAN_POSTAL_CODES = {
   "Pasrur": "51480",
   "Phalia": "50440",
 
-  // KPK
+  // Khyber Pakhtunkhwa
+  "Peshawar": "25000",
+  "Charsadda": "24420",
+  "Shabqadar": "24630",
   "Abbottabad": "22010",
   "Bannu": "28100",
-  "Batkhela": "23000",
+  "Batkhela": "23020",
   "Buner": "19290",
   "Chitral": "17200",
   "Dera Ismail Khan": "29050",
   "Dir": "18300",
-  "Hangu": "26100",
+  "Hangu": "26190",
   "Haripur": "22620",
   "Karak": "27200",
   "Khyber": "24800",
@@ -75,10 +75,10 @@ export const PAKISTAN_POSTAL_CODES = {
   "Kohistan": "20100",
   "Lakki Marwat": "28420",
   "Lower Dir": "18300",
-  "Malakand": "23020",
+  "Malakand": "23050",
   "Mansehra": "21300",
   "Mardan": "23200",
-  "Mingora": "19200",
+  "Mingora": "19130",
   "Nowshera": "24100",
   "Parachinar": "26300",
   "Swabi": "23430",
@@ -90,8 +90,9 @@ export const PAKISTAN_POSTAL_CODES = {
   "Wana": "29500",
 
   // Sindh
+  "Karachi": "74000",
   "Hyderabad": "71000",
-  "Sukkur": "65150",
+  "Sukkur": "65200",
   "Larkana": "77150",
   "Nawabshah (Shaheed Benazirabad)": "67450",
   "Mirpur Khas": "69000",
@@ -126,7 +127,7 @@ export const PAKISTAN_POSTAL_CODES = {
   "Pishin": "86200",
   "Dera Murad Jamali": "80500",
   "Dera Allah Yar": "80400",
-  "Nushki": "85000",
+  "Nushki": "95200",
   "Loralai": "84800",
   "Kharan": "85100",
   "Panjgur": "93000",
@@ -134,14 +135,13 @@ export const PAKISTAN_POSTAL_CODES = {
   "Kalat": "88300",
   "Jafarabad": "80400",
 
-  // AJK
+  // Azad Jammu & Kashmir
   "Muzaffarabad": "13100",
   "Mirpur": "10250",
   "Rawalakot": "12350",
   "Kotli": "11100",
   "Bhimber": "10040",
   "Bagh": "12500",
-  "Bagh District": "12500",
   "Hajira": "12300",
   "Neelum Valley": "13200",
   "Pallandri": "12000",
@@ -165,7 +165,7 @@ export const PAKISTAN_CITIES = Object.keys(PAKISTAN_POSTAL_CODES).sort();
  */
 export function getPostalCodeForCity(cityName) {
   if (!cityName) return "";
-  
+
   // Exact lookup
   if (PAKISTAN_POSTAL_CODES[cityName]) {
     return PAKISTAN_POSTAL_CODES[cityName];
