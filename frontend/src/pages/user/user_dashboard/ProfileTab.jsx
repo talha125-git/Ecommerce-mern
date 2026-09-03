@@ -14,7 +14,7 @@ import {
   Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getPakistanCities, PAKISTAN_CITIES } from "@/utils/locationData";
+import { getPakistanCities, PAKISTAN_CITIES, getPostalCodeForCity } from "@/utils/locationData";
 
 export default function ProfileTab({
   profileData,
@@ -46,7 +46,16 @@ export default function ProfileTab({
   }, []);
 
   const handleChange = (field, value) => {
-    setProfileData((prev) => ({ ...prev, [field]: value }));
+    setProfileData((prev) => {
+      const updated = { ...prev, [field]: value };
+      if (field === "city" && value) {
+        const autoPostal = getPostalCodeForCity(value);
+        if (autoPostal) {
+          updated.postalCode = autoPostal;
+        }
+      }
+      return updated;
+    });
   };
 
   return (

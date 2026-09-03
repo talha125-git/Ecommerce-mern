@@ -21,7 +21,7 @@ import {
   Building2,
   Loader2
 } from "lucide-react";
-import { getPakistanCities, PAKISTAN_CITIES } from "@/utils/locationData";
+import { getPakistanCities, PAKISTAN_CITIES, getPostalCodeForCity } from "@/utils/locationData";
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
@@ -127,8 +127,11 @@ export default function CheckoutPage() {
     const { name, value } = e.target;
     setFormData((prev) => {
       const updated = { ...prev, [name]: value };
-      if (name === "country") {
-        updated.city = "";
+      if (name === "city" && value) {
+        const autoPostal = getPostalCodeForCity(value);
+        if (autoPostal) {
+          updated.postalCode = autoPostal;
+        }
       }
       return updated;
     });
