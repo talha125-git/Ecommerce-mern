@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  ShoppingBag,
   ShoppingCart,
   Heart,
   Package,
@@ -9,7 +8,6 @@ import {
 
 export default function UserSidebar({ activeTab, setActiveTab, profileData, cartCount, wishlistCount, ordersCount }) {
   const tabs = [
-    { id: "products", label: "Browse Products", icon: ShoppingBag },
     { id: "cart", label: "Cart", icon: ShoppingCart, badge: cartCount },
     { id: "wishlist", label: "Wishlist", icon: Heart, badge: wishlistCount },
     { id: "orders", label: "My Orders", icon: Package, badge: ordersCount },

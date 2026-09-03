@@ -4,15 +4,52 @@ import { useCart } from "@/context/CartContext";
 import { cn } from "@/lib/utils";
 import { Check, Eye, Heart, ShoppingCart, Star, Flame, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// ─── Wishlist helpers (shared localStorage key used by dashboard) ─────────────
+function getWishlistKey() {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const email = user.email || "";
+    return `user_wishlist_${email.toLowerCase()}`;
+  } catch {
+    return "user_wishlist_guest";
+  }
+}
+
+function readWishlist() {
+  try {
+    return JSON.parse(localStorage.getItem(getWishlistKey()) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function writeWishlist(items) {
+  try {
+    localStorage.setItem(getWishlistKey(), JSON.stringify(items));
+    // Dispatch a storage event so the dashboard re-reads if open in same tab
+    window.dispatchEvent(new Event("wishlist-updated"));
+  } catch {}
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function ProductCard({ product }) {
-  const [isLiked, setIsLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [justLiked, setJustLiked] = useState(false);
 
   const { addToCart } = useCart();
+
+  const productId = product._id || product.id;
+
+  // Sync heart state from localStorage on mount
+  useEffect(() => {
+    const wl = readWishlist();
+    setIsLiked(wl.some((w) => (w._id || w.id) === productId));
+  }, [productId]);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
@@ -21,11 +58,9 @@ export default function ProductCard({ product }) {
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    const targetId = product._id || product.id;
-
     addToCart({
-      id: targetId,
-      _id: targetId,
+      id: productId,
+      _id: productId,
       name: product.name,
       price: product.price,
       image: product.image,
@@ -34,21 +69,42 @@ export default function ProductCard({ product }) {
 
     setIsAdding(false);
     setJustAdded(true);
-
     setTimeout(() => setJustAdded(false), 2000);
   };
 
   const handleToggleLike = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsLiked(!isLiked);
+
+    const current = readWishlist();
+    const exists = current.some((w) => (w._id || w.id) === productId);
+
+    let updated;
+    if (exists) {
+      updated = current.filter((w) => (w._id || w.id) !== productId);
+      setIsLiked(false);
+    } else {
+      updated = [
+        ...current,
+        {
+          id: productId,
+          _id: productId,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+        },
+      ];
+      setIsLiked(true);
+      setJustLiked(true);
+      setTimeout(() => setJustLiked(false), 1800);
+    }
+
+    writeWishlist(updated);
   };
 
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
-
-  const productId = product._id || product.id;
 
   return (
     <Card className="group overflow-hidden bg-card border border-border/80 hover:border-primary/40 hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 rounded-2xl flex flex-col justify-between">
@@ -77,22 +133,28 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Wishlist Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          name="Like Button"
-          className={cn(
-            "absolute top-3 right-3 z-10 transition-all duration-200 bg-background/90 backdrop-blur-md hover:bg-background shadow-sm rounded-full",
-            isLiked ? "text-red-500 fill-current opacity-100" : "opacity-0 group-hover:opacity-100 text-slate-600"
-          )}
+        {/* Wishlist / Heart Button */}
+        <button
           onClick={handleToggleLike}
+          title={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
+          className={cn(
+            "absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 bg-background/90 backdrop-blur-md shadow-sm",
+            isLiked
+              ? "text-rose-500 opacity-100 scale-110"
+              : "opacity-0 group-hover:opacity-100 text-slate-500 hover:text-rose-500 hover:scale-110"
+          )}
         >
           <Heart
-            name="Like Icon"
-            className={cn("h-4 w-4", isLiked && "fill-current")}
+            className={cn("h-4 w-4 transition-all", isLiked && "fill-current text-rose-500")}
           />
-        </Button>
+        </button>
+
+        {/* Liked toast indicator */}
+        {justLiked && (
+          <div className="absolute top-12 right-2 z-20 bg-rose-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-md animate-in fade-in slide-in-from-top-2 duration-200 whitespace-nowrap">
+            ♥ Added to Wishlist
+          </div>
+        )}
 
         {/* Image & Quick View Link */}
         <Link to={`/product/${productId}`} className="block relative">
