@@ -74,7 +74,8 @@ export default function CheckoutPage() {
         const address = savedUser.address || profileSavedObj.address || "";
         const city = savedUser.city || profileSavedObj.city || "";
         const postalCode = savedUser.postalCode || profileSavedObj.postalCode || "";
-        const country = savedUser.country || profileSavedObj.country || "Pakistan";
+        const rawCountry = savedUser.country || profileSavedObj.country;
+        const country = (!rawCountry || rawCountry === "United States" || rawCountry === "US") ? "Pakistan" : rawCountry;
 
         setFormData((prev) => ({
           ...prev,
@@ -84,7 +85,7 @@ export default function CheckoutPage() {
           address: address || prev.address,
           city: city || prev.city,
           postalCode: postalCode || prev.postalCode,
-          country: country || prev.country,
+          country: country,
         }));
 
         if (fullName || address || phone) {

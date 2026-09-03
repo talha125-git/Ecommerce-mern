@@ -287,7 +287,9 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
                         <p className="font-bold text-gray-900 text-xs">{ord.customer?.fullName || "Customer"}</p>
                         {ord.customer?.address && (
                           <p className="text-[11px] text-gray-500 leading-relaxed">
-                            {ord.customer.address}<br />{ord.customer.city}{ord.customer.country ? `, ${ord.customer.country}` : ""}
+                            {ord.customer.address}<br />
+                            {ord.customer.city}
+                            {`, ${!ord.customer.country || ord.customer.country === "United States" || ord.customer.country === "US" ? "Pakistan" : ord.customer.country}`}
                           </p>
                         )}
                       </div>

@@ -153,6 +153,9 @@ export default function UserDashboardPage() {
         const emailKey = parsed.email ? `user_profile_${parsed.email.toLowerCase()}` : null;
         const profileSavedObj = emailKey ? JSON.parse(localStorage.getItem(emailKey) || "{}") : {};
 
+        const rawCountry = parsed.country || profileSavedObj.country;
+        const normalizedCountry = (!rawCountry || rawCountry === "United States" || rawCountry === "US") ? "Pakistan" : rawCountry;
+
         setProfileData({
           name: parsed.name || profileSavedObj.name || "",
           email: parsed.email || profileSavedObj.email || "",
@@ -160,7 +163,7 @@ export default function UserDashboardPage() {
           address: parsed.address || profileSavedObj.address || "",
           city: parsed.city || profileSavedObj.city || "",
           postalCode: parsed.postalCode || profileSavedObj.postalCode || "",
-          country: parsed.country || profileSavedObj.country || "Pakistan"
+          country: normalizedCountry
         });
 
         // Load wishlist for this user
@@ -208,7 +211,7 @@ export default function UserDashboardPage() {
       address: profileData.address,
       city: profileData.city,
       postalCode: profileData.postalCode,
-      country: profileData.country || "Pakistan"
+      country: "Pakistan"
     };
 
     // Save under primary "user" key
