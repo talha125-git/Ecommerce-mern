@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import axios from "axios";
 import { useCart } from "@/context/CartContext";
 import { LogOut, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export default function UserDashboardPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { cart, addToCart, removeFromCart, updateQuantity, clearCart } = useCart();
+  const API_URL = import.meta.env.VITE_API_URL || "";
   
   const initialTab = searchParams.get("tab") || "products";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -40,11 +42,9 @@ export default function UserDashboardPage() {
     { id: 2, name: "Leather Crossbody Handbag", price: 89.00, image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400" },
   ]);
 
-  // Sample User Orders history
-  const [orders, setOrders] = useState([
-    { id: "#ORD-8821", date: "2026-08-18", total: "$153.99", status: "Delivered", items: "Floral Summer Dress, Leather Handbag" },
-    { id: "#ORD-8804", date: "2026-08-10", total: "$89.00", status: "Processing", items: "Quartz Gold Wristwatch" },
-  ]);
+  // Real User Orders state fetched dynamically from MongoDB / API
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -54,6 +54,43 @@ export default function UserDashboardPage() {
     address: "742 Evergreen Terrace, Springfield, OR"
   });
   const [profileSaved, setProfileSaved] = useState(false);
+
+  const fetchUserOrders = async () => {
+    setLoadingOrders(true);
+    const userEmail = profileData.email || (user && user.email) || "";
+    let apiOrders = [];
+    try {
+      const res = await axios.get(`${API_URL}/api/orders`);
+      if (res.data && Array.isArray(res.data.orders)) {
+        apiOrders = userEmail
+          ? res.data.orders.filter(
+              (o) => o.customer?.email?.toLowerCase() === userEmail.toLowerCase()
+            )
+          : res.data.orders;
+      }
+    } catch (err) {
+      console.warn("Could not fetch orders from backend API:", err);
+    }
+
+    if (userEmail) {
+      const localKey = `user_orders_${userEmail.toLowerCase()}`;
+      try {
+        const localOrders = JSON.parse(localStorage.getItem(localKey) || "[]");
+        const apiIds = new Set(apiOrders.map((o) => o.orderId || o._id));
+        const missingLocal = localOrders.filter(
+          (lo) => !apiIds.has(lo.orderId) && !apiIds.has(lo._id)
+        );
+        apiOrders = [...apiOrders, ...missingLocal];
+      } catch (e) {}
+    }
+
+    setOrders(apiOrders);
+    setLoadingOrders(false);
+  };
+
+  useEffect(() => {
+    fetchUserOrders();
+  }, [profileData.email, user]);
 
   useEffect(() => {
     const savedUserStr = localStorage.getItem("user");
@@ -146,7 +183,14 @@ export default function UserDashboardPage() {
           />
         );
       case "orders":
-        return <OrdersTab orders={orders} />;
+        return (
+          <OrdersTab
+            orders={orders}
+            loading={loadingOrders}
+            fetchUserOrders={fetchUserOrders}
+            setActiveTab={handleTabChange}
+          />
+        );
       case "profile":
         return (
           <ProfileTab

@@ -115,6 +115,19 @@ export default function CheckoutPage() {
     } catch (err) {
       console.warn("Could not persist order to server, saving locally:", err);
     } finally {
+      if (formData.email) {
+        const key = `user_orders_${formData.email.toLowerCase()}`;
+        try {
+          const existing = JSON.parse(localStorage.getItem(key) || "[]");
+          const newLocalOrder = {
+            ...orderPayload,
+            _id: generatedId,
+            createdAt: new Date().toISOString(),
+            status: "Pending"
+          };
+          localStorage.setItem(key, JSON.stringify([newLocalOrder, ...existing]));
+        } catch (e) {}
+      }
       setPlacedOrderId(generatedId);
       setIsSubmitting(false);
       setOrderPlaced(true);
