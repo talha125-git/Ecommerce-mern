@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Check, Eye, Heart, ShoppingCart, Star, Flame, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 // ─── Wishlist helpers (shared localStorage key used by dashboard) ─────────────
 function getWishlistKey() {
@@ -31,6 +32,18 @@ function writeWishlist(items) {
     // Dispatch a storage event so the dashboard re-reads if open in same tab
     window.dispatchEvent(new Event("wishlist-updated"));
   } catch {}
+}
+
+async function syncWishlistToAPI(items) {
+  try {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const email = user.email;
+    if (!email) return;
+    const API_URL = import.meta.env.VITE_API_URL || "";
+    await axios.put(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`, { wishlist: items });
+  } catch (err) {
+    console.warn("Could not sync wishlist to API:", err);
+  }
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -100,6 +113,7 @@ export default function ProductCard({ product }) {
     }
 
     writeWishlist(updated);
+    syncWishlistToAPI(updated); // persist to MongoDB for cross-device sync
   };
 
   const discount = product.originalPrice

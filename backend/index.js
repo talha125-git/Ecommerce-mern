@@ -675,4 +675,49 @@ app.delete("/api/orders/:id", async (req, res) => {
     }
 });
 
-module.exports = app;
+// ─── WISHLIST ROUTES ──────────────────────────────────────────────────────────
+
+// GET /api/wishlist/:email — Fetch wishlist for a user by email
+app.get("/api/wishlist/:email", async (req, res) => {
+    try {
+        const email = req.params.email.toLowerCase();
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            return res.json({ wishlist: [] });
+        }
+        return res.json({ wishlist: user.wishlist || [] });
+    } catch (err) {
+        console.error("❌ Error fetching wishlist:", err);
+        return res.status(500).json({ message: "Failed to fetch wishlist", error: err.message });
+    }
+});
+
+// PUT /api/wishlist/:email — Save/update the full wishlist for a user
+app.put("/api/wishlist/:email", async (req, res) => {
+    try {
+        const email = req.params.email.toLowerCase();
+        const { wishlist } = req.body;
+
+        if (!Array.isArray(wishlist)) {
+            return res.status(400).json({ message: "wishlist must be an array" });
+        }
+
+        const user = await UserModel.findOneAndUpdate(
+            { email },
+            { $set: { wishlist } },
+            { new: true, upsert: false }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        console.log(`✅ Wishlist updated for ${email} — ${wishlist.length} item(s)`);
+        return res.json({ message: "Wishlist saved successfully", wishlist: user.wishlist });
+    } catch (err) {
+        console.error("❌ Error saving wishlist:", err);
+        return res.status(500).json({ message: "Failed to save wishlist", error: err.message });
+    }
+});
+
+module.exports = app;

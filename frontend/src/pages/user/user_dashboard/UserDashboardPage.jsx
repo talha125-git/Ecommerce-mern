@@ -44,14 +44,27 @@ export default function UserDashboardPage() {
   });
   const [profileSaved, setProfileSaved] = useState(false);
 
-  // Persistent Wishlist — loaded from localStorage keyed by user email
+  // Persistent Wishlist — synced with MongoDB (works across devices & deployments)
   const [wishlist, setWishlist] = useState([]);
 
-  // Helper: get the localStorage key for this user's wishlist
+  // Helper: localStorage cache key
   const getWishlistKey = (email) => `user_wishlist_${(email || "guest").toLowerCase()}`;
 
-  // Load wishlist from localStorage whenever user/email is known
-  const loadWishlist = (email) => {
+  // Load wishlist — tries MongoDB first, falls back to localStorage cache
+  const loadWishlist = async (email) => {
+    if (!email) return;
+    try {
+      const res = await axios.get(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`);
+      if (res.data && Array.isArray(res.data.wishlist)) {
+        setWishlist(res.data.wishlist);
+        // Keep localStorage in sync as cache
+        localStorage.setItem(getWishlistKey(email), JSON.stringify(res.data.wishlist));
+        return;
+      }
+    } catch (err) {
+      console.warn("Could not fetch wishlist from API, using localStorage cache:", err);
+    }
+    // Fallback: read from localStorage
     try {
       const stored = JSON.parse(localStorage.getItem(getWishlistKey(email)) || "[]");
       setWishlist(Array.isArray(stored) ? stored : []);
@@ -60,12 +73,21 @@ export default function UserDashboardPage() {
     }
   };
 
-  // Save wishlist to localStorage
-  const saveWishlist = (email, items) => {
+  // Save wishlist — writes to MongoDB AND localStorage cache
+  const saveWishlist = async (email, items) => {
+    // Optimistic local update
     try {
       localStorage.setItem(getWishlistKey(email), JSON.stringify(items));
       window.dispatchEvent(new Event("wishlist-updated"));
     } catch (e) {}
+    // Persist to MongoDB
+    if (email) {
+      try {
+        await axios.put(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`, { wishlist: items });
+      } catch (err) {
+        console.warn("Could not save wishlist to API:", err);
+      }
+    }
   };
 
   // Re-read wishlist when ProductCard fires the wishlist-updated event
