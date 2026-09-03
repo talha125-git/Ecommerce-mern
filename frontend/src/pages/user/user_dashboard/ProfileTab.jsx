@@ -65,7 +65,7 @@ export default function ProfileTab({
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-md">
         <div className="absolute -right-8 -bottom-8 w-40 h-40 bg-primary/10 rounded-full blur-2xl pointer-events-none" />
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          
+
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-2xl font-black text-primary shadow-inner">
               {userInitial}
@@ -238,14 +238,20 @@ export default function ProfileTab({
 
             {/* Postal Code */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700">Postal Code</label>
+              <label className="block text-xs font-bold text-gray-700 flex items-center justify-between">
+                <span>Postal Code</span>
+                <span className="text-[10px] text-gray-400 font-medium">Auto-filled</span>
+              </label>
               <input
                 type="text"
                 value={profileData.postalCode}
                 onChange={(e) => handleChange("postalCode", e.target.value)}
-                placeholder="e.g. 54000 / 25000"
+                placeholder="e.g. 24630 / 25000"
                 className="w-full px-3.5 py-2.5 text-xs font-semibold bg-gray-50 border border-gray-200 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition"
               />
+              <p className="text-[10px] text-amber-600 font-medium flex items-center gap-1 mt-0.5">
+                <span>💡</span> Auto-filled city default. Please confirm or edit for your local area code.
+              </p>
             </div>
 
           </div>

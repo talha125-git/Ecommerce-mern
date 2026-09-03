@@ -474,17 +474,21 @@ export default function CheckoutPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">
-                    Postal Code
+                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center justify-between">
+                    <span>Postal Code</span>
+                    <span className="text-[10px] text-gray-400 font-medium">Auto-filled</span>
                   </label>
                   <input
                     type="text"
                     name="postalCode"
-                    placeholder="54000"
+                    placeholder="e.g. 24630 / 25000"
                     value={formData.postalCode}
                     onChange={handleChange}
-                    className="w-full px-3 py-2.5 bg-muted/40 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                    className="w-full px-3 py-2.5 bg-muted/40 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium text-xs"
                   />
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 mt-1">
+                    <span>💡</span> Auto-filled default. You can edit if your area code differs.
+                  </p>
                 </div>
               </div>
             </CardContent>
