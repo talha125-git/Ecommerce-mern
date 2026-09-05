@@ -434,12 +434,12 @@ export default function ProductsTab() {
                         </div>
 
                         {/* Product Title (No truncation, shown in full) */}
-                        <h3 className="font-extrabold text-gray-900 text-sm leading-snug break-words">
+                        <h3 className="font-extrabold text-gray-900 text-sm leading-snug wrap-break-word">
                           {prod.name}
                         </h3>
 
                         {/* Description (Full text shown, no line clamp or ellipses) */}
-                        <p className="text-[11px] text-gray-500 leading-relaxed break-words mt-1">
+                        <p className="text-[11px] text-gray-500 leading-relaxed wrap-break-word mt-1">
                           {prod.description || "No description provided."}
                         </p>
 
