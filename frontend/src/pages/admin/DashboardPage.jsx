@@ -12,6 +12,8 @@ import SettingsTab from './SettingsTab';
 import SliderTab from './Setup/SliderTab';
 import CategoryTab from './Setup/CategoryTab';
 import AboutTab from './Setup/AboutTab';
+import DashboardCharts from './DashboardCharts';
+
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -73,6 +75,9 @@ const DashboardPage = () => {
         productsCount: products.length,
         inStockCount,
         recentOrders: orders.slice(0, 5),
+        rawOrders: orders,
+        rawProducts: products,
+        rawCustomers: customers,
       });
     } catch (err) {
       console.error("Error fetching dashboard stats:", err);
@@ -271,6 +276,86 @@ const DashboardPage = () => {
             {stats.inStockCount} in stock catalog items
           </p>
         </div>
+      </div>
+
+      {/* Dynamic Visual Analytics Charts */}
+      {statsLoading ? (
+        <div className="bg-white border border-gray-200 rounded-3xl p-12 text-center space-y-3 shadow-xs">
+          <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-gray-500">Loading Real Analytics & Charts...</p>
+        </div>
+      ) : (
+        <DashboardCharts
+          orders={stats.rawOrders || []}
+          products={stats.rawProducts || []}
+          customers={stats.rawCustomers || []}
+        />
+      )}
+
+      {/* Recent Orders Overview Table */}
+      <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+          <div className="space-y-0.5">
+            <h3 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-emerald-600" /> Recent Orders Activity
+            </h3>
+            <p className="text-xs text-gray-500">Latest customer orders from store front</p>
+          </div>
+          <button
+            onClick={() => handleTabChange('orders')}
+            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 cursor-pointer"
+          >
+            <span>View All Orders</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {stats.recentOrders && stats.recentOrders.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-gray-700">
+              <thead>
+                <tr className="border-b border-gray-100 text-gray-400 font-extrabold uppercase tracking-wider text-[10px]">
+                  <th className="pb-3 px-2">Order ID</th>
+                  <th className="pb-3 px-2">Customer</th>
+                  <th className="pb-3 px-2">Items</th>
+                  <th className="pb-3 px-2">Total Amount</th>
+                  <th className="pb-3 px-2">Status</th>
+                  <th className="pb-3 px-2 text-right">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50 font-medium">
+                {stats.recentOrders.map((ord) => (
+                  <tr key={ord._id || ord.orderId} className="hover:bg-gray-50/80 transition">
+                    <td className="py-3 px-2 font-mono font-bold text-gray-900">
+                      #{ord.orderId || (ord._id ? ord._id.substring(18) : 'ORD')}
+                    </td>
+                    <td className="py-3 px-2 text-gray-900 font-semibold">
+                      {ord.customer?.fullName || 'Guest Customer'}
+                    </td>
+                    <td className="py-3 px-2 text-gray-500">
+                      {ord.items ? ord.items.length : 0} item(s)
+                    </td>
+                    <td className="py-3 px-2 font-bold font-mono text-emerald-600">
+                      ${Number(ord.totalAmount || 0).toFixed(2)}
+                    </td>
+                    <td className="py-3 px-2">
+                      <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${getStatusBadgeClass(ord.status || 'Pending')}`}>
+                        {ord.status || 'Pending'}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 text-right text-gray-400 text-[11px]">
+                      {ord.createdAt ? new Date(ord.createdAt).toLocaleDateString() : 'Today'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="py-8 text-center text-xs text-gray-400">
+            No recent orders recorded yet.
+          </div>
+        )}
       </div>
     </div>
   );
