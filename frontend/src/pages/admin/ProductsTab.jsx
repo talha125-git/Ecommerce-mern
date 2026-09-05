@@ -260,13 +260,13 @@ export default function ProductsTab() {
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Header Banner */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-2 bg-purple-50 text-purple-600 rounded-xl">
               <Package className="w-5 h-5" />
             </span>
-            <h1 className="text-2xl font-black text-gray-900">Products Catalog Management</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-gray-900">Products Catalog Management</h1>
           </div>
           <p className="text-xs text-gray-500 max-w-xl">
             Add, update, and manage all store footwear products dynamically. Assign categories from active store categories.
@@ -275,7 +275,7 @@ export default function ProductsTab() {
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer active:scale-98"
         >
           <Plus className="w-4 h-4 text-emerald-400" />
           <span>Add New Product</span>
@@ -285,11 +285,10 @@ export default function ProductsTab() {
       {/* Alert Status Banner */}
       {statusMsg.text && (
         <div
-          className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between animate-in slide-in-from-top duration-200 ${
-            statusMsg.type === "success"
-              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
-              : "bg-rose-50 text-rose-800 border border-rose-200"
-          }`}
+          className={`p-4 rounded-xl text-xs font-semibold flex items-center justify-between animate-in slide-in-from-top duration-200 ${statusMsg.type === "success"
+            ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+            : "bg-rose-50 text-rose-800 border border-rose-200"
+            }`}
         >
           <div className="flex items-center gap-2">
             {statusMsg.type === "success" ? (
@@ -303,9 +302,9 @@ export default function ProductsTab() {
       )}
 
       {/* Controls Bar: Search & Category Filter Pills */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4">
         {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none order-2 md:order-1">
           <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mr-1 hidden sm:inline-block">
             Category:
           </span>
@@ -313,11 +312,10 @@ export default function ProductsTab() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
-                selectedCategory === cat
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${selectedCategory === cat
+                ? "bg-slate-900 text-white shadow-xs"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
             >
               {cat}
             </button>
@@ -325,121 +323,273 @@ export default function ProductsTab() {
         </div>
 
         {/* Search Input */}
-        <div className="relative w-full md:w-64">
+        <div className="relative w-full md:w-64 order-1 md:order-2">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full pl-9 pr-8 py-2 md:py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Products Table */}
+      {/* Products Catalog View */}
       {loading ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
           <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
           <p className="text-xs font-semibold text-gray-500">Loading product catalog...</p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                <tr>
-                  <th className="p-4">Product Info</th>
-                  <th className="p-4">Category</th>
-                  <th className="p-4">Price</th>
-                  <th className="p-4">Badges</th>
-                  <th className="p-4">Stock</th>
-                  <th className="p-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map((prod) => (
-                    <tr key={prod._id || prod.id} className="hover:bg-gray-50/80 transition">
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={prod.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
-                            alt={prod.name}
-                            className="w-10 h-10 rounded-xl object-cover border border-gray-200 shrink-0"
-                          />
-                          <div>
-                            <div className="font-bold text-gray-900">{prod.name}</div>
-                            <div className="text-[10px] text-gray-400 line-clamp-1 max-w-xs">
-                              {prod.description || "No description."}
+        <>
+          {/* ========================================================================= */}
+          {/* MOBILE VIEW (Independent Separated Cards - No Truncation, Do Not Touch)   */}
+          {/* ========================================================================= */}
+          <div className="block md:hidden space-y-3.5">
+            {/* Mobile Header Bar */}
+            <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 shadow-xs flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold text-gray-900">Products Catalog</span>
+                <span className="px-2 py-0.5 bg-slate-900 text-white rounded-full text-[10px] font-extrabold">
+                  {filteredProducts.length}
+                </span>
+              </div>
+              {selectedCategory !== "All" && (
+                <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-md">
+                  {selectedCategory}
+                </span>
+              )}
+            </div>
+
+            {/* Separated Product Cards */}
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((prod) => {
+                const stockVal = prod.stock !== undefined ? Number(prod.stock) : 15;
+                const hasDiscount = prod.originalPrice && Number(prod.originalPrice) > Number(prod.price);
+
+                return (
+                  <div
+                    key={prod._id || prod.id}
+                    className="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs hover:shadow-sm transition-all space-y-3"
+                  >
+                    {/* Top Row: Product Image + Information */}
+                    <div className="flex items-start gap-3.5">
+                      {/* Product Thumbnail with Badges */}
+                      <div className="relative shrink-0">
+                        <img
+                          src={prod.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                          alt={prod.name}
+                          className="w-20 h-20 rounded-2xl object-cover border border-gray-200/80 bg-gray-50 shadow-2xs"
+                        />
+                        {/* Status / Promo Badges */}
+                        {prod.isHot ? (
+                          <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded-md shadow-xs flex items-center gap-0.5 leading-none">
+                            🔥 HOT
+                          </span>
+                        ) : prod.isNew ? (
+                          <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.5 bg-emerald-600 text-white text-[9px] font-black rounded-md shadow-xs flex items-center gap-0.5 leading-none">
+                            ✨ NEW
+                          </span>
+                        ) : prod.badge ? (
+                          <span className="absolute -top-1.5 -left-1.5 px-1.5 py-0.5 bg-blue-600 text-white text-[9px] font-black rounded-md shadow-xs leading-none">
+                            {prod.badge}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      {/* Info Column */}
+                      <div className="flex-1 min-w-0">
+                        {/* Category & Stock Status */}
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5 flex-wrap">
+                          <span className="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-md text-[10px] border border-purple-100 inline-flex items-center gap-1">
+                            <Tag className="w-2.5 h-2.5" /> {prod.category}
+                          </span>
+
+                          {/* Dynamic Stock Indicator */}
+                          {stockVal === 0 ? (
+                            <span className="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                              Out of stock
+                            </span>
+                          ) : stockVal <= 5 ? (
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                              Only {stockVal} left
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                              {stockVal} in stock
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Product Title (No truncation, shown in full) */}
+                        <h3 className="font-extrabold text-gray-900 text-sm leading-snug break-words">
+                          {prod.name}
+                        </h3>
+
+                        {/* Description (Full text shown, no line clamp or ellipses) */}
+                        <p className="text-[11px] text-gray-500 leading-relaxed break-words mt-1">
+                          {prod.description || "No description provided."}
+                        </p>
+
+                        {/* Price & Savings */}
+                        <div className="flex items-baseline gap-2 mt-2">
+                          <span className="text-base font-black text-slate-900 leading-none">
+                            ${prod.price}
+                          </span>
+                          {prod.originalPrice && (
+                            <span className="text-xs text-gray-400 line-through leading-none">
+                              ${prod.originalPrice}
+                            </span>
+                          )}
+                          {hasDiscount && (
+                            <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded leading-none">
+                              Save ${(Number(prod.originalPrice) - Number(prod.price)).toFixed(0)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-gray-100">
+                      <button
+                        onClick={() => openEditModal(prod)}
+                        className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-gray-50 hover:bg-amber-50 text-gray-700 hover:text-amber-800 font-bold rounded-xl text-xs transition border border-gray-200/80 active:scale-98 cursor-pointer shadow-2xs"
+                      >
+                        <Edit className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Edit Product</span>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(prod._id || prod.id, prod.name)}
+                        className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition border border-rose-200/80 active:scale-98 cursor-pointer shadow-2xs"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center text-gray-400 space-y-2 shadow-xs">
+                <Package className="w-8 h-8 mx-auto text-gray-300 stroke-1" />
+                <p className="text-xs font-medium">No products match your current search or category filter.</p>
+              </div>
+            )}
+          </div>
+
+          {/* ========================================================================= */}
+          {/* DESKTOP VIEW (Full Table with standard columns)                           */}
+          {/* ========================================================================= */}
+          <div className="hidden md:block bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4">Product Info</th>
+                    <th className="p-4">Category</th>
+                    <th className="p-4">Price</th>
+                    <th className="p-4">Badges</th>
+                    <th className="p-4">Stock</th>
+                    <th className="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((prod) => (
+                      <tr key={prod._id || prod.id} className="hover:bg-gray-50/80 transition">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={prod.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                              alt={prod.name}
+                              className="w-10 h-10 rounded-xl object-cover border border-gray-200 shrink-0"
+                            />
+                            <div>
+                              <div className="font-bold text-gray-900">{prod.name}</div>
+                              <div className="text-[10px] text-gray-400 line-clamp-1 max-w-xs">
+                                {prod.description || "No description."}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        <span className="px-2.5 py-1 bg-purple-50 text-purple-700 font-bold rounded-lg text-[10px] border border-purple-100 inline-flex items-center gap-1">
-                          <Tag className="w-3 h-3" /> {prod.category}
-                        </span>
-                      </td>
-                      <td className="p-4">
-                        <div className="font-extrabold text-gray-900">${prod.price}</div>
-                        {prod.originalPrice && (
-                          <div className="text-[10px] text-gray-400 line-through">
-                            ${prod.originalPrice}
+                        </td>
+                        <td className="p-4">
+                          <span className="px-2.5 py-1 bg-purple-50 text-purple-700 font-bold rounded-lg text-[10px] border border-purple-100 inline-flex items-center gap-1">
+                            <Tag className="w-3 h-3" /> {prod.category}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-extrabold text-gray-900">${prod.price}</div>
+                          {prod.originalPrice && (
+                            <div className="text-[10px] text-gray-400 line-through">
+                              ${prod.originalPrice}
+                            </div>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-1">
+                            {prod.isHot && (
+                              <span className="px-2 py-0.5 bg-amber-50 text-amber-600 rounded-md text-[9px] font-bold border border-amber-200">
+                                🔥 HOT
+                              </span>
+                            )}
+                            {prod.isNew && (
+                              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[9px] font-bold border border-emerald-200">
+                                ✨ NEW
+                              </span>
+                            )}
+                            {prod.badge && !prod.isHot && !prod.isNew && (
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[9px] font-bold border border-blue-200">
+                                {prod.badge}
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        <div className="flex items-center gap-1">
-                          {prod.isHot && (
-                            <span className="px-2 py-0.5 bg-amber-50 text-amber-600 rounded-md text-[9px] font-bold border border-amber-200">
-                              🔥 HOT
-                            </span>
-                          )}
-                          {prod.isNew && (
-                            <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[9px] font-bold border border-emerald-200">
-                              ✨ NEW
-                            </span>
-                          )}
-                          {prod.badge && !prod.isHot && !prod.isNew && (
-                            <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[9px] font-bold border border-blue-200">
-                              {prod.badge}
-                            </span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4 font-semibold text-gray-700">
-                        {prod.stock !== undefined ? prod.stock : 15} items
-                      </td>
-                      <td className="p-4 text-right space-x-2">
-                        <button
-                          onClick={() => openEditModal(prod)}
-                          className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition"
-                          title="Edit Product"
-                        >
-                          <Edit className="w-4 h-4 inline" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProduct(prod._id || prod.id, prod.name)}
-                          className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-4 h-4 inline" />
-                        </button>
+                        </td>
+                        <td className="p-4 font-semibold text-gray-700">
+                          {prod.stock !== undefined ? prod.stock : 15} items
+                        </td>
+                        <td className="p-4 text-right space-x-2">
+                          <button
+                            onClick={() => openEditModal(prod)}
+                            className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition cursor-pointer"
+                            title="Edit Product"
+                          >
+                            <Edit className="w-4 h-4 inline" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(prod._id || prod.id, prod.name)}
+                            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-4 h-4 inline" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-gray-400 font-medium">
+                        No products match your current search or category filter.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="p-8 text-center text-gray-400 font-medium">
-                      No products match your current search or category filter.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Add / Edit Product Modal */}
@@ -582,22 +732,20 @@ export default function ProductsTab() {
                       <button
                         type="button"
                         onClick={() => setImageInputMode("file")}
-                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
-                          imageInputMode === "file"
-                            ? "bg-white text-slate-900 shadow-xs"
-                            : "text-gray-500 hover:text-gray-900"
-                        }`}
+                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${imageInputMode === "file"
+                          ? "bg-white text-slate-900 shadow-xs"
+                          : "text-gray-500 hover:text-gray-900"
+                          }`}
                       >
                         <Upload className="w-3 h-3" /> Upload Device File
                       </button>
                       <button
                         type="button"
                         onClick={() => setImageInputMode("url")}
-                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${
-                          imageInputMode === "url"
-                            ? "bg-white text-slate-900 shadow-xs"
-                            : "text-gray-500 hover:text-gray-900"
-                        }`}
+                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${imageInputMode === "url"
+                          ? "bg-white text-slate-900 shadow-xs"
+                          : "text-gray-500 hover:text-gray-900"
+                          }`}
                       >
                         <LinkIcon className="w-3 h-3" /> Image URL Link
                       </button>
