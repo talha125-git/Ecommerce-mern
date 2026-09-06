@@ -8,72 +8,73 @@ const CategoryModel = require("./models/Category");
 const ProductModel = require("./models/Product");
 const OrderModel = require("./models/Order");
 const AboutModel = require("./models/About");
+const SettingsModel = require("./models/Settings");
 
 const DEFAULT_ABOUT_SECTION = {
-  key: "about_us_section",
-  badge: "About BloomShop",
-  title: "Where Modern Style Meets Uncompromised Comfort",
-  description: "Founded with a passion for elevated footwear, BloomShop merges aesthetic innovation with day-long ergonomic support. We craft shoes for those who walk with confidence.",
-  subTitle: "Built for the Street, Designed for the Future",
-  subDescription: "Whether you're hitting the pavement, training for your next milestone, or making a sleek fashion statement, our curated sneaker lineup delivers optimum support without compromising on trendsetting design.",
-  quote: "Every stitch is calculated for maximum durability and timeless visual appeal.",
-  quoteBadge: "Our Commitment",
-  image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
-  buttonText: "Explore Products",
-  bullet1: "Ethically Sourced Materials",
-  bullet2: "Rigorous 12-Point Quality Checks",
-  stats: [
-    { label: "Happy Shoppers", value: "50,000+" },
-    { label: "Original Models", value: "250+" },
-    { label: "Avg Rating", value: "4.9 ★" },
-    { label: "Global Stores", value: "18 Outlets" }
-  ],
-  features: [
-    {
-      title: "Premium Craftsmanship",
-      description: "Engineered with high-grade breathable mesh, genuine leather, and ultra-responsive soles.",
-      color: "text-amber-500 bg-amber-50 dark:bg-amber-950/30"
-    },
-    {
-      title: "Express Delivery",
-      description: "Fast and reliable worldwide shipping with full real-time order tracking.",
-      color: "text-blue-500 bg-blue-50 dark:bg-blue-950/30"
-    },
-    {
-      title: "100% Authentic Guarantee",
-      description: "Every pair undergoes rigorous quality inspection before leaving our warehouse.",
-      color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30"
-    },
-    {
-      title: "Hassle-Free Returns",
-      description: "30-day effortless return policy with instant refunds or size exchanges.",
-      color: "text-purple-500 bg-purple-50 dark:bg-purple-950/30"
-    }
-  ]
+    key: "about_us_section",
+    badge: "About BloomShop",
+    title: "Where Modern Style Meets Uncompromised Comfort",
+    description: "Founded with a passion for elevated footwear, BloomShop merges aesthetic innovation with day-long ergonomic support. We craft shoes for those who walk with confidence.",
+    subTitle: "Built for the Street, Designed for the Future",
+    subDescription: "Whether you're hitting the pavement, training for your next milestone, or making a sleek fashion statement, our curated sneaker lineup delivers optimum support without compromising on trendsetting design.",
+    quote: "Every stitch is calculated for maximum durability and timeless visual appeal.",
+    quoteBadge: "Our Commitment",
+    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+    buttonText: "Explore Products",
+    bullet1: "Ethically Sourced Materials",
+    bullet2: "Rigorous 12-Point Quality Checks",
+    stats: [
+        { label: "Happy Shoppers", value: "50,000+" },
+        { label: "Original Models", value: "250+" },
+        { label: "Avg Rating", value: "4.9 ★" },
+        { label: "Global Stores", value: "18 Outlets" }
+    ],
+    features: [
+        {
+            title: "Premium Craftsmanship",
+            description: "Engineered with high-grade breathable mesh, genuine leather, and ultra-responsive soles.",
+            color: "text-amber-500 bg-amber-50 dark:bg-amber-950/30"
+        },
+        {
+            title: "Express Delivery",
+            description: "Fast and reliable worldwide shipping with full real-time order tracking.",
+            color: "text-blue-500 bg-blue-50 dark:bg-blue-950/30"
+        },
+        {
+            title: "100% Authentic Guarantee",
+            description: "Every pair undergoes rigorous quality inspection before leaving our warehouse.",
+            color: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30"
+        },
+        {
+            title: "Hassle-Free Returns",
+            description: "30-day effortless return policy with instant refunds or size exchanges.",
+            color: "text-purple-500 bg-purple-50 dark:bg-purple-950/30"
+        }
+    ]
 };
 
 const DEFAULT_CATEGORIES = [
-  { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
-  { id: "running", name: "Running", slug: "running", active: true, isDefault: true, icon: "Zap", description: "High performance running & athletic footwear" },
-  { id: "casual", name: "Casual", slug: "casual", active: true, isDefault: true, icon: "Smile", description: "Everyday comfort sneakers and shoes" },
-  { id: "retro", name: "Retro", slug: "retro", active: true, isDefault: true, icon: "Sparkles", description: "Iconic timeless classic models" },
-  { id: "performance", name: "Performance", slug: "performance", active: true, isDefault: true, icon: "Activity", description: "Pro-level sports performance footwear" },
-  { id: "lifestyle", name: "Lifestyle", slug: "lifestyle", active: true, isDefault: true, icon: "Compass", description: "Modern street style and fashion shoes" },
-  { id: "high-top", name: "High Top", slug: "high-top", active: true, isDefault: true, icon: "Shield", description: "Ankle support high top sneakers" },
-  { id: "training", name: "Training", slug: "training", active: true, isDefault: true, icon: "Dumbbell", description: "Gym and cross-training athletic shoes" },
+    { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
+    { id: "running", name: "Running", slug: "running", active: true, isDefault: true, icon: "Zap", description: "High performance running & athletic footwear" },
+    { id: "casual", name: "Casual", slug: "casual", active: true, isDefault: true, icon: "Smile", description: "Everyday comfort sneakers and shoes" },
+    { id: "retro", name: "Retro", slug: "retro", active: true, isDefault: true, icon: "Sparkles", description: "Iconic timeless classic models" },
+    { id: "performance", name: "Performance", slug: "performance", active: true, isDefault: true, icon: "Activity", description: "Pro-level sports performance footwear" },
+    { id: "lifestyle", name: "Lifestyle", slug: "lifestyle", active: true, isDefault: true, icon: "Compass", description: "Modern street style and fashion shoes" },
+    { id: "high-top", name: "High Top", slug: "high-top", active: true, isDefault: true, icon: "Shield", description: "Ankle support high top sneakers" },
+    { id: "training", name: "Training", slug: "training", active: true, isDefault: true, icon: "Dumbbell", description: "Gym and cross-training athletic shoes" },
 ];
 
 const DEFAULT_PRODUCTS = [
-  { id: "1", name: "AirFlex Runner", price: 89, originalPrice: 119, rating: 4.9, reviewsCount: 128, isHot: true, isNew: false, badge: "HOT", category: "Running", image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Lightweight running sneakers designed for speed and comfort. Breathable mesh and durable sole." },
-  { id: "2", name: "Urban Street Pro", price: 99, originalPrice: 129, rating: 4.8, reviewsCount: 94, isHot: false, isNew: true, badge: "NEW", category: "Casual", image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Minimalist sneakers for everyday wear. Premium leather with a modern urban look." },
-  { id: "3", name: "Classic Court 90s", price: 79, originalPrice: 99, rating: 4.7, reviewsCount: 86, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Retro-inspired sneakers with a tennis court vibe. Perfect balance between comfort and style." },
-  { id: "4", name: "Volt Edge", price: 119, originalPrice: 149, rating: 4.9, reviewsCount: 210, isHot: true, isNew: true, badge: "BESTSELLER", category: "Performance", image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Performance sneakers with bold details. Responsive cushioning for all-day energy." },
-  { id: "5", name: "Zenith Flow", price: 129, originalPrice: 159, rating: 4.9, reviewsCount: 175, isHot: false, isNew: true, badge: "NEW", category: "Lifestyle", image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Premium lifestyle sneakers blending high-quality knit material and futuristic design." },
-  { id: "6", name: "Street Vibe Low", price: 69, originalPrice: 89, rating: 4.6, reviewsCount: 62, isHot: false, isNew: false, badge: "SALE", category: "Casual", image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Casual low-top sneakers with a timeless silhouette. Built for versatility and comfort." },
-  { id: "7", name: "Nova Horizon", price: 109, originalPrice: 139, rating: 4.8, reviewsCount: 115, isHot: true, isNew: false, badge: "HOT", category: "High Top", image: "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "High-top sneakers crafted with suede and mesh. Perfect mix of streetwear and performance." },
-  { id: "8", name: "Pulse React", price: 99, originalPrice: 119, rating: 4.7, reviewsCount: 88, isHot: false, isNew: true, badge: "NEW", category: "Training", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Dynamic sneakers with responsive cushioning. Designed for training and everyday comfort." },
-  { id: "9", name: "Core Street Retro", price: 85, originalPrice: 105, rating: 4.8, reviewsCount: 140, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Old-school sneakers inspired by 80s basketball. Durable construction with vintage vibes." },
-  { id: "10", name: "AeroFlex Lite", price: 75, originalPrice: 95, rating: 4.6, reviewsCount: 53, isHot: false, isNew: true, badge: "NEW", category: "Running", image: "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Ultra-light sneakers designed for everyday mobility. Breathable and flexible design." }
+    { id: "1", name: "AirFlex Runner", price: 89, originalPrice: 119, rating: 4.9, reviewsCount: 128, isHot: true, isNew: false, badge: "HOT", category: "Running", image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Lightweight running sneakers designed for speed and comfort. Breathable mesh and durable sole." },
+    { id: "2", name: "Urban Street Pro", price: 99, originalPrice: 129, rating: 4.8, reviewsCount: 94, isHot: false, isNew: true, badge: "NEW", category: "Casual", image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Minimalist sneakers for everyday wear. Premium leather with a modern urban look." },
+    { id: "3", name: "Classic Court 90s", price: 79, originalPrice: 99, rating: 4.7, reviewsCount: 86, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Retro-inspired sneakers with a tennis court vibe. Perfect balance between comfort and style." },
+    { id: "4", name: "Volt Edge", price: 119, originalPrice: 149, rating: 4.9, reviewsCount: 210, isHot: true, isNew: true, badge: "BESTSELLER", category: "Performance", image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Performance sneakers with bold details. Responsive cushioning for all-day energy." },
+    { id: "5", name: "Zenith Flow", price: 129, originalPrice: 159, rating: 4.9, reviewsCount: 175, isHot: false, isNew: true, badge: "NEW", category: "Lifestyle", image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Premium lifestyle sneakers blending high-quality knit material and futuristic design." },
+    { id: "6", name: "Street Vibe Low", price: 69, originalPrice: 89, rating: 4.6, reviewsCount: 62, isHot: false, isNew: false, badge: "SALE", category: "Casual", image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Casual low-top sneakers with a timeless silhouette. Built for versatility and comfort." },
+    { id: "7", name: "Nova Horizon", price: 109, originalPrice: 139, rating: 4.8, reviewsCount: 115, isHot: true, isNew: false, badge: "HOT", category: "High Top", image: "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "High-top sneakers crafted with suede and mesh. Perfect mix of streetwear and performance." },
+    { id: "8", name: "Pulse React", price: 99, originalPrice: 119, rating: 4.7, reviewsCount: 88, isHot: false, isNew: true, badge: "NEW", category: "Training", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Dynamic sneakers with responsive cushioning. Designed for training and everyday comfort." },
+    { id: "9", name: "Core Street Retro", price: 85, originalPrice: 105, rating: 4.8, reviewsCount: 140, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Old-school sneakers inspired by 80s basketball. Durable construction with vintage vibes." },
+    { id: "10", name: "AeroFlex Lite", price: 75, originalPrice: 95, rating: 4.6, reviewsCount: 53, isHot: false, isNew: true, badge: "NEW", category: "Running", image: "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Ultra-light sneakers designed for everyday mobility. Breathable and flexible design." }
 ];
 
 
@@ -149,10 +150,10 @@ app.post("/api/upload-slider-image", async (req, res) => {
         }
 
         // Check if Cloudinary credentials are set correctly
-        const hasCredentials = process.env.CLOUDINARY_API_KEY && 
-                               process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
-                               process.env.CLOUDINARY_API_SECRET &&
-                               process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
+        const hasCredentials = process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+            process.env.CLOUDINARY_API_SECRET &&
+            process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
 
         if (!hasCredentials) {
             console.warn("⚠️ Cloudinary API keys not configured. Falling back to direct Base64 embedding.");
@@ -193,10 +194,10 @@ app.post("/api/upload-product-image", async (req, res) => {
             return res.status(400).json({ message: "No image data provided" });
         }
 
-        const hasCredentials = process.env.CLOUDINARY_API_KEY && 
-                               process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
-                               process.env.CLOUDINARY_API_SECRET &&
-                               process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
+        const hasCredentials = process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+            process.env.CLOUDINARY_API_SECRET &&
+            process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
 
         if (!hasCredentials) {
             console.warn("⚠️ Cloudinary API keys not configured. Falling back to Base64 image data.");
@@ -236,10 +237,10 @@ app.post("/api/upload-about-image", async (req, res) => {
             return res.status(400).json({ message: "No image data provided" });
         }
 
-        const hasCredentials = process.env.CLOUDINARY_API_KEY && 
-                               process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
-                               process.env.CLOUDINARY_API_SECRET &&
-                               process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
+        const hasCredentials = process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+            process.env.CLOUDINARY_API_SECRET &&
+            process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
 
         if (!hasCredentials) {
             return res.json({
@@ -515,7 +516,7 @@ app.post("/api/register", (req, res) => {
 
 app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
-    UserModel.findOne({ email:email })
+    UserModel.findOne({ email: email })
         .then(user => {
             if (user) {
                 if (user.password === password) {
@@ -523,8 +524,8 @@ app.post("/api/login", (req, res) => {
                     // 1. Sign a token containing the user's email and ID.
                     const token = jwt.sign({ email: user.email, name: user.name, id: user._id }, process.env.JWT_SECRET || "jwt_secret_key", { expiresIn: "1d" });
                     // 2. Set the token inside an HttpOnly cookie with cross-domain support flags.
-                    res.cookie("token", token, { 
-                        httpOnly: true, 
+                    res.cookie("token", token, {
+                        httpOnly: true,
                         maxAge: 24 * 60 * 60 * 1000,
                         sameSite: 'none',
                         secure: true
@@ -720,4 +721,99 @@ app.put("/api/wishlist/:email", async (req, res) => {
     }
 });
 
-module.exports = app;
+// ─── SETTINGS & ADMIN REST API ENDPOINTS ──────────────────────────────────────
+const DEFAULT_SETTINGS = {
+    key: "store_settings",
+    storeName: "BloomShop",
+    storeTagline: "Premium Footwear & Streetwear Lifestyle",
+    supportEmail: "support@bloomshop.com",
+    supportPhone: "+92 347 6722423",
+    storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
+    currency: "USD ($)",
+    currencySymbol: "$",
+    timezone: "UTC+05:00 (Pakistan Standard Time)",
+    adminName: "Talha (Admin)",
+    adminEmail: "admin@bloomshop.com",
+    adminRole: "Super Administrator",
+    taxRate: 5,
+    flatShippingRate: 15,
+    freeShippingThreshold: 150,
+    enableCOD: true,
+    enableCardPayment: true,
+    enablePaypal: false,
+    enableBankTransfer: true,
+    lowStockThreshold: 5,
+    orderEmailNotification: true,
+    orderSoundAlert: true,
+    allowBackorders: false,
+    socialInstagram: "https://instagram.com/bloomshop",
+    socialFacebook: "https://facebook.com/bloomshop",
+    socialTwitter: "https://twitter.com/bloomshop",
+    socialWhatsapp: "+923476722423",
+    maintenanceMode: false
+};
+
+// GET /api/settings: Fetch store settings from MongoDB
+app.get("/api/settings", async (req, res) => {
+    try {
+        let settings = await SettingsModel.findOne({ key: "store_settings" });
+        if (!settings) {
+            console.log("ℹ️ Initializing default store settings in MongoDB...");
+            settings = await SettingsModel.create(DEFAULT_SETTINGS);
+        }
+        return res.json({ settings });
+    } catch (err) {
+        console.error("❌ Error fetching settings:", err);
+        return res.status(500).json({ message: "Failed to fetch settings", settings: DEFAULT_SETTINGS, error: err.message });
+    }
+});
+
+// POST /api/settings: Save/Update store settings in MongoDB
+app.post("/api/settings", async (req, res) => {
+    try {
+        const updateData = { ...req.body, updatedAt: new Date() };
+        delete updateData._id;
+
+        const settings = await SettingsModel.findOneAndUpdate(
+            { key: "store_settings" },
+            { $set: updateData },
+            { new: true, upsert: true }
+        );
+
+        console.log("✅ Store settings updated successfully in MongoDB");
+        return res.json({ message: "Settings saved successfully", settings });
+    } catch (err) {
+        console.error("❌ Error updating settings:", err);
+        return res.status(500).json({ message: "Failed to update settings", error: err.message });
+    }
+});
+
+// POST /api/admin/change-password: Change admin password
+app.post("/api/admin/change-password", async (req, res) => {
+    try {
+        const { email, currentPassword, newPassword } = req.body;
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ message: "New password must be at least 6 characters long." });
+        }
+
+        const adminUser = await UserModel.findOne({ email: email || "admin@bloomshop.com" });
+        if (!adminUser) {
+            return res.status(404).json({ message: "Admin account not found." });
+        }
+
+        if (currentPassword && adminUser.password && adminUser.password !== currentPassword) {
+            return res.status(400).json({ message: "Current password does not match." });
+        }
+
+        adminUser.password = newPassword;
+        await adminUser.save();
+
+        console.log(`✅ Admin password changed successfully for ${adminUser.email}`);
+        return res.json({ message: "Password updated successfully!" });
+    } catch (err) {
+        console.error("❌ Error changing password:", err);
+        return res.status(500).json({ message: "Failed to change password", error: err.message });
+    }
+});
+
+module.exports = app;

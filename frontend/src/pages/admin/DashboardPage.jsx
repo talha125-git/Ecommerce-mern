@@ -19,7 +19,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTabParam = searchParams.get('tab') || 'overview';
-  const [user, setUser] = useState({ name: "Admin", email: "admin@bloomshop.com" });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(currentTabParam);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -127,18 +127,37 @@ const DashboardPage = () => {
       withCredentials: true,
       headers: token ? { Authorization: `Bearer ${token}` } : {}
     };
+    // Try to decode user info from JWT token stored in localStorage
+    const tryDecodeTokenUser = () => {
+      const token = localStorage.getItem('token');
+      if (!token) return { name: "Admin", email: "" };
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+          '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(''));
+        const payload = JSON.parse(jsonPayload);
+        return { name: payload.name || "Admin", email: payload.email || "" };
+      } catch {
+        return { name: "Admin", email: "" };
+      }
+    };
+
     const API_URL = import.meta.env.VITE_API_URL || '';
     axios.get(`${API_URL}/api/dashboard`, config)
       .then(res => {
-        if (res.data.message === "Success") {
-          setUser({ name: "Admin", email: "admin@bloomshop.com" });
+        if (res.data.message === "Success" && res.data.user) {
+          // Use the decoded user from JWT response
+          setUser({ name: res.data.user.name || "Admin", email: res.data.user.email || "" });
         } else {
-          setUser({ name: "Admin", email: "admin@bloomshop.com" });
+          // Fallback: decode from stored token
+          setUser(tryDecodeTokenUser());
         }
       })
       .catch(err => {
         console.log("Dashboard auth check:", err);
-        setUser({ name: "Admin", email: "admin@bloomshop.com" });
+        setUser(tryDecodeTokenUser());
       })
       .finally(() => {
         setLoading(false);
@@ -377,7 +396,7 @@ const DashboardPage = () => {
       case 'customers':
         return <CustomersTab />;
       case 'settings':
-        return <SettingsTab user={user} />;
+        return <SettingsTab />;
       default:
         return renderOverview();
     }

@@ -1,19 +1,74 @@
 import {
   ArrowRight,
   Heart,
-  Globe,
   Mail,
   MapPin,
   Phone,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import axios from "axios";
+
+// Brand SVG Icons for Storefront Footer
+const InstagramIcon = ({ className = "h-4 w-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
+
+const FacebookIcon = ({ className = "h-4 w-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+const TwitterXIcon = ({ className = "h-4 w-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const WhatsAppIcon = ({ className = "h-4 w-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.54 1.861.861 2.796.862h.005c3.179 0 5.767-2.586 5.768-5.766 0-1.541-.601-2.99-1.69-4.08-1.09-1.09-2.54-1.689-4.083-1.67zm0-2.172c4.418 0 8 3.582 8 8s-3.582 8-8 8c-1.42 0-2.753-.374-3.916-1.028l-4.115 1.028 1.054-3.987c-.742-1.214-1.173-2.645-1.173-4.013 0-4.418 3.582-8 8-8z" />
+  </svg>
+);
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [storeSettings, setStoreSettings] = useState({
+    supportEmail: "support@bloomshop.com",
+    supportPhone: "+92 347 6722423",
+    storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
+    socialInstagram: "https://instagram.com/bloomshop",
+    socialFacebook: "https://facebook.com/bloomshop",
+    socialTwitter: "https://twitter.com/bloomshop",
+    socialWhatsapp: "+923476722423"
+  });
+
+  useEffect(() => {
+    // Check cached settings
+    const cached = localStorage.getItem("bloom_admin_settings");
+    if (cached) {
+      try {
+        setStoreSettings(JSON.parse(cached));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    // Fetch latest from API
+    const API_URL = import.meta.env.VITE_API_URL || "";
+    axios.get(`${API_URL}/api/settings`).then(res => {
+      if (res.data?.settings) {
+        setStoreSettings(res.data.settings);
+      }
+    }).catch(() => {});
+  }, []);
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -60,11 +115,6 @@ export default function Footer() {
         { href: "/privacy", label: "Accessibility" },
       ],
     },
-  ];
-
-  const socialLinks = [
-    { href: "#", icon: Globe, label: "Website" },
-    { href: "#", icon: Mail, label: "Contact" },
   ];
 
   return (
@@ -119,33 +169,64 @@ export default function Footer() {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span>123 Fashion Street, Style City, SC 12345</span>
+                  <MapPin className="h-4 w-4 text-primary shrink-0" />
+                  <span>{storeSettings.storeAddress || "Shabqadar Charsadda, Peshawar, Pakistan"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <Phone className="h-4 w-4 text-primary" />
-                  <span>+1 (555) 123-4567</span>
+                  <Phone className="h-4 w-4 text-primary shrink-0" />
+                  <span>{storeSettings.supportPhone || "+92 347 6722423"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <Mail className="h-4 w-4 text-primary" />
-                  <span>hello@bloomshop.com</span>
+                  <Mail className="h-4 w-4 text-primary shrink-0" />
+                  <span>{storeSettings.supportEmail || "support@bloomshop.com"}</span>
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
-                {socialLinks.map(({ href, icon: Icon, label }) => (
-                  <Button
-                    key={label}
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                    className="h-10 w-10 rounded-full bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
-                  >
-                    <Link to={href} aria-label={label}>
-                      <Icon className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                ))}
+              {/* Social Media Channels Icons */}
+              <div className="flex items-center gap-2.5 mt-6">
+                <a
+                  href={storeSettings.socialInstagram || "https://instagram.com/bloomshop"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow us on Instagram"
+                  title="Instagram"
+                  className="h-10 w-10 rounded-full bg-muted/80 hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-pink-500 hover:to-purple-600 hover:text-white flex items-center justify-center transition-all shadow-xs text-muted-foreground hover:scale-105 border border-border"
+                >
+                  <InstagramIcon className="h-4 w-4" />
+                </a>
+
+                <a
+                  href={storeSettings.socialFacebook || "https://facebook.com/bloomshop"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow us on Facebook"
+                  title="Facebook"
+                  className="h-10 w-10 rounded-full bg-muted/80 hover:bg-[#1877F2] hover:text-white flex items-center justify-center transition-all shadow-xs text-muted-foreground hover:scale-105 border border-border"
+                >
+                  <FacebookIcon className="h-4 w-4" />
+                </a>
+
+                <a
+                  href={storeSettings.socialTwitter || "https://twitter.com/bloomshop"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow us on Twitter X"
+                  title="Twitter / X"
+                  className="h-10 w-10 rounded-full bg-muted/80 hover:bg-black hover:text-white flex items-center justify-center transition-all shadow-xs text-muted-foreground hover:scale-105 border border-border"
+                >
+                  <TwitterXIcon className="h-4 w-4" />
+                </a>
+
+                <a
+                  href={`https://wa.me/${(storeSettings.socialWhatsapp || "923476722423").replace(/[^0-9]/g, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Chat on WhatsApp"
+                  title="WhatsApp"
+                  className="h-10 w-10 rounded-full bg-muted/80 hover:bg-[#25D366] hover:text-white flex items-center justify-center transition-all shadow-xs text-muted-foreground hover:scale-105 border border-border"
+                >
+                  <WhatsAppIcon className="h-4 w-4" />
+                </a>
               </div>
             </div>
 

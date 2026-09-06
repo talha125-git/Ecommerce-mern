@@ -162,13 +162,12 @@ export default function OrdersTab() {
       {/* Alert Status Banner */}
       {statusMsg.text && (
         <div
-          className={`p-3.5 rounded-xl text-xs font-bold flex items-center justify-between border ${
-            statusMsg.type === "success"
+          className={`p-3.5 rounded-xl text-xs font-bold flex items-center justify-between border ${statusMsg.type === "success"
               ? "bg-emerald-50 text-emerald-800 border-emerald-200"
               : statusMsg.type === "error"
-              ? "bg-rose-50 text-rose-800 border-rose-200"
-              : "bg-amber-50 text-amber-800 border-amber-200"
-          }`}
+                ? "bg-rose-50 text-rose-800 border-rose-200"
+                : "bg-amber-50 text-amber-800 border-amber-200"
+            }`}
         >
           <span>{statusMsg.text}</span>
           <button onClick={() => setStatusMsg({ type: "", text: "" })}>
@@ -184,11 +183,10 @@ export default function OrdersTab() {
             <button
               key={st}
               onClick={() => setSelectedStatus(st)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
-                selectedStatus === st
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${selectedStatus === st
                   ? "bg-slate-900 text-white shadow-xs"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
+                }`}
             >
               {st}
             </button>
@@ -226,209 +224,403 @@ export default function OrdersTab() {
           </p>
         </div>
       ) : (
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                <tr>
-                  <th className="p-4">Order Code</th>
-                  <th className="p-4">Customer Details & Delivery Address</th>
-                  <th className="p-4">Items Ordered</th>
-                  <th className="p-4">Total Price</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {filteredOrders.map((ord) => {
-                  const isExpanded = expandedOrderId === ord._id;
+        <div>
+          {/* ===== DESKTOP TABLE (hidden on small screens) ===== */}
+          <div className="hidden lg:block bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                  <tr>
+                    <th className="p-4">Order Code</th>
+                    <th className="p-4">Customer Details & Delivery Address</th>
+                    <th className="p-4">Items Ordered</th>
+                    <th className="p-4">Total Price</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filteredOrders.map((ord) => {
+                    const isExpanded = expandedOrderId === ord._id;
 
-                  return (
-                    <>
-                      <tr key={ord._id || ord.orderId} className="hover:bg-gray-50/80 transition">
-                        {/* Order Code */}
-                        <td className="p-4 font-extrabold text-slate-900 align-top">
-                          <div className="flex items-center gap-1.5">
-                            <span className="px-2 py-0.5 bg-slate-900 text-white font-extrabold rounded-md text-[11px]">
-                              {ord.orderId}
-                            </span>
-                          </div>
-                          <div className="text-[10px] text-gray-400 font-normal mt-1.5 flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-gray-400" />
-                            {ord.createdAt ? new Date(ord.createdAt).toLocaleString() : "Just now"}
-                          </div>
-                        </td>
-
-                        {/* Customer Details & Address */}
-                        <td className="p-4 space-y-1 align-top max-w-xs">
-                          <div className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
-                            <User className="w-4 h-4 text-slate-700" />
-                            <span>{ord.customer?.fullName || "Guest Customer"}</span>
-                          </div>
-                          <div className="text-[11px] text-gray-600 flex items-center gap-1.5">
-                            <Mail className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                            <span className="truncate">{ord.customer?.email || "N/A"}</span>
-                          </div>
-                          <div className="text-[11px] text-gray-600 flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-                            <span>{ord.customer?.phone || "N/A"}</span>
-                          </div>
-                          <div className="text-[11px] text-emerald-800 font-semibold flex items-start gap-1.5 pt-1 bg-emerald-50/70 p-2 rounded-lg border border-emerald-100">
-                            <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                            <span className="leading-snug">
-                              {ord.customer?.address ? `${ord.customer.address}, ${ord.customer.city}, ${ord.customer.country || "Pakistan"}` : ord.customer?.city || "N/A"}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* Items Ordered */}
-                        <td className="p-4 align-top">
-                          <div className="space-y-1.5">
-                            <div className="font-bold text-gray-900 flex items-center gap-1">
-                              <Package className="w-3.5 h-3.5 text-gray-500" />
-                              <span>{ord.items?.length || 0} item{(ord.items?.length || 0) > 1 ? "s" : ""}</span>
+                    return (
+                      <>
+                        <tr key={ord._id || ord.orderId} className="hover:bg-gray-50/80 transition">
+                          {/* Order Code */}
+                          <td className="p-4 font-extrabold text-slate-900 align-top">
+                            <div className="flex items-center gap-1.5">
+                              <span className="px-2 py-0.5 bg-slate-900 text-white font-extrabold rounded-md text-[11px]">
+                                {ord.orderId}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-1 overflow-x-auto max-w-45">
-                              {ord.items?.slice(0, 3).map((it, idx) => (
-                                <img
-                                  key={idx}
-                                  src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
-                                  alt={it.name}
-                                  title={`${it.name} (Qty: ${it.quantity})`}
-                                  className="w-8 h-8 rounded-lg object-cover border border-gray-200 shrink-0"
-                                />
-                              ))}
-                              {(ord.items?.length || 0) > 3 && (
-                                <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-1 rounded-md">
-                                  +{(ord.items?.length || 0) - 3}
-                                </span>
-                              )}
+                            <div className="text-[10px] text-gray-400 font-normal mt-1.5 flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-gray-400" />
+                              {ord.createdAt ? new Date(ord.createdAt).toLocaleString() : "Just now"}
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        {/* Total Price & Payment */}
-                        <td className="p-4 align-top">
-                          <div className="font-black text-sm text-slate-900">
-                            ${Number(ord.totalAmount || 0).toFixed(2)}
-                          </div>
-                          <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1 flex items-center gap-1">
-                            <CreditCard className="w-3 h-3 text-gray-400" />
-                            {ord.paymentMethod || "Card"}
-                          </div>
-                        </td>
+                          {/* Customer Details & Address */}
+                          <td className="p-4 space-y-1 align-top max-w-xs">
+                            <div className="font-bold text-gray-900 flex items-center gap-1.5 text-sm">
+                              <User className="w-4 h-4 text-slate-700" />
+                              <span>{ord.customer?.fullName || "Guest Customer"}</span>
+                            </div>
+                            <div className="text-[11px] text-gray-600 flex items-center gap-1.5">
+                              <Mail className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                              <span className="truncate">{ord.customer?.email || "N/A"}</span>
+                            </div>
+                            <div className="text-[11px] text-gray-600 flex items-center gap-1.5">
+                              <Phone className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                              <span>{ord.customer?.phone || "N/A"}</span>
+                            </div>
+                            <div className="text-[11px] text-emerald-800 font-semibold flex items-start gap-1.5 pt-1 bg-emerald-50/70 p-2 rounded-lg border border-emerald-100">
+                              <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                              <span className="leading-snug">
+                                {ord.customer?.address ? `${ord.customer.address}, ${ord.customer.city}, ${ord.customer.country || "Pakistan"}` : ord.customer?.city || "N/A"}
+                              </span>
+                            </div>
+                          </td>
 
-                        {/* Status Selector */}
-                        <td className="p-4 align-top">
-                          <select
-                            value={ord.status || "Pending"}
-                            onChange={(e) => handleUpdateStatus(ord._id, e.target.value)}
-                            className={`px-2.5 py-1.5 rounded-xl text-[10px] font-extrabold border focus:outline-none cursor-pointer ${getStatusBadgeClass(
-                              ord.status
-                            )}`}
-                          >
-                            <option value="Pending">⌛ Pending</option>
-                            <option value="Processing">⚙️ Processing</option>
-                            <option value="Shipped">🚚 Shipped</option>
-                            <option value="Delivered">✅ Delivered</option>
-                            <option value="Cancelled">❌ Cancelled</option>
-                          </select>
-                        </td>
-
-                        {/* Actions */}
-                        <td className="p-4 align-top text-right space-x-1.5 whitespace-nowrap">
-                          <button
-                            onClick={() => setExpandedOrderId(isExpanded ? null : ord._id)}
-                            className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
-                            title={isExpanded ? "Collapse Details" : "Expand Details"}
-                          >
-                            {isExpanded ? <ChevronUp className="w-4 h-4 inline" /> : <ChevronDown className="w-4 h-4 inline" />}
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedOrder(ord);
-                              setIsModalOpen(true);
-                            }}
-                            className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
-                            title="Full Modal View"
-                          >
-                            <Eye className="w-4 h-4 inline" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteOrder(ord._id, ord.orderId)}
-                            className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                            title="Delete Order"
-                          >
-                            <Trash2 className="w-4 h-4 inline" />
-                          </button>
-                        </td>
-                      </tr>
-
-                      {/* Expandable Order Detail Drawer Row */}
-                      {isExpanded && (
-                        <tr className="bg-slate-50/90 border-b border-gray-200">
-                          <td colSpan="6" className="p-4">
-                            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs space-y-4">
-                              <div className="flex items-center justify-between border-b pb-3 text-xs font-bold text-gray-700">
-                                <span className="flex items-center gap-2 text-slate-900 font-extrabold">
-                                  <Sparkles className="w-4 h-4 text-amber-500" /> Complete Purchase Breakdown for Order #{ord.orderId}
-                                </span>
-                                <span className="text-gray-500">
-                                  Payment Mode: <strong className="uppercase text-slate-900">{ord.paymentMethod || "Card"}</strong>
-                                </span>
+                          {/* Items Ordered */}
+                          <td className="p-4 align-top">
+                            <div className="space-y-1.5">
+                              <div className="font-bold text-gray-900 flex items-center gap-1">
+                                <Package className="w-3.5 h-3.5 text-gray-500" />
+                                <span>{ord.items?.length || 0} item{(ord.items?.length || 0) > 1 ? "s" : ""}</span>
                               </div>
-
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-                                {/* Left: Full Address Card */}
-                                <div className="bg-emerald-50/50 p-3.5 rounded-xl border border-emerald-100 space-y-2">
-                                  <h4 className="font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
-                                    <MapPin className="w-4 h-4 text-emerald-600" /> Delivery Address & Contact
-                                  </h4>
-                                  <div className="space-y-1 text-gray-700">
-                                    <div><strong>Name:</strong> {ord.customer?.fullName}</div>
-                                    <div><strong>Email:</strong> {ord.customer?.email}</div>
-                                    <div><strong>Phone:</strong> {ord.customer?.phone}</div>
-                                    <div><strong>Street Address:</strong> {ord.customer?.address}</div>
-                                    <div><strong>City & Country:</strong> {ord.customer?.city}, {ord.customer?.country || "Pakistan"}</div>
-                                  </div>
-                                </div>
-
-                                {/* Right: Product Items Breakdown */}
-                                <div className="space-y-2">
-                                  <h4 className="font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                                    <Package className="w-4 h-4 text-slate-700" /> Items List
-                                  </h4>
-                                  <div className="divide-y divide-gray-100 max-h-40 overflow-y-auto">
-                                    {ord.items?.map((it, idx) => (
-                                      <div key={idx} className="py-2 flex items-center justify-between gap-3 text-xs">
-                                        <img
-                                          src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
-                                          alt={it.name}
-                                          className="w-9 h-9 rounded-md object-cover border shrink-0"
-                                        />
-                                        <div className="flex-1 min-w-0">
-                                          <div className="font-bold text-gray-900 truncate">{it.name}</div>
-                                          <div className="text-gray-500 text-[10px]">
-                                            Qty: {it.quantity} × ${it.price}
-                                          </div>
-                                        </div>
-                                        <div className="font-black text-gray-900 shrink-0">
-                                          ${(it.quantity * it.price).toFixed(2)}
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
+                              <div className="flex items-center gap-1 overflow-x-auto max-w-45">
+                                {ord.items?.slice(0, 3).map((it, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                                    alt={it.name}
+                                    title={`${it.name} (Qty: ${it.quantity})`}
+                                    className="w-8 h-8 rounded-lg object-cover border border-gray-200 shrink-0"
+                                  />
+                                ))}
+                                {(ord.items?.length || 0) > 3 && (
+                                  <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-1.5 py-1 rounded-md">
+                                    +{(ord.items?.length || 0) - 3}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </td>
+
+                          {/* Total Price & Payment */}
+                          <td className="p-4 align-top">
+                            <div className="font-black text-sm text-slate-900">
+                              ${Number(ord.totalAmount || 0).toFixed(2)}
+                            </div>
+                            <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1 flex items-center gap-1">
+                              <CreditCard className="w-3 h-3 text-gray-400" />
+                              {ord.paymentMethod || "Card"}
+                            </div>
+                          </td>
+
+                          {/* Status Selector */}
+                          <td className="p-4 align-top">
+                            <select
+                              value={ord.status || "Pending"}
+                              onChange={(e) => handleUpdateStatus(ord._id, e.target.value)}
+                              className={`px-2.5 py-1.5 rounded-xl text-[10px] font-extrabold border focus:outline-none cursor-pointer ${getStatusBadgeClass(
+                                ord.status
+                              )}`}
+                            >
+                              <option value="Pending">⌛ Pending</option>
+                              <option value="Processing">⚙️ Processing</option>
+                              <option value="Shipped">🚚 Shipped</option>
+                              <option value="Delivered">✅ Delivered</option>
+                              <option value="Cancelled">❌ Cancelled</option>
+                            </select>
+                          </td>
+
+                          {/* Actions */}
+                          <td className="p-4 align-top text-right space-x-1.5 whitespace-nowrap">
+                            <button
+                              onClick={() => setExpandedOrderId(isExpanded ? null : ord._id)}
+                              className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
+                              title={isExpanded ? "Collapse Details" : "Expand Details"}
+                            >
+                              {isExpanded ? <ChevronUp className="w-4 h-4 inline" /> : <ChevronDown className="w-4 h-4 inline" />}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedOrder(ord);
+                                setIsModalOpen(true);
+                              }}
+                              className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
+                              title="Full Modal View"
+                            >
+                              <Eye className="w-4 h-4 inline" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteOrder(ord._id, ord.orderId)}
+                              className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                              title="Delete Order"
+                            >
+                              <Trash2 className="w-4 h-4 inline" />
+                            </button>
+                          </td>
                         </tr>
-                      )}
-                    </>
-                  );
-                })}
-              </tbody>
-            </table>
+
+                        {/* Expandable Order Detail Drawer Row */}
+                        {isExpanded && (
+                          <tr className="bg-slate-50/90 border-b border-gray-200">
+                            <td colSpan="6" className="p-4">
+                              <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-xs space-y-4">
+                                <div className="flex items-center justify-between border-b pb-3 text-xs font-bold text-gray-700">
+                                  <span className="flex items-center gap-2 text-slate-900 font-extrabold">
+                                    <Sparkles className="w-4 h-4 text-amber-500" /> Complete Purchase Breakdown for Order #{ord.orderId}
+                                  </span>
+                                  <span className="text-gray-500">
+                                    Payment Mode: <strong className="uppercase text-slate-900">{ord.paymentMethod || "Card"}</strong>
+                                  </span>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                                  {/* Left: Full Address Card */}
+                                  <div className="bg-emerald-50/50 p-3.5 rounded-xl border border-emerald-100 space-y-2">
+                                    <h4 className="font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
+                                      <MapPin className="w-4 h-4 text-emerald-600" /> Delivery Address & Contact
+                                    </h4>
+                                    <div className="space-y-1 text-gray-700">
+                                      <div><strong>Name:</strong> {ord.customer?.fullName}</div>
+                                      <div><strong>Email:</strong> {ord.customer?.email}</div>
+                                      <div><strong>Phone:</strong> {ord.customer?.phone}</div>
+                                      <div><strong>Street Address:</strong> {ord.customer?.address}</div>
+                                      <div><strong>City & Country:</strong> {ord.customer?.city}, {ord.customer?.country || "Pakistan"}</div>
+                                    </div>
+                                  </div>
+
+                                  {/* Right: Product Items Breakdown */}
+                                  <div className="space-y-2">
+                                    <h4 className="font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                                      <Package className="w-4 h-4 text-slate-700" /> Items List
+                                    </h4>
+                                    <div className="divide-y divide-gray-100 max-h-40 overflow-y-auto">
+                                      {ord.items?.map((it, idx) => (
+                                        <div key={idx} className="py-2 flex items-center justify-between gap-3 text-xs">
+                                          <img
+                                            src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                                            alt={it.name}
+                                            className="w-9 h-9 rounded-md object-cover border shrink-0"
+                                          />
+                                          <div className="flex-1 min-w-0">
+                                            <div className="font-bold text-gray-900 truncate">{it.name}</div>
+                                            <div className="text-gray-500 text-[10px]">
+                                              Qty: {it.quantity} × ${it.price}
+                                            </div>
+                                          </div>
+                                          <div className="font-black text-gray-900 shrink-0">
+                                            ${(it.quantity * it.price).toFixed(2)}
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ===== MOBILE CARDS (visible only on small screens) ===== */}
+          <div className="lg:hidden space-y-3">
+            {filteredOrders.map((ord) => {
+              const isExpanded = expandedOrderId === ord._id;
+
+              return (
+                <div
+                  key={ord._id || ord.orderId}
+                  className="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden"
+                >
+                  {/* Card Header: Order ID + Status + Actions */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50/80 border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-slate-900 text-white font-extrabold rounded-md text-[11px]">
+                        {ord.orderId}
+                      </span>
+                      <select
+                        value={ord.status || "Pending"}
+                        onChange={(e) => handleUpdateStatus(ord._id, e.target.value)}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-extrabold border focus:outline-none cursor-pointer ${getStatusBadgeClass(
+                          ord.status
+                        )}`}
+                      >
+                        <option value="Pending">⌛ Pending</option>
+                        <option value="Processing">⚙️ Processing</option>
+                        <option value="Shipped">🚚 Shipped</option>
+                        <option value="Delivered">✅ Delivered</option>
+                        <option value="Cancelled">❌ Cancelled</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        onClick={() => setExpandedOrderId(isExpanded ? null : ord._id)}
+                        className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
+                      >
+                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedOrder(ord);
+                          setIsModalOpen(true);
+                        }}
+                        className="p-1.5 text-gray-500 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteOrder(ord._id, ord.orderId)}
+                        className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="p-3 space-y-2.5">
+                    {/* Customer Info Row */}
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                        <User className="w-4 h-4 text-slate-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-gray-900 text-sm truncate">
+                          {ord.customer?.fullName || "Guest Customer"}
+                        </div>
+                        <div className="text-[11px] text-gray-500 flex items-center gap-1 truncate">
+                          <Mail className="w-3 h-3 shrink-0" />
+                          <span className="truncate">{ord.customer?.email || "N/A"}</span>
+                        </div>
+                        <div className="text-[11px] text-gray-500 flex items-center gap-1">
+                          <Phone className="w-3 h-3 shrink-0" />
+                          {ord.customer?.phone || "N/A"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Address */}
+                    <div className="text-[11px] text-emerald-800 font-semibold flex items-start gap-1.5 bg-emerald-50/70 p-2 rounded-lg border border-emerald-100">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      <span className="leading-snug">
+                        {ord.customer?.address ? `${ord.customer.address}, ${ord.customer.city}, ${ord.customer.country || "Pakistan"}` : ord.customer?.city || "N/A"}
+                      </span>
+                    </div>
+
+                    {/* Items + Price Row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Package className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="text-xs font-bold text-gray-700">
+                          {ord.items?.length || 0} item{(ord.items?.length || 0) > 1 ? "s" : ""}
+                        </span>
+                        <div className="flex items-center gap-1 ml-1">
+                          {ord.items?.slice(0, 3).map((it, idx) => (
+                            <img
+                              key={idx}
+                              src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                              alt={it.name}
+                              className="w-7 h-7 rounded-md object-cover border border-gray-200 shrink-0"
+                            />
+                          ))}
+                          {(ord.items?.length || 0) > 3 && (
+                            <span className="text-[9px] font-bold text-gray-500 bg-gray-100 px-1 py-0.5 rounded">
+                              +{(ord.items?.length || 0) - 3}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-black text-sm text-slate-900">
+                          ${Number(ord.totalAmount || 0).toFixed(2)}
+                        </div>
+                        <div className="text-[9px] text-gray-400 uppercase font-bold flex items-center gap-0.5 justify-end">
+                          <CreditCard className="w-2.5 h-2.5" />
+                          {ord.paymentMethod || "Card"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date */}
+                    <div className="text-[10px] text-gray-400 flex items-center gap-1 pt-0.5 border-t border-gray-100">
+                      <Calendar className="w-3 h-3" />
+                      {ord.createdAt ? new Date(ord.createdAt).toLocaleString() : "Just now"}
+                    </div>
+                  </div>
+
+                  {/* Expanded Detail (inside card) */}
+                  {isExpanded && (
+                    <div className="border-t border-gray-200 bg-slate-50/60 p-3 space-y-3">
+                      <div className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5 pb-2 border-b border-gray-200">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                        Order Breakdown
+                      </div>
+
+                      {/* Address Detail */}
+                      <div className="bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100 space-y-1 text-[11px]">
+                        <h4 className="font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1 text-[10px]">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600" /> Delivery Details
+                        </h4>
+                        <div className="text-gray-700 space-y-0.5">
+                          <div><strong>Name:</strong> {ord.customer?.fullName}</div>
+                          <div><strong>Email:</strong> {ord.customer?.email}</div>
+                          <div><strong>Phone:</strong> {ord.customer?.phone}</div>
+                          <div><strong>Address:</strong> {ord.customer?.address}</div>
+                          <div><strong>City:</strong> {ord.customer?.city}, {ord.customer?.country || "Pakistan"}</div>
+                        </div>
+                      </div>
+
+                      {/* Items Detail */}
+                      <div className="space-y-1.5">
+                        <h4 className="font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1 text-[10px]">
+                          <Package className="w-3.5 h-3.5 text-slate-700" /> Items List
+                        </h4>
+                        <div className="divide-y divide-gray-100 bg-white rounded-lg border border-gray-100 overflow-hidden">
+                          {ord.items?.map((it, idx) => (
+                            <div key={idx} className="py-2 px-2.5 flex items-center justify-between gap-2 text-xs">
+                              <img
+                                src={it.image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"}
+                                alt={it.name}
+                                className="w-8 h-8 rounded-md object-cover border shrink-0"
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="font-bold text-gray-900 truncate">{it.name}</div>
+                                <div className="text-gray-500 text-[10px]">
+                                  Qty: {it.quantity} × ${it.price}
+                                </div>
+                              </div>
+                              <div className="font-black text-gray-900 shrink-0 text-xs">
+                                ${(it.quantity * it.price).toFixed(2)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Payment info */}
+                      <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200">
+                        <span className="text-gray-500 font-bold flex items-center gap-1">
+                          <CreditCard className="w-3 h-3" /> Payment: <strong className="uppercase text-slate-900">{ord.paymentMethod || "Card"}</strong>
+                        </span>
+                        <span className="font-black text-slate-900 text-sm">
+                          Total: ${Number(ord.totalAmount || 0).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
