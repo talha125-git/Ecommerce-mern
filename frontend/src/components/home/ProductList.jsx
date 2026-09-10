@@ -44,16 +44,32 @@ export default function ProductList() {
 
   // Fetch dynamic products from backend
   useEffect(() => {
-    axios
-      .get(`${API_URL}/api/products`)
-      .then((res) => {
-        if (res.data && Array.isArray(res.data.products) && res.data.products.length > 0) {
-          setProductsList(res.data.products);
-        }
-      })
-      .catch((err) => {
-        console.log("Could not fetch products from server, using local fallback:", err);
-      });
+    let timer;
+    const fetchProducts = () => {
+      axios
+        .get(`${API_URL}/api/products`)
+        .then((res) => {
+          if (res.data && Array.isArray(res.data.products) && res.data.products.length > 0) {
+            setProductsList(res.data.products);
+          }
+        })
+        .catch((err) => {
+          console.log("Could not fetch products from server, using local fallback:", err);
+          // Auto retry after 1.5s in case backend was booting up
+          timer = setTimeout(() => {
+            axios
+              .get(`${API_URL}/api/products`)
+              .then((res) => {
+                if (res.data && Array.isArray(res.data.products) && res.data.products.length > 0) {
+                  setProductsList(res.data.products);
+                }
+              })
+              .catch(() => {});
+          }, 1500);
+        });
+    };
+    fetchProducts();
+    return () => clearTimeout(timer);
   }, []);
 
   // Listen to hash changes in URL (e.g. #hot-products or #new-arrivals)

@@ -406,10 +406,59 @@ app.get("/api/products", async (req, res) => {
             await ProductModel.insertMany(DEFAULT_PRODUCTS);
             products = await ProductModel.find().sort({ createdAt: -1 });
         }
+
+        // Ensure every product has an id field populated for backward and numeric URL compatibility
+        for (let p of products) {
+            if (!p.id) {
+                const matchDefault = DEFAULT_PRODUCTS.find(dp => dp.name === p.name);
+                const assignedId = matchDefault ? String(matchDefault.id) : String(p._id);
+                await ProductModel.updateOne({ _id: p._id }, { $set: { id: assignedId } });
+                p.id = assignedId;
+            }
+        }
+
         return res.json({ products });
     } catch (err) {
         console.error("❌ Error fetching products:", err);
         return res.status(500).json({ message: "Failed to fetch products", error: err.message, products: DEFAULT_PRODUCTS });
+    }
+});
+
+// GET /api/products/:id: Fetch single product by id or _id
+app.get("/api/products/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        let product = null;
+
+        // 1. Try finding by MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            product = await ProductModel.findById(id);
+        }
+
+        // 2. Try finding by custom id string
+        if (!product) {
+            product = await ProductModel.findOne({ id: String(id) });
+        }
+
+        // 3. Try matching default product by numeric id (e.g. "1" -> "AirFlex Runner")
+        if (!product) {
+            const num = parseInt(id, 10);
+            if (!isNaN(num)) {
+                const defaultProd = DEFAULT_PRODUCTS.find((p) => String(p.id) === String(num));
+                if (defaultProd) {
+                    product = await ProductModel.findOne({ name: defaultProd.name });
+                }
+            }
+        }
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        return res.json({ product });
+    } catch (err) {
+        console.error("❌ Error fetching product:", err);
+        return res.status(500).json({ message: "Failed to fetch product", error: err.message });
     }
 });
 
@@ -435,6 +484,11 @@ app.post("/api/products", async (req, res) => {
             isHot: Boolean(isHot),
             badge: badge || (isNew ? "NEW" : isHot ? "HOT" : ""),
         });
+
+        if (!newProduct.id) {
+            newProduct.id = newProduct._id.toString();
+            await ProductModel.updateOne({ _id: newProduct._id }, { $set: { id: newProduct.id } });
+        }
 
         console.log(`✅ Product "${newProduct.name}" created successfully`);
         return res.json({ message: "Product created successfully", product: newProduct });

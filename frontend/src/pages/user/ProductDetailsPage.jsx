@@ -20,30 +20,75 @@ export default function ProductDetailsPage() {
   const { addToCart } = useCart();
   const API_URL = import.meta.env.VITE_API_URL || "";
 
+  const resolveProduct = (candidateList, targetId) => {
+    if (!targetId) return null;
+    const list = Array.isArray(candidateList) ? candidateList : [];
+    const fallbackList = Array.isArray(productsData) ? productsData : [];
+
+    // 1. Direct check on candidate list by _id or id
+    let match = list.find(
+      (p) => String(p._id) === String(targetId) || (p.id != null && String(p.id) === String(targetId))
+    );
+    if (match) return match;
+
+    // 2. Check local fallback productsData
+    const localMatch = fallbackList.find(
+      (p) => String(p._id) === String(targetId) || (p.id != null && String(p.id) === String(targetId))
+    );
+    if (localMatch) {
+      // Find server version with the same name if exists
+      const serverMatch = list.find(
+        (p) => p.name?.toLowerCase().trim() === localMatch.name?.toLowerCase().trim()
+      );
+      return serverMatch || localMatch;
+    }
+
+    // 3. Match 1-based index (e.g. /product/1 -> first product in catalog)
+    const num = parseInt(targetId, 10);
+    if (!isNaN(num) && num > 0) {
+      if (list.length >= num) return list[num - 1];
+      if (fallbackList.length >= num) return fallbackList[num - 1];
+    }
+
+    return null;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoading(true);
-    axios
-      .get(`${API_URL}/api/products`)
-      .then((res) => {
-        const allProducts = (res.data && Array.isArray(res.data.products) && res.data.products.length > 0)
-          ? res.data.products
-          : productsData;
 
-        const found = allProducts.find(
-          (p) => String(p._id) === String(id) || String(p.id) === String(id)
-        );
-        setProduct(found || null);
+    // 1. Try single product endpoint
+    axios
+      .get(`${API_URL}/api/products/${id}`)
+      .then((res) => {
+        if (res.data?.product) {
+          setProduct(res.data.product);
+          setLoading(false);
+          return;
+        }
+        throw new Error("No product found in response");
       })
-      .catch((err) => {
-        console.warn("Could not fetch products from server, using static fallback:", err);
-        const found = productsData.find(
-          (p) => String(p._id) === String(id) || String(p.id) === String(id)
-        );
-        setProduct(found || null);
-      })
-      .finally(() => {
-        setLoading(false);
+      .catch(() => {
+        // 2. Fallback: fetch catalog and match flexibly
+        axios
+          .get(`${API_URL}/api/products`)
+          .then((res) => {
+            const allProducts =
+              res.data && Array.isArray(res.data.products) && res.data.products.length > 0
+                ? res.data.products
+                : productsData;
+
+            const found = resolveProduct(allProducts, id);
+            setProduct(found || null);
+          })
+          .catch((err) => {
+            console.warn("Could not fetch products from server, using static fallback:", err);
+            const found = resolveProduct(productsData, id);
+            setProduct(found || null);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       });
   }, [id]);
 
