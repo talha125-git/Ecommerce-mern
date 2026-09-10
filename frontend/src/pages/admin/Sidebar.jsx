@@ -10,7 +10,8 @@ import {
   Sliders,
   Tag,
   Info,
-  X
+  X,
+  PlusCircle
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -23,6 +24,7 @@ export default function Sidebar({
   const navTabs = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Products', icon: Package, badge: '' },
+    { id: 'add-product', label: 'Add Product', icon: PlusCircle, badge: '+' },
     { id: 'categories', label: 'Categories', icon: Tag },
     // { id: 'about', label: 'About Us', icon: Info },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '' },

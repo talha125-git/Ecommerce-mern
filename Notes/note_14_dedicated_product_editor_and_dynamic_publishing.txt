@@ -1,0 +1,83 @@
+================================================================================
+          NOTE 14: DEDICATED PRODUCT CREATOR & DYNAMIC STORE PUBLISHING
+================================================================================
+
+1. OVERVIEW & OBJECTIVE:
+   - Transitioned product addition and editing from cramped modal dialogs to a
+     full-featured, dedicated Product Editor Page (`ProductEditorPage.jsx`).
+   - Enabled dynamic multi-image upload from both:
+     * Computer/laptop file browser (supporting multiple files simultaneously).
+     * Online image URLs (direct link form).
+   - Enabled detailed product specifications input (upper material, sole & cushioning,
+     fit profile, care instructions, closure, sizes, colors, promotional tags).
+   - Instant live preview card showing how the item appears to buyers on the storefront.
+   - Dynamic synchronization with MongoDB backend and real-time reflection on
+     storefront pages (`HomePage`, `ShopPage`, and `ProductDetailsPage`).
+
+2. DEDICATED PRODUCT EDITOR PAGE (`ProductEditorPage.jsx`):
+   - Location: `frontend/src/pages/admin/ProductEditorPage.jsx`
+   - Modes:
+     * Add Mode: Clean form for creating new products from scratch.
+     * Edit Mode: Pre-populates all existing images, pricing, and specs when
+       editing any product from the catalog.
+   - Key Features:
+     a) Dual-Mode Multi-Image Gallery:
+        * Browser File Upload: Drag-and-drop or click to browse files from device.
+          Uploads via `/api/upload-product-image` to Cloudinary with Base64 fallback.
+        * Web Link Form: Enter direct HTTP/HTTPS URLs and click "Add Link".
+        * Gallery Angle Grid: Visual grid of all attached images with badges.
+        * Cover Selector: One-click "Set as Cover" on any thumbnail to designate
+          the primary catalog photo.
+        * Removal: Instant one-click trash button to remove unwanted angles.
+        * Counter: Live badge displaying attached image count.
+     b) General Information:
+        * Product title/name with real-time validation.
+        * Category dropdown dynamically populated from MongoDB store categories,
+          with "+ Custom category" input for adding new categories on the fly.
+        * Promotional badge chips (HOT, NEW, SALE, LIMITED, or custom).
+        * Toggles: "Mark as New Release" and "Mark as Trending / Hot Deal".
+        * Multiline product description.
+     c) Pricing & Inventory:
+        * Selling price ($).
+        * Original/compare-at price ($) with auto-calculated discount % and savings.
+        * Stock inventory units.
+     d) Technical Specifications & Details:
+        * Upper Material (e.g. Engineered Breathable Mesh & Leather Overlays).
+        * Sole & Cushioning (e.g. Dynamic Cloud EVA Foam & Rubber Outsole).
+        * Fit Profile (e.g. True to size, Standard D width).
+        * Care Instructions (e.g. Spot clean with damp cloth).
+        * Closure Type (e.g. Traditional Lace-Up).
+     e) Sizes Available:
+        * Interactive toggle chips for US shoe sizes (6 to 13).
+        * Custom size input for adding custom dimensions or apparel sizes.
+     f) Live Storefront Preview:
+        * Sticky card preview on desktop showing how the product card appears
+          to customers on the live storefront.
+     g) Post-Publish Success Actions:
+        * Success notification with direct "View on Live Storefront" button
+          linking to `/product/:id`.
+        * "Add Another Product" and "Return to Catalog" buttons.
+
+3. ROUTING & NAVIGATION INTEGRATION:
+   - Standalone Direct Routes (`App.jsx`):
+     * `/admin/products/new` -> Opens `ProductEditorPage` in creation mode.
+     * `/admin/products/edit/:id` -> Opens `ProductEditorPage` in edit mode.
+   - Dashboard Seamless Tab Switching (`DashboardPage.jsx`):
+     * `tab=add-product` -> Renders `ProductEditorPage` inside admin dashboard.
+     * `tab=edit-product&id=:id` -> Renders `ProductEditorPage` for target item.
+   - Admin Sidebar Quick Link (`Sidebar.jsx`):
+     * Added "Add Product" nav item with `PlusCircle` icon.
+   - Products Catalog Integration (`ProductsTab.jsx`):
+     * "Add New Product" button smoothly navigates to `add-product`.
+     * "Edit Product" buttons on mobile cards and desktop rows navigate to
+       `edit-product` with target product ID.
+
+4. FRONTEND LIVE STORE DISPLAY ENHANCEMENTS (`ProductDetailsPage.jsx`):
+   - Product specifications section dynamically reads from `product.details`:
+     * Upper Material: `product.details?.material`
+     * Sole & Cushioning: `product.details?.sole`
+     * Fit: `product.details?.fit`
+     * Care Instructions: `product.details?.care`
+   - Instant visibility across `ProductList.jsx` (Home) and `ShopPage.jsx` upon saving.
+
+================================================================================

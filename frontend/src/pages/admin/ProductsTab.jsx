@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   Package,
@@ -24,7 +25,9 @@ import {
 
 const DEFAULT_CATEGORIES = ["Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
 
-export default function ProductsTab() {
+export default function ProductsTab({ onAddNew, onEditProduct }) {
+  const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [loading, setLoading] = useState(true);
@@ -243,6 +246,23 @@ export default function ProductsTab() {
     setTimeout(() => setStatusMsg({ type: "", text: "" }), 4000);
   };
 
+  const handleAddNew = () => {
+    if (onAddNew) {
+      onAddNew();
+    } else {
+      navigate('/admin/dashboard?tab=add-product');
+    }
+  };
+
+  const handleEdit = (prod) => {
+    if (onEditProduct) {
+      onEditProduct(prod);
+    } else {
+      const pId = prod._id || prod.id;
+      navigate(`/admin/dashboard?tab=edit-product&id=${pId}`);
+    }
+  };
+
   // Open Modal for Add
   const openAddModal = () => {
     setEditingProduct(null);
@@ -400,8 +420,8 @@ export default function ProductsTab() {
         </div>
 
         <button
-          onClick={openAddModal}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm cursor-pointer active:scale-98"
+          onClick={handleAddNew}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-md cursor-pointer active:scale-98"
         >
           <Plus className="w-4 h-4 text-emerald-400" />
           <span>Add New Product</span>
@@ -591,7 +611,7 @@ export default function ProductsTab() {
                     {/* Bottom Action Buttons */}
                     <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-gray-100">
                       <button
-                        onClick={() => openEditModal(prod)}
+                        onClick={() => handleEdit(prod)}
                         className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-gray-50 hover:bg-amber-50 text-gray-700 hover:text-amber-800 font-bold rounded-xl text-xs transition border border-gray-200/80 active:scale-98 cursor-pointer shadow-2xs"
                       >
                         <Edit className="w-3.5 h-3.5 text-amber-600" />
@@ -688,7 +708,7 @@ export default function ProductsTab() {
                         </td>
                         <td className="p-4 text-right space-x-2">
                           <button
-                            onClick={() => openEditModal(prod)}
+                            onClick={() => handleEdit(prod)}
                             className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition cursor-pointer"
                             title="Edit Product"
                           >

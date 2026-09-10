@@ -13,6 +13,7 @@ import SliderTab from './Setup/SliderTab';
 import CategoryTab from './Setup/CategoryTab';
 import AboutTab from './Setup/AboutTab';
 import DashboardCharts from './DashboardCharts';
+import ProductEditorPage from './ProductEditorPage';
 
 
 const DashboardPage = () => {
@@ -390,7 +391,25 @@ const DashboardPage = () => {
       case 'about':
         return <AboutTab />;
       case 'products':
-        return <ProductsTab />;
+        return (
+          <ProductsTab
+            onAddNew={() => handleTabChange('add-product')}
+            onEditProduct={(prod) => {
+              const pId = prod._id || prod.id;
+              setSearchParams({ tab: 'edit-product', id: pId });
+              setActiveTab('edit-product');
+            }}
+          />
+        );
+      case 'add-product':
+        return <ProductEditorPage onBack={() => handleTabChange('products')} />;
+      case 'edit-product':
+        return (
+          <ProductEditorPage
+            productId={searchParams.get('id')}
+            onBack={() => handleTabChange('products')}
+          />
+        );
       case 'orders':
         return <OrdersTab />;
       case 'customers':

@@ -529,19 +529,27 @@ export default function ProductDetailsPage() {
                 </div>
                 <div>
                   <span className="text-muted-foreground block text-[11px]">Upper Material</span>
-                  <span className="font-semibold text-foreground">Engineered Breathable Mesh</span>
+                  <span className="font-semibold text-foreground">
+                    {product.details?.material || product.material || "Engineered Breathable Mesh"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block text-[11px]">Sole & Cushioning</span>
-                  <span className="font-semibold text-foreground">Dynamic Cloud EVA Foam</span>
+                  <span className="font-semibold text-foreground">
+                    {product.details?.sole || product.sole || "Dynamic Cloud EVA Foam"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block text-[11px]">Fit</span>
-                  <span className="font-semibold text-foreground">True to size (Standard D)</span>
+                  <span className="font-semibold text-foreground">
+                    {product.details?.fit || product.fit || "True to size (Standard D)"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground block text-[11px]">Care Instructions</span>
-                  <span className="font-semibold text-foreground">Spot clean with damp cloth</span>
+                  <span className="font-semibold text-foreground">
+                    {product.details?.care || product.care || "Spot clean with damp cloth"}
+                  </span>
                 </div>
               </div>
             </div>

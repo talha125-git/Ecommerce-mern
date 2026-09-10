@@ -20,6 +20,7 @@ import UserDashboardPage from './pages/user/user_dashboard/UserDashboardPage'
 
 // ── Admin Pages ──
 import DashboardPage from './pages/admin/DashboardPage'
+import ProductEditorPage from './pages/admin/ProductEditorPage'
 
 // ── Layout ──
 import Header from './components/layout/Header'
@@ -92,10 +93,12 @@ function App() {
           <Route path="/admin/login" element={<AdminLoginPage />} />
 
           {/* ═══════════════════════════════════
-              Dashboards
+              Dashboards & Admin Pages
           ═══════════════════════════════════ */}
           <Route path="/user/dashboard" element={<UserDashboardPage />} />
           <Route path="/admin/dashboard" element={<DashboardPage />} />
+          <Route path="/admin/products/new" element={<ProductEditorPage />} />
+          <Route path="/admin/products/edit/:id" element={<ProductEditorPage />} />
           <Route path="/dashboard" element={<DashboardRedirect />} />
         </Routes>
       </BrowserRouter>
