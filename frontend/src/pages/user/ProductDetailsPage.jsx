@@ -18,11 +18,6 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  Sparkles,
-  PackageCheck,
-  CheckCircle2,
-  Info,
-  Layers,
   Award
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,7 +30,6 @@ export default function ProductDetailsPage() {
   // Gallery and UI state
   const [activeImage, setActiveImage] = useState("");
   const [selectedSize, setSelectedSize] = useState(9);
-  const [activeTab, setActiveTab] = useState("overview"); // "overview" | "specs" | "shipping" | "reviews"
 
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
@@ -516,264 +510,46 @@ export default function ProductDetailsPage() {
                 <span>100% Authentic verified</span>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* ========================================================================= */}
-      {/* LOWER SECTION: Comprehensive Product Details, Specs, & Reviews            */}
-      {/* ========================================================================= */}
-      <div className="mt-16 sm:mt-24 pt-10 border-t border-border">
-        {/* Tab Headers */}
-        <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto pb-4 border-b border-border scrollbar-none">
-          <button
-            type="button"
-            onClick={() => setActiveTab("overview")}
-            className={cn(
-              "px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2",
-              activeTab === "overview"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-            )}
-          >
-            <Sparkles className="w-4 h-4" />
-            Product Overview
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("specs")}
-            className={cn(
-              "px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2",
-              activeTab === "specs"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-            )}
-          >
-            <Layers className="w-4 h-4" />
-            Technical Specifications
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("shipping")}
-            className={cn(
-              "px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2",
-              activeTab === "shipping"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-            )}
-          >
-            <PackageCheck className="w-4 h-4" />
-            Delivery & Returns
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("reviews")}
-            className={cn(
-              "px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2",
-              activeTab === "reviews"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted"
-            )}
-          >
-            <Star className="w-4 h-4 text-amber-500 fill-current" />
-            Reviews ({product.reviewsCount || 128})
-          </button>
-        </div>
-
-        {/* Tab Content Panes */}
-        <div className="py-8">
-          {activeTab === "overview" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-in fade-in duration-200">
-              <div className="md:col-span-2 space-y-4">
-                <h3 className="text-xl font-bold text-foreground">
-                  Engineered for Performance and Elevated Everyday Style
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {product.description || "This sneaker combines premium craftsmanship with modern sports ergonomics. Developed with breathable multi-layer knit mesh and reinforced overlays to ensure durable wear, while the ergonomic arch structure guarantees all-day support."}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                  <div className="p-4 bg-muted/40 rounded-2xl border border-border/60 space-y-1">
-                    <h4 className="font-extrabold text-sm text-foreground flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      Dynamic Cloud Cushioning
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      Shock-absorbing EVA foam absorbs impact with every stride.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-muted/40 rounded-2xl border border-border/60 space-y-1">
-                    <h4 className="font-extrabold text-sm text-foreground flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      Ultra-Grip Outsole
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      Tread pattern engineered for high-traction grip across all surfaces.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-muted/40 p-6 rounded-3xl border border-border/60 space-y-4">
-                <h4 className="font-extrabold text-sm text-foreground uppercase tracking-wider">
-                  Product Highlights
-                </h4>
-                <ul className="space-y-3 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <strong>Category:</strong> {product.category || "Casual"}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <strong>Release:</strong> {product.isNew ? "Current Season Release" : "Classic Edition"}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <strong>Fit:</strong> True to size (Standard D width)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    <strong>Care:</strong> Spot clean with damp cloth
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "specs" && (
-            <div className="max-w-3xl space-y-4 animate-in fade-in duration-200">
-              <h3 className="text-xl font-bold text-foreground mb-4">
-                Technical Specifications & Materials
+            {/* Product Specifications & Key Details (Clean Inline, No Tabs) */}
+            <div className="p-5 rounded-2xl bg-muted/40 border border-border/60 space-y-3">
+              <h3 className="text-xs font-extrabold uppercase tracking-wider text-foreground">
+                Product Specifications & Details
               </h3>
-              <div className="border border-border rounded-2xl overflow-hidden divide-y divide-border text-xs sm:text-sm">
-                <div className="grid grid-cols-2 p-3.5 bg-muted/30">
-                  <span className="font-bold text-muted-foreground">Upper Material</span>
-                  <span className="font-medium text-foreground">Engineered Breathable Mesh & Leather Overlays</span>
-                </div>
-                <div className="grid grid-cols-2 p-3.5">
-                  <span className="font-bold text-muted-foreground">Midsole</span>
-                  <span className="font-medium text-foreground">Responsive Molded Cloud EVA Foam</span>
-                </div>
-                <div className="grid grid-cols-2 p-3.5 bg-muted/30">
-                  <span className="font-bold text-muted-foreground">Outsole</span>
-                  <span className="font-medium text-foreground">High-Traction Vulcanized Rubber</span>
-                </div>
-                <div className="grid grid-cols-2 p-3.5">
-                  <span className="font-bold text-muted-foreground">Closure Type</span>
-                  <span className="font-medium text-foreground">Traditional Lace-Up with Padded Tongue</span>
-                </div>
-                <div className="grid grid-cols-2 p-3.5 bg-muted/30">
-                  <span className="font-bold text-muted-foreground">Average Weight</span>
-                  <span className="font-medium text-foreground">Approx. 310 grams (Single shoe, Size 9)</span>
-                </div>
-                <div className="grid grid-cols-2 p-3.5">
-                  <span className="font-bold text-muted-foreground">Gender & Cut</span>
-                  <span className="font-medium text-foreground">Unisex / Low-to-Mid Profile</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "shipping" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl animate-in fade-in duration-200">
-              <div className="p-5 rounded-2xl bg-muted/40 border border-border space-y-2">
-                <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                  <Truck className="w-5 h-5" />
-                  Fast Express Shipping
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  All orders placed before 3:00 PM are packaged and dispatched on the same business day. Delivery takes 2-4 working days worldwide with full online tracking.
-                </p>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-muted/40 border border-border space-y-2">
-                <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                  <RotateCcw className="w-5 h-5" />
-                  30-Day Free Returns
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  If the shoe does not fit perfectly, take advantage of our 30-day effortless return policy. We provide free size exchanges or instant full refunds.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "reviews" && (
-            <div className="space-y-6 max-w-3xl animate-in fade-in duration-200">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-muted/40 border border-border">
+              <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <div className="text-4xl font-black text-foreground">
-                    {product.rating ? Number(product.rating).toFixed(1) : "4.9"}
-                  </div>
-                  <div className="flex items-center gap-1 text-amber-500 my-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Based on {product.reviewsCount || 128} verified purchases
-                  </p>
+                  <span className="text-muted-foreground block text-[11px]">Category</span>
+                  <span className="font-semibold text-foreground">{product.category || "Footwear"}</span>
                 </div>
-                <div className="space-y-1.5 text-xs text-muted-foreground w-full sm:w-64">
-                  <div className="flex items-center gap-2">
-                    <span>5★</span>
-                    <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-amber-500 h-full w-[88%]" />
-                    </div>
-                    <span>88%</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>4★</span>
-                    <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-amber-500 h-full w-[10%]" />
-                    </div>
-                    <span>10%</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span>3★</span>
-                    <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-amber-500 h-full w-[2%]" />
-                    </div>
-                    <span>2%</span>
-                  </div>
+                <div>
+                  <span className="text-muted-foreground block text-[11px]">Release Edition</span>
+                  <span className="font-semibold text-foreground">
+                    {product.badge || (product.isNew ? "Current Season Release" : "Classic Edition")}
+                  </span>
                 </div>
-              </div>
-
-              {/* Sample Verified Reviews */}
-              <div className="space-y-3 pt-2">
-                <div className="p-4 rounded-xl border border-border space-y-1 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-foreground">Tariq M. &bull; Verified Buyer</span>
-                    <span className="text-muted-foreground text-[10px]">3 days ago</span>
-                  </div>
-                  <div className="flex text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground pt-1">
-                    "Exceptional comfort right out of the box. Cushioning feels great during morning runs and looks super stylish with joggers."
-                  </p>
+                <div>
+                  <span className="text-muted-foreground block text-[11px]">Upper Material</span>
+                  <span className="font-semibold text-foreground">Engineered Breathable Mesh</span>
                 </div>
-
-                <div className="p-4 rounded-xl border border-border space-y-1 text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-extrabold text-foreground">Sara K. &bull; Verified Buyer</span>
-                    <span className="text-muted-foreground text-[10px]">1 week ago</span>
-                  </div>
-                  <div className="flex text-amber-500">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground pt-1">
-                    "True to size and very lightweight. Colors look even better in person than on screen. Delivery took only 2 days."
-                  </p>
+                <div>
+                  <span className="text-muted-foreground block text-[11px]">Sole & Cushioning</span>
+                  <span className="font-semibold text-foreground">Dynamic Cloud EVA Foam</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[11px]">Fit</span>
+                  <span className="font-semibold text-foreground">True to size (Standard D)</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[11px]">Care Instructions</span>
+                  <span className="font-semibold text-foreground">Spot clean with damp cloth</span>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
 

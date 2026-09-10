@@ -49,11 +49,11 @@
      * 30-day effortless size exchange and return policy.
      * 1-year manufacturer quality warranty.
      * 100% verified authentic footwear guarantee.
-   - Structured Tabs Below Product Hero:
-     * Tab 1: Product Overview & Features (Cloud cushioning, ultra-grip sole, highlights).
-     * Tab 2: Technical Specifications Table (Upper material, midsole, outsole, weight ~310g, closure, gender).
-     * Tab 3: Delivery & Returns Details (Dispatch cutoffs, courier handling, returns guide).
-     * Tab 4: Verified Customer Reviews (Rating distribution breakdown bars & buyer comments).
+    - Inline Product Specifications (No Tabs):
+      * Removed the 4-tab navigation (Overview, Specs, Delivery, Reviews).
+      * Product specs (Category, Release Edition, Upper Material, Sole & Cushioning,
+        Fit, Care Instructions) are now displayed in a clean 2-column grid directly
+        in the right-hand product info panel — no tabs, no switching needed.
 
 4. DYNAMIC ADMIN MULTI-IMAGE MANAGEMENT (ProductsTab.jsx):
    - Dedicated Multi-Angle Gallery Manager in the Add/Edit Product modal:
