@@ -592,46 +592,51 @@ export default function ProductDetailsPage() {
               </div>
             </div>
 
-            {/* Product Specifications & Key Details (Clean Inline, No Tabs) */}
-            <div className="p-5 rounded-2xl bg-muted/40 border border-border/60 space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-foreground">
-                Product Specifications & Details
+            {/* Product Description */}
+            <div className="space-y-3 pt-2">
+              <h3 className="text-sm sm:text-base font-extrabold text-foreground italic">
+                Product Description
               </h3>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Category</span>
-                  <span className="font-semibold text-foreground">{product.category || "Footwear"}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Release Edition</span>
-                  <span className="font-semibold text-foreground">
-                    {product.badge || (product.isNew ? "Current Season Release" : "Classic Edition")}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Upper Material</span>
-                  <span className="font-semibold text-foreground">
-                    {product.details?.material || product.material || "Engineered Breathable Mesh"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Sole & Cushioning</span>
-                  <span className="font-semibold text-foreground">
-                    {product.details?.sole || product.sole || "Dynamic Cloud EVA Foam"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Fit</span>
-                  <span className="font-semibold text-foreground">
-                    {product.details?.fit || product.fit || "True to size (Standard D)"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground block text-[11px]">Care Instructions</span>
-                  <span className="font-semibold text-foreground">
-                    {product.details?.care || product.care || "Spot clean with damp cloth"}
-                  </span>
-                </div>
+              <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                {(() => {
+                  // Build description bullet points from product details
+                  const bullets = [];
+                  const desc = product.description || "";
+                  
+                  // If description has bullet points (• or -), split and render them
+                  if (desc.includes("•") || desc.includes("- ")) {
+                    const parts = desc.split(/[•\-]/).map(s => s.trim()).filter(Boolean);
+                    parts.forEach(p => bullets.push(p));
+                  } else if (desc) {
+                    // If it's a plain description, show it as a paragraph
+                    bullets.push(desc);
+                  }
+
+                  // Add detail fields as additional feature bullets
+                  const details = product.details || {};
+                  if (details.material) bullets.push(`Featuring ${details.material.toLowerCase().startsWith("a") || details.material.toLowerCase().startsWith("e") ? "an" : "a"} durable ${details.material} upper that gives a neat look with easy-care and long-lasting use`);
+                  if (details.sole) bullets.push(`Equipped with ${details.sole} for flexibility, grip, and all-day comfort`);
+                  if (details.fit) bullets.push(`Fit profile: ${details.fit}`);
+                  if (details.care) bullets.push(`Care: ${details.care}`);
+                  if (details.closure) bullets.push(`Closure style: ${details.closure}`);
+
+                  // Fallback if nothing at all
+                  if (bullets.length === 0) {
+                    bullets.push(
+                      "Designed for everyday ease, this product provides comfort, durability, and lightweight performance for daily wear",
+                      "Built with a smooth inner lining to enhance comfort and reduce fatigue",
+                      "Constructed with premium technology to ensure a strong and reliable build quality",
+                      "Equipped with a lightweight sole and cushioned footbed for flexibility, grip, and all-day comfort"
+                    );
+                  }
+
+                  return bullets.map((point, idx) => (
+                    <p key={idx} className="flex items-start gap-2">
+                      <span className="text-foreground mt-0.5 shrink-0">•</span>
+                      <span>{point}</span>
+                    </p>
+                  ));
+                })()}
               </div>
             </div>
           </div>

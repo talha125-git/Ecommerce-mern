@@ -707,19 +707,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
               </div>
             </div>
 
-            {/* Description */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700">
-                Product Description
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Describe the footwear materials, athletic cushioning technology, styling advice, and standout features..."
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition leading-relaxed"
-              />
-            </div>
+
 
             {/* Checkbox Toggles */}
             <div className="flex flex-wrap items-center gap-6 pt-2 border-t border-gray-100">
@@ -973,99 +961,65 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
             </div>
           </div>
 
-          {/* 4. PRODUCT SPECIFICATIONS & TECHNICAL DETAILS CARD */}
+          {/* 4. PRODUCT DESCRIPTION & DETAILS CARD */}
           <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-primary" />
                 <h2 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">
-                  4. Technical Specifications & Details
+                  4. Product Description & Details
                 </h2>
               </div>
-              <span className="text-[11px] text-gray-400">Appears directly on Product Details page</span>
+              <span className="text-[11px] text-gray-400">Appears as bullet points on Product Details page</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700">Upper Material</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Engineered Breathable Mesh & Leather Overlays"
-                  value={formData.details.material}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, material: e.target.value }
-                    })
-                  }
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
-                />
-              </div>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Write each product feature on a new line starting with <strong>•</strong> or <strong>-</strong> to create bullet points. These will display as a clean description list on the storefront product page.
+            </p>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700">Sole & Cushioning</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Dynamic Cloud EVA Foam & Rubber Outsole"
-                  value={formData.details.sole}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, sole: e.target.value }
-                    })
-                  }
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700">Fit Profile</label>
-                <input
-                  type="text"
-                  placeholder="e.g. True to size (Standard D width)"
-                  value={formData.details.fit}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, fit: e.target.value }
-                    })
-                  }
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700">Care Instructions</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Spot clean with damp cloth"
-                  value={formData.details.care}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, care: e.target.value }
-                    })
-                  }
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
-                />
-              </div>
-
-              <div className="space-y-1.5 sm:col-span-2">
-                <label className="block text-xs font-bold text-gray-700">Closure Type</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Traditional Lace-Up with Padded Collar"
-                  value={formData.details.closure}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      details: { ...formData.details, closure: e.target.value }
-                    })
-                  }
-                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
-                />
-              </div>
+            {/* Large Description Textarea */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-bold text-gray-700">
+                Product Features & Description *
+              </label>
+              <textarea
+                rows={8}
+                placeholder={"• Designed for everyday ease, provides comfort, durability, and lightweight performance\n• Featuring a durable synthetic upper that gives a neat look with easy-care\n• Built with a smooth inner lining to enhance comfort and reduce fatigue\n• Constructed with premium technology for a strong and reliable build\n• Equipped with a lightweight sole and cushioned footbed for all-day comfort\n• Spot clean with damp cloth"}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition leading-relaxed"
+              />
+              <span className="text-[11px] text-gray-400">
+                Tip: Start each line with • or - for bullet points. Plain text will also display as a description.
+              </span>
             </div>
+
+            {/* Live Description Preview */}
+            {formData.description.trim() && (
+              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200 space-y-2">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">
+                  Storefront Preview
+                </span>
+                <h4 className="text-sm font-extrabold text-gray-900 italic">Product Description</h4>
+                <div className="text-xs text-gray-600 leading-relaxed space-y-1.5">
+                  {(() => {
+                    const desc = formData.description || "";
+                    let bullets = [];
+                    if (desc.includes("•") || desc.includes("- ")) {
+                      bullets = desc.split(/[•\-]/).map(s => s.trim()).filter(Boolean);
+                    } else {
+                      bullets = desc.split("\n").map(s => s.trim()).filter(Boolean);
+                    }
+                    return bullets.map((point, idx) => (
+                      <p key={idx} className="flex items-start gap-2">
+                        <span className="text-gray-900 mt-0.5 shrink-0">•</span>
+                        <span>{point}</span>
+                      </p>
+                    ));
+                  })()}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 5. SIZES SELECTION CARD */}
