@@ -9,6 +9,7 @@ const ProductSchema = new mongoose.Schema(
     originalPrice: { type: Number },
     description: { type: String },
     image: { type: String },
+    images: { type: [String], default: [] },
     stock: { type: Number, default: 10 },
     rating: { type: Number, default: 4.8 },
     reviewsCount: { type: Number, default: 24 },
@@ -16,6 +17,8 @@ const ProductSchema = new mongoose.Schema(
     isHot: { type: Boolean, default: false },
     badge: { type: String, default: "" },
     sizes: { type: Array, default: [7, 8, 9, 10, 11] },
+    colors: { type: Array, default: ["Standard"] },
+    details: { type: Object, default: {} },
   },
   { timestamps: true }
 );

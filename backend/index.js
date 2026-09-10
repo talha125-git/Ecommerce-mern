@@ -65,16 +65,195 @@ const DEFAULT_CATEGORIES = [
 ];
 
 const DEFAULT_PRODUCTS = [
-    { id: "1", name: "AirFlex Runner", price: 89, originalPrice: 119, rating: 4.9, reviewsCount: 128, isHot: true, isNew: false, badge: "HOT", category: "Running", image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Lightweight running sneakers designed for speed and comfort. Breathable mesh and durable sole." },
-    { id: "2", name: "Urban Street Pro", price: 99, originalPrice: 129, rating: 4.8, reviewsCount: 94, isHot: false, isNew: true, badge: "NEW", category: "Casual", image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Minimalist sneakers for everyday wear. Premium leather with a modern urban look." },
-    { id: "3", name: "Classic Court 90s", price: 79, originalPrice: 99, rating: 4.7, reviewsCount: 86, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Retro-inspired sneakers with a tennis court vibe. Perfect balance between comfort and style." },
-    { id: "4", name: "Volt Edge", price: 119, originalPrice: 149, rating: 4.9, reviewsCount: 210, isHot: true, isNew: true, badge: "BESTSELLER", category: "Performance", image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Performance sneakers with bold details. Responsive cushioning for all-day energy." },
-    { id: "5", name: "Zenith Flow", price: 129, originalPrice: 159, rating: 4.9, reviewsCount: 175, isHot: false, isNew: true, badge: "NEW", category: "Lifestyle", image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Premium lifestyle sneakers blending high-quality knit material and futuristic design." },
-    { id: "6", name: "Street Vibe Low", price: 69, originalPrice: 89, rating: 4.6, reviewsCount: 62, isHot: false, isNew: false, badge: "SALE", category: "Casual", image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Casual low-top sneakers with a timeless silhouette. Built for versatility and comfort." },
-    { id: "7", name: "Nova Horizon", price: 109, originalPrice: 139, rating: 4.8, reviewsCount: 115, isHot: true, isNew: false, badge: "HOT", category: "High Top", image: "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "High-top sneakers crafted with suede and mesh. Perfect mix of streetwear and performance." },
-    { id: "8", name: "Pulse React", price: 99, originalPrice: 119, rating: 4.7, reviewsCount: 88, isHot: false, isNew: true, badge: "NEW", category: "Training", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Dynamic sneakers with responsive cushioning. Designed for training and everyday comfort." },
-    { id: "9", name: "Core Street Retro", price: 85, originalPrice: 105, rating: 4.8, reviewsCount: 140, isHot: true, isNew: false, badge: "HOT", category: "Retro", image: "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Old-school sneakers inspired by 80s basketball. Durable construction with vintage vibes." },
-    { id: "10", name: "AeroFlex Lite", price: 75, originalPrice: 95, rating: 4.6, reviewsCount: 53, isHot: false, isNew: true, badge: "NEW", category: "Running", image: "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", description: "Ultra-light sneakers designed for everyday mobility. Breathable and flexible design." }
+    {
+        id: "1",
+        name: "AirFlex Runner",
+        price: 89,
+        originalPrice: 119,
+        rating: 4.9,
+        reviewsCount: 128,
+        isHot: true,
+        isNew: false,
+        badge: "HOT",
+        category: "Running",
+        image: "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Lightweight running sneakers designed for speed and comfort. Breathable mesh and durable sole."
+    },
+    {
+        id: "2",
+        name: "Urban Street Pro",
+        price: 99,
+        originalPrice: 129,
+        rating: 4.8,
+        reviewsCount: 94,
+        isHot: false,
+        isNew: true,
+        badge: "NEW",
+        category: "Casual",
+        image: "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Minimalist sneakers for everyday wear. Premium leather with a modern urban look."
+    },
+    {
+        id: "3",
+        name: "Classic Court 90s",
+        price: 79,
+        originalPrice: 99,
+        rating: 4.7,
+        reviewsCount: 86,
+        isHot: true,
+        isNew: false,
+        badge: "HOT",
+        category: "Retro",
+        image: "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Retro-inspired sneakers with a tennis court vibe. Perfect balance between comfort and style."
+    },
+    {
+        id: "4",
+        name: "Volt Edge",
+        price: 119,
+        originalPrice: 149,
+        rating: 4.9,
+        reviewsCount: 210,
+        isHot: true,
+        isNew: true,
+        badge: "BESTSELLER",
+        category: "Performance",
+        image: "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Performance sneakers with bold details. Responsive cushioning for all-day energy."
+    },
+    {
+        id: "5",
+        name: "Zenith Flow",
+        price: 129,
+        originalPrice: 159,
+        rating: 4.9,
+        reviewsCount: 175,
+        isHot: false,
+        isNew: true,
+        badge: "NEW",
+        category: "Lifestyle",
+        image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Premium lifestyle sneakers blending high-quality knit material and futuristic design."
+    },
+    {
+        id: "6",
+        name: "Street Vibe Low",
+        price: 69,
+        originalPrice: 89,
+        rating: 4.6,
+        reviewsCount: 62,
+        isHot: false,
+        isNew: false,
+        badge: "SALE",
+        category: "Casual",
+        image: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Casual low-top sneakers with a timeless silhouette. Built for versatility and comfort."
+    },
+    {
+        id: "7",
+        name: "Nova Horizon",
+        price: 109,
+        originalPrice: 139,
+        rating: 4.8,
+        reviewsCount: 115,
+        isHot: true,
+        isNew: false,
+        badge: "HOT",
+        category: "High Top",
+        image: "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "High-top sneakers crafted with suede and mesh. Perfect mix of streetwear and performance."
+    },
+    {
+        id: "8",
+        name: "Pulse React",
+        price: 99,
+        originalPrice: 119,
+        rating: 4.7,
+        reviewsCount: 88,
+        isHot: false,
+        isNew: true,
+        badge: "NEW",
+        category: "Training",
+        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Dynamic sneakers with responsive cushioning. Designed for training and everyday comfort."
+    },
+    {
+        id: "9",
+        name: "Core Street Retro",
+        price: 85,
+        originalPrice: 105,
+        rating: 4.8,
+        reviewsCount: 140,
+        isHot: true,
+        isNew: false,
+        badge: "HOT",
+        category: "Retro",
+        image: "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Old-school sneakers inspired by 80s basketball. Durable construction with vintage vibes."
+    },
+    {
+        id: "10",
+        name: "AeroFlex Lite",
+        price: 75,
+        originalPrice: 95,
+        rating: 4.6,
+        reviewsCount: 53,
+        isHot: false,
+        isNew: true,
+        badge: "NEW",
+        category: "Running",
+        image: "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        images: [
+            "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"
+        ],
+        description: "Ultra-light sneakers designed for everyday mobility. Breathable and flexible design."
+    }
 ];
 
 
@@ -407,13 +586,31 @@ app.get("/api/products", async (req, res) => {
             products = await ProductModel.find().sort({ createdAt: -1 });
         }
 
-        // Ensure every product has an id field populated for backward and numeric URL compatibility
+        // Ensure every product has id and images array populated for gallery preview
         for (let p of products) {
+            let needsUpdate = false;
+            const updateFields = {};
+
             if (!p.id) {
                 const matchDefault = DEFAULT_PRODUCTS.find(dp => dp.name === p.name);
                 const assignedId = matchDefault ? String(matchDefault.id) : String(p._id);
-                await ProductModel.updateOne({ _id: p._id }, { $set: { id: assignedId } });
+                updateFields.id = assignedId;
                 p.id = assignedId;
+                needsUpdate = true;
+            }
+
+            if (!p.images || !Array.isArray(p.images) || p.images.length === 0) {
+                const matchDefault = DEFAULT_PRODUCTS.find(dp => dp.name === p.name);
+                const assignedImages = (matchDefault && matchDefault.images && matchDefault.images.length > 0)
+                    ? matchDefault.images
+                    : (p.image ? [p.image] : []);
+                updateFields.images = assignedImages;
+                p.images = assignedImages;
+                needsUpdate = true;
+            }
+
+            if (needsUpdate) {
+                await ProductModel.updateOne({ _id: p._id }, { $set: updateFields });
             }
         }
 
@@ -455,6 +652,12 @@ app.get("/api/products/:id", async (req, res) => {
             return res.status(404).json({ message: "Product not found" });
         }
 
+        // Ensure images array is never empty
+        if (!product.images || !Array.isArray(product.images) || product.images.length === 0) {
+            const matchDefault = DEFAULT_PRODUCTS.find(dp => dp.name === product.name);
+            product.images = (matchDefault && matchDefault.images) ? matchDefault.images : (product.image ? [product.image] : []);
+        }
+
         return res.json({ product });
     } catch (err) {
         console.error("❌ Error fetching product:", err);
@@ -462,13 +665,35 @@ app.get("/api/products/:id", async (req, res) => {
     }
 });
 
-// POST /api/products: Add a new product dynamically
+// POST /api/products: Add a new product dynamically with gallery images & extra specs
 app.post("/api/products", async (req, res) => {
     try {
-        const { name, category, price, originalPrice, description, image, stock, rating, isNew, isHot, badge } = req.body;
+        const {
+            name,
+            category,
+            price,
+            originalPrice,
+            description,
+            image,
+            images,
+            stock,
+            rating,
+            isNew,
+            isHot,
+            badge,
+            colors,
+            sizes,
+            details
+        } = req.body;
+
         if (!name || !category || !price) {
             return res.status(400).json({ message: "Name, category, and price are required" });
         }
+
+        const galleryImages = Array.isArray(images) && images.length > 0
+            ? images
+            : (image ? [image] : []);
+        const primaryImage = image || (galleryImages.length > 0 ? galleryImages[0] : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600");
 
         const newProduct = await ProductModel.create({
             name,
@@ -476,13 +701,17 @@ app.post("/api/products", async (req, res) => {
             price: Number(price),
             originalPrice: originalPrice ? Number(originalPrice) : undefined,
             description: description || "",
-            image: image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+            image: primaryImage,
+            images: galleryImages,
             stock: stock !== undefined ? Number(stock) : 10,
             rating: rating !== undefined ? Number(rating) : 4.8,
             reviewsCount: 1,
             isNew: Boolean(isNew),
             isHot: Boolean(isHot),
             badge: badge || (isNew ? "NEW" : isHot ? "HOT" : ""),
+            colors: Array.isArray(colors) && colors.length > 0 ? colors : ["Standard"],
+            sizes: Array.isArray(sizes) && sizes.length > 0 ? sizes : [7, 8, 9, 10, 11],
+            details: details || {}
         });
 
         if (!newProduct.id) {
@@ -490,7 +719,7 @@ app.post("/api/products", async (req, res) => {
             await ProductModel.updateOne({ _id: newProduct._id }, { $set: { id: newProduct.id } });
         }
 
-        console.log(`✅ Product "${newProduct.name}" created successfully`);
+        console.log(`✅ Product "${newProduct.name}" created successfully with ${newProduct.images.length} gallery images`);
         return res.json({ message: "Product created successfully", product: newProduct });
     } catch (err) {
         console.error("❌ Error creating product:", err);
@@ -506,6 +735,10 @@ app.put("/api/products/:id", async (req, res) => {
         if (updateData.price) updateData.price = Number(updateData.price);
         if (updateData.originalPrice) updateData.originalPrice = Number(updateData.originalPrice);
         if (updateData.stock) updateData.stock = Number(updateData.stock);
+
+        if (Array.isArray(updateData.images) && updateData.images.length > 0 && !updateData.image) {
+            updateData.image = updateData.images[0];
+        }
 
         let product = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
         if (!product) {

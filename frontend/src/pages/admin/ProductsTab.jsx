@@ -46,6 +46,7 @@ export default function ProductsTab() {
     originalPrice: "",
     description: "",
     image: "",
+    images: [],
     stock: "15",
     rating: "4.8",
     reviewsCount: "88",
@@ -53,6 +54,8 @@ export default function ProductsTab() {
     isHot: false,
     badge: "",
   });
+  const [galleryUrlInput, setGalleryUrlInput] = useState("");
+  const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "";
 
@@ -74,19 +77,128 @@ export default function ProductsTab() {
         const res = await axios.post(`${API_URL}/api/upload-product-image`, {
           imageBase64: base64,
         });
-        if (res.data && res.data.url) {
-          setFormData((prev) => ({ ...prev, image: res.data.url }));
-          showStatus("success", "Image uploaded successfully to Cloudinary!");
-        }
+        const url = (res.data && res.data.url) ? res.data.url : base64;
+        setFormData((prev) => {
+          const newImages = prev.images && prev.images.length > 0 ? [...prev.images] : [];
+          if (!newImages.includes(url)) newImages.push(url);
+          return { ...prev, image: url, images: newImages };
+        });
+        showStatus("success", "Cover image uploaded successfully!");
       } catch (err) {
         console.error("Cloudinary image upload failed:", err);
-        setFormData((prev) => ({ ...prev, image: base64 }));
+        setFormData((prev) => {
+          const newImages = prev.images && prev.images.length > 0 ? [...prev.images] : [];
+          if (!newImages.includes(base64)) newImages.push(base64);
+          return { ...prev, image: base64, images: newImages };
+        });
         showStatus("warning", "Uploaded offline preview image.");
       } finally {
         setUploadingImage(false);
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  // Upload an extra angle image directly to the product's gallery
+  const handleGalleryFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showStatus("error", "Please select a valid image file.");
+      return;
+    }
+
+    setUploadingGalleryImage(true);
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64 = reader.result;
+      try {
+        const res = await axios.post(`${API_URL}/api/upload-product-image`, {
+          imageBase64: base64,
+        });
+        const url = (res.data && res.data.url) ? res.data.url : base64;
+        setFormData((prev) => {
+          const currentList = Array.isArray(prev.images) ? [...prev.images] : [];
+          if (prev.image && !currentList.includes(prev.image)) {
+            currentList.unshift(prev.image);
+          }
+          currentList.push(url);
+          return {
+            ...prev,
+            images: currentList,
+            image: prev.image || url,
+          };
+        });
+        showStatus("success", "Additional image added to gallery!");
+      } catch (err) {
+        console.error("Gallery upload error:", err);
+        setFormData((prev) => {
+          const currentList = Array.isArray(prev.images) ? [...prev.images] : [];
+          if (prev.image && !currentList.includes(prev.image)) {
+            currentList.unshift(prev.image);
+          }
+          currentList.push(base64);
+          return {
+            ...prev,
+            images: currentList,
+            image: prev.image || base64,
+          };
+        });
+        showStatus("warning", "Added offline preview image to gallery.");
+      } finally {
+        setUploadingGalleryImage(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Add an image to gallery by URL
+  const handleAddGalleryUrl = () => {
+    const url = galleryUrlInput.trim();
+    if (!url) return;
+    if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("data:")) {
+      showStatus("error", "Please enter a valid HTTP or HTTPS image URL.");
+      return;
+    }
+    setFormData((prev) => {
+      const currentList = Array.isArray(prev.images) ? [...prev.images] : [];
+      if (prev.image && !currentList.includes(prev.image)) {
+        currentList.unshift(prev.image);
+      }
+      currentList.push(url);
+      return {
+        ...prev,
+        images: currentList,
+        image: prev.image || url,
+      };
+    });
+    setGalleryUrlInput("");
+    showStatus("success", "Image URL added to gallery!");
+  };
+
+  // Remove an image from gallery
+  const handleRemoveGalleryImage = (idxToRemove) => {
+    setFormData((prev) => {
+      const current = Array.isArray(prev.images) ? [...prev.images] : [];
+      const removedUrl = current[idxToRemove];
+      const updated = current.filter((_, i) => i !== idxToRemove);
+      const newCover = (prev.image === removedUrl) ? (updated[0] || "") : prev.image;
+      return {
+        ...prev,
+        images: updated,
+        image: newCover,
+      };
+    });
+  };
+
+  // Set selected image as the primary cover
+  const handleSetCover = (imgUrl) => {
+    setFormData((prev) => ({
+      ...prev,
+      image: imgUrl,
+    }));
+    showStatus("success", "Set as main cover image!");
   };
 
   useEffect(() => {
@@ -141,6 +253,7 @@ export default function ProductsTab() {
       originalPrice: "",
       description: "",
       image: "",
+      images: [],
       stock: "15",
       rating: "4.8",
       reviewsCount: "88",
@@ -148,19 +261,25 @@ export default function ProductsTab() {
       isHot: false,
       badge: "",
     });
+    setGalleryUrlInput("");
     setIsModalOpen(true);
   };
 
   // Open Modal for Edit
   const openEditModal = (prod) => {
     setEditingProduct(prod);
+    const existingImages = Array.isArray(prod.images) && prod.images.length > 0
+      ? prod.images
+      : (prod.image ? [prod.image] : []);
+
     setFormData({
       name: prod.name || "",
       category: prod.category || categories[0] || "Running",
       price: prod.price ? String(prod.price) : "",
       originalPrice: prod.originalPrice ? String(prod.originalPrice) : "",
       description: prod.description || "",
-      image: prod.image || "",
+      image: prod.image || (existingImages[0] || ""),
+      images: existingImages,
       stock: prod.stock !== undefined ? String(prod.stock) : "15",
       rating: prod.rating !== undefined ? String(prod.rating) : "4.8",
       reviewsCount: prod.reviewsCount !== undefined ? String(prod.reviewsCount) : "88",
@@ -168,6 +287,7 @@ export default function ProductsTab() {
       isHot: Boolean(prod.isHot),
       badge: prod.badge || "",
     });
+    setGalleryUrlInput("");
     setIsModalOpen(true);
   };
 
@@ -193,6 +313,11 @@ export default function ProductsTab() {
       return;
     }
 
+    const galleryImages = Array.isArray(formData.images) && formData.images.length > 0
+      ? formData.images
+      : (formData.image ? [formData.image.trim()] : []);
+    const primaryCover = formData.image.trim() || (galleryImages[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600");
+
     setSaving(true);
     const payload = {
       name: formData.name.trim(),
@@ -200,7 +325,8 @@ export default function ProductsTab() {
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       description: formData.description.trim(),
-      image: formData.image.trim() || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+      image: primaryCover,
+      images: galleryImages,
       stock: Number(formData.stock || 15),
       rating: Number(formData.rating || 4.8),
       reviewsCount: Number(formData.reviewsCount || 88),
@@ -722,89 +848,149 @@ export default function ProductsTab() {
                 </div>
 
 
-                {/* Product Image Selection (URL Link OR Upload File from Laptop/Mobile to Cloudinary) */}
-                <div className="sm:col-span-2 space-y-2">
+                {/* Product Main Cover & Multi-Angle Gallery Management */}
+                <div className="sm:col-span-2 space-y-4 pt-2 border-t border-gray-100">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold text-gray-700">
-                      Product Image
-                    </label>
-                    <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg text-[10px] font-bold">
-                      <button
-                        type="button"
-                        onClick={() => setImageInputMode("file")}
-                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${imageInputMode === "file"
-                          ? "bg-white text-slate-900 shadow-xs"
-                          : "text-gray-500 hover:text-gray-900"
-                          }`}
-                      >
-                        <Upload className="w-3 h-3" /> Upload Device File
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setImageInputMode("url")}
-                        className={`px-2 py-1 rounded-md transition flex items-center gap-1 cursor-pointer ${imageInputMode === "url"
-                          ? "bg-white text-slate-900 shadow-xs"
-                          : "text-gray-500 hover:text-gray-900"
-                          }`}
-                      >
-                        <LinkIcon className="w-3 h-3" /> Image URL Link
-                      </button>
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                        <ImageIcon className="w-4 h-4 text-purple-600" />
+                        Product Images & Multi-Angle Gallery
+                      </h4>
+                      <p className="text-[11px] text-gray-500">
+                        Add multiple images for different angles (front, side, sole, on-foot). Buyers will be able to click thumbnails to view each angle.
+                      </p>
+                    </div>
+                    <span className="px-2.5 py-1 bg-purple-50 text-purple-700 text-[11px] font-bold rounded-lg border border-purple-100">
+                      {formData.images?.length || (formData.image ? 1 : 0)} Images Attached
+                    </span>
+                  </div>
+
+                  {/* Add Image Options: 1) Upload File from Computer / 2) Add via Image URL */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-gray-50/80 p-3.5 rounded-2xl border border-gray-200">
+                    {/* Option A: Upload Device File */}
+                    <div className="space-y-1.5">
+                      <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1">
+                        <Upload className="w-3.5 h-3.5 text-slate-700" />
+                        Browse from Device:
+                      </span>
+                      <label className="flex items-center justify-center gap-2 px-3 py-2.5 bg-white border border-dashed border-gray-300 hover:border-slate-900 rounded-xl cursor-pointer transition text-xs font-semibold text-slate-900 shadow-2xs hover:bg-gray-50">
+                        {uploadingGalleryImage ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin text-purple-600" />
+                            <span>Uploading Image...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-4 h-4 text-purple-600" />
+                            <span>Upload File from Device</span>
+                          </>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={uploadingGalleryImage}
+                          onChange={handleGalleryFileUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    {/* Option B: Add by URL Link */}
+                    <div className="space-y-1.5">
+                      <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1">
+                        <LinkIcon className="w-3.5 h-3.5 text-slate-700" />
+                        Add via Image URL:
+                      </span>
+                      <div className="flex gap-1.5">
+                        <input
+                          type="url"
+                          placeholder="https://images.unsplash.com/..."
+                          value={galleryUrlInput}
+                          onChange={(e) => setGalleryUrlInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              handleAddGalleryUrl();
+                            }
+                          }}
+                          className="flex-1 px-3 py-2 text-xs bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddGalleryUrl}
+                          className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition cursor-pointer shrink-0 shadow-xs"
+                        >
+                          Add URL
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  {imageInputMode === "file" ? (
-                    <div className="border-2 border-dashed border-gray-200 hover:border-slate-900 rounded-xl p-4 text-center transition bg-gray-50/50">
-                      {uploadingImage ? (
-                        <div className="flex flex-col items-center justify-center py-2 space-y-2">
-                          <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
-                          <span className="text-xs font-bold text-gray-600">
-                            Uploading image to Cloudinary...
-                          </span>
-                        </div>
-                      ) : (
-                        <label className="cursor-pointer block space-y-2">
-                          <Upload className="w-6 h-6 text-gray-400 mx-auto" />
-                          <div className="text-xs font-bold text-slate-900">
-                            Click to browse image from laptop / mobile
-                          </div>
-                          <div className="text-[10px] text-gray-400">
-                            Supports PNG, JPG, WEBP (Uploaded directly to Cloudinary)
-                          </div>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      )}
+                  {/* Visual Gallery Grid of Attached Images */}
+                  {Array.isArray(formData.images) && formData.images.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-[11px] text-gray-500 font-semibold px-0.5">
+                        <span>Current Attached Images (Click "Make Cover" to set the main catalog photo):</span>
+                      </div>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                        {formData.images.map((imgUrl, idx) => {
+                          const isCover = formData.image === imgUrl || (!formData.image && idx === 0);
+                          return (
+                            <div
+                              key={idx}
+                              className={cn(
+                                "group relative rounded-2xl overflow-hidden aspect-square border-2 bg-white shadow-xs transition-all",
+                                isCover
+                                  ? "border-emerald-500 ring-2 ring-emerald-500/20"
+                                  : "border-gray-200 hover:border-gray-400"
+                              )}
+                            >
+                              <img
+                                src={imgUrl}
+                                alt={`Angle ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+
+                              {/* Cover Badge */}
+                              {isCover ? (
+                                <span className="absolute top-1 left-1 bg-emerald-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow leading-tight">
+                                  Cover
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetCover(imgUrl)}
+                                  className="absolute top-1 left-1 bg-slate-900/80 hover:bg-slate-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition shadow"
+                                  title="Set as Main Cover"
+                                >
+                                  Make Cover
+                                </button>
+                              )}
+
+                              {/* Remove Button */}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveGalleryImage(idx)}
+                                className="absolute top-1 right-1 bg-rose-600 text-white rounded-full p-1 shadow-md hover:bg-rose-700 transition"
+                                title="Remove Angle"
+                              >
+                                <X className="w-2.5 h-2.5" />
+                              </button>
+
+                              {/* Index tag */}
+                              <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-bold px-1 rounded-sm">
+                                #{idx + 1}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   ) : (
-                    <input
-                      type="text"
-                      placeholder="https://images.unsplash.com/photo-..."
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"
-                    />
-                  )}
-
-                  {/* Image Preview Box */}
-                  {formData.image && (
-                    <div className="relative inline-block mt-2 group">
-                      <img
-                        src={formData.image}
-                        alt="Product preview"
-                        className="w-20 h-20 object-cover rounded-xl border border-gray-200 shadow-xs"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setFormData({ ...formData, image: "" })}
-                        className="absolute -top-2 -right-2 bg-rose-600 text-white rounded-full p-1 shadow-md hover:bg-rose-700 transition"
-                        title="Remove Image"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
+                    <div className="p-4 border border-dashed border-gray-200 rounded-2xl text-center bg-gray-50/50">
+                      <p className="text-xs text-gray-500">
+                        No images added yet. Upload from your device or paste an image link above.
+                      </p>
                     </div>
                   )}
                 </div>
