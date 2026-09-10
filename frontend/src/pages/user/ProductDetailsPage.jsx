@@ -18,7 +18,9 @@ import {
   ChevronLeft,
   ChevronRight,
   RotateCcw,
-  Award
+  Award,
+  AlertCircle,
+  AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,8 +37,9 @@ export default function ProductDetailsPage() {
   const [justAdded, setJustAdded] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [stockWarning, setStockWarning] = useState("");
 
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
   const API_URL = import.meta.env.VITE_API_URL || "";
 
   const resolveProduct = (candidateList, targetId) => {
@@ -188,7 +191,48 @@ export default function ProductDetailsPage() {
     );
   }
 
+  const availableStock = product?.stock !== undefined && product?.stock !== null
+    ? Number(product.stock)
+    : 15;
+  const isOutOfStock = availableStock <= 0;
+  const isLowStock = availableStock > 0 && availableStock <= 5;
+
+  const existingCartItem = (cart || []).find(
+    (c) => String(c._id || c.id) === String(product?._id || product?.id)
+  );
+  const inCartQty = existingCartItem ? Number(existingCartItem.quantity) || 0 : 0;
+
+  const handleIncreaseQuantity = () => {
+    if (quantity >= availableStock) {
+      setStockWarning(`Only ${availableStock} item(s) available in stock!`);
+      return;
+    }
+    setStockWarning("");
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecreaseQuantity = () => {
+    setStockWarning("");
+    setQuantity((prev) => Math.max(1, prev - 1));
+  };
+
   const handleAddToCart = async () => {
+    if (isOutOfStock) {
+      setStockWarning("Sorry, this item is currently Out of Stock.");
+      return;
+    }
+    if (quantity > availableStock) {
+      setStockWarning(`Cannot add ${quantity} items. Only ${availableStock} in stock!`);
+      return;
+    }
+    if (inCartQty + quantity > availableStock) {
+      setStockWarning(
+        `You already have ${inCartQty} in your cart. Only ${availableStock} total available in stock!`
+      );
+      return;
+    }
+
+    setStockWarning("");
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
     const targetId = product._id || product.id;
@@ -200,6 +244,7 @@ export default function ProductDetailsPage() {
       image: activeImage || product.image,
       size: selectedSize,
       quantity: quantity,
+      stock: availableStock,
     });
     setIsAdding(false);
     setJustAdded(true);
@@ -353,10 +398,22 @@ export default function ProductDetailsPage() {
               <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider">
                 {product.category || "Footwear"}
               </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                In Stock &bull; Ready to Ship
-              </span>
+              {isOutOfStock ? (
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  Out of Stock
+                </span>
+              ) : isLowStock ? (
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 animate-pulse">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  Only {availableStock} left in stock &bull; Order soon
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  In Stock ({availableStock} available)
+                </span>
+              )}
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-tight">
@@ -441,20 +498,25 @@ export default function ProductDetailsPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
-                  className="h-9 w-9 rounded-lg"
+                  onClick={handleDecreaseQuantity}
+                  disabled={quantity <= 1 || isOutOfStock}
+                  className="h-9 w-9 rounded-lg cursor-pointer"
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <span className="px-3 text-center text-base font-bold">
-                  {quantity}
+                  {isOutOfStock ? 0 : quantity}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="h-9 w-9 rounded-lg"
+                  onClick={handleIncreaseQuantity}
+                  disabled={quantity >= availableStock || isOutOfStock}
+                  className={cn(
+                    "h-9 w-9 rounded-lg cursor-pointer",
+                    (quantity >= availableStock || isOutOfStock) && "opacity-50 cursor-not-allowed"
+                  )}
+                  title={quantity >= availableStock ? `Only ${availableStock} in stock` : "Increase quantity"}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -465,12 +527,14 @@ export default function ProductDetailsPage() {
                 size="lg"
                 className={cn(
                   "flex-1 h-12 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 shadow-md cursor-pointer",
-                  justAdded
+                  isOutOfStock || (inCartQty >= availableStock)
+                    ? "bg-gray-300 text-gray-600 hover:bg-gray-300 cursor-not-allowed shadow-none"
+                    : justAdded
                     ? "bg-emerald-600 text-white hover:bg-emerald-600"
                     : "bg-primary text-primary-foreground hover:bg-primary/90"
                 )}
                 onClick={handleAddToCart}
-                disabled={isAdding}
+                disabled={isAdding || isOutOfStock || (inCartQty >= availableStock)}
               >
                 {isAdding ? (
                   <>
@@ -482,6 +546,10 @@ export default function ProductDetailsPage() {
                     <Check className="h-5 w-5 mr-2" />
                     Added to Cart!
                   </>
+                ) : isOutOfStock ? (
+                  <>Out of Stock</>
+                ) : inCartQty >= availableStock ? (
+                  <>Max Stock in Cart ({inCartQty}/{availableStock})</>
                 ) : (
                   <>
                     <ShoppingCart className="h-5 w-5 mr-2" />
@@ -490,6 +558,19 @@ export default function ProductDetailsPage() {
                 )}
               </Button>
             </div>
+
+            {/* Warning Message when selecting more than stock or low stock */}
+            {stockWarning ? (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs font-bold text-amber-900 flex items-center gap-2 animate-in fade-in duration-200">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>{stockWarning}</span>
+              </div>
+            ) : isLowStock ? (
+              <p className="text-xs font-semibold text-amber-600 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                Hurry! Only {availableStock} {availableStock === 1 ? "pair" : "pairs"} left in stock.
+              </p>
+            ) : null}
 
             {/* Guarantee / Value Badges */}
             <div className="grid grid-cols-2 gap-3 pt-2">

@@ -90,16 +90,28 @@ export const CartProvider = ({ children }) => {
       );
 
       const quantityToAdd = item.quantity || 1;
+      const itemStock =
+        item.stock !== undefined && item.stock !== null
+          ? Number(item.stock)
+          : existingItem?.stock !== undefined
+          ? Number(existingItem.stock)
+          : 999;
 
       let newCart;
       if (existingItem) {
+        const currentQty = Number(existingItem.quantity) || 1;
+        const totalQty = Math.min(itemStock, currentQty + quantityToAdd);
         newCart = prevCart.map((cartItem) =>
           String(cartItem._id || cartItem.id) === String(itemId)
-            ? { ...cartItem, quantity: cartItem.quantity + quantityToAdd }
+            ? { ...cartItem, stock: itemStock, quantity: totalQty }
             : cartItem
         );
       } else {
-        newCart = [...prevCart, { ...item, id: itemId, _id: itemId, quantity: quantityToAdd }];
+        const initialQty = Math.min(itemStock, quantityToAdd);
+        newCart = [
+          ...prevCart,
+          { ...item, id: itemId, _id: itemId, stock: itemStock, quantity: initialQty },
+        ];
       }
 
       persistCart(newCart);
@@ -126,11 +138,15 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = (id, quantity) => {
     setCart((prevCart) => {
-      const newCart = prevCart.map((item) =>
-        String(item._id || item.id) === String(id)
-          ? { ...item, quantity: Math.max(1, quantity) }
-          : item
-      );
+      const newCart = prevCart.map((item) => {
+        if (String(item._id || item.id) === String(id)) {
+          const maxStock =
+            item.stock !== undefined && item.stock !== null ? Number(item.stock) : 999;
+          const targetQty = Math.min(maxStock, Math.max(1, Number(quantity)));
+          return { ...item, quantity: targetQty };
+        }
+        return item;
+      });
       persistCart(newCart);
       return newCart;
     });

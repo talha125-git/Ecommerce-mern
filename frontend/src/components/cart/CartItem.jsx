@@ -8,6 +8,8 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 
 export default function CartItem({ item, isLast }) {
   const { removeFromCart, updateQuantity } = useCart();
+  const maxStock = item.stock !== undefined && item.stock !== null ? Number(item.stock) : 999;
+  const isAtMaxStock = item.quantity >= maxStock;
 
   return (
     <div>
@@ -35,36 +37,52 @@ export default function CartItem({ item, isLast }) {
               variant="ghost"
               size="icon"
               onClick={() => removeFromCart(item._id || item.id)}
-              className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0"
+              className="text-muted-foreground hover:text-destructive h-8 w-8 shrink-0 cursor-pointer"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center border border-border rounded-lg">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() =>
-                  updateQuantity(item._id || item.id, Math.max(1, item.quantity - 1))
-                }
-                disabled={item.quantity <= 1}
-                className="h-8 w-8 rounded-r-none"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-              <span className="px-4 py-2 min-w-12.5 text-center text-sm font-medium">
-                {item.quantity}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => updateQuantity(item._id || item.id, item.quantity + 1)}
-                className="h-8 w-8  rounded-l-none"
-              >
-                <Plus className="h-3 w-3 " />
-              </Button>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mt-4">
+            <div className="space-y-1">
+              <div className="flex items-center border border-border rounded-lg w-fit">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    updateQuantity(item._id || item.id, Math.max(1, item.quantity - 1))
+                  }
+                  disabled={item.quantity <= 1}
+                  className="h-8 w-8 rounded-r-none cursor-pointer"
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="px-4 py-2 min-w-12.5 text-center text-sm font-medium">
+                  {item.quantity}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => updateQuantity(item._id || item.id, item.quantity + 1)}
+                  disabled={isAtMaxStock}
+                  className={`h-8 w-8 rounded-l-none ${isAtMaxStock ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                  title={isAtMaxStock ? `Only ${maxStock} in stock` : "Increase"}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+
+              {/* Stock Notice in Cart */}
+              {isAtMaxStock && maxStock < 999 && (
+                <span className="text-[10px] font-extrabold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md inline-block">
+                  ⚠️ Max stock reached ({maxStock} in stock)
+                </span>
+              )}
+              {!isAtMaxStock && maxStock <= 5 && (
+                <span className="text-[10px] font-semibold text-amber-600 block">
+                  Only {maxStock} left in stock
+                </span>
+              )}
             </div>
 
             <div className="text-right">

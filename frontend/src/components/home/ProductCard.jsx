@@ -64,9 +64,16 @@ export default function ProductCard({ product }) {
     setIsLiked(wl.some((w) => (w._id || w.id) === productId));
   }, [productId]);
 
+  const availableStock = product?.stock !== undefined && product?.stock !== null
+    ? Number(product.stock)
+    : 15;
+  const isOutOfStock = availableStock <= 0;
+
   const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (isOutOfStock) return;
 
     setIsAdding(true);
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -78,6 +85,7 @@ export default function ProductCard({ product }) {
       price: product.price,
       image: product.image,
       quantity: 1,
+      stock: availableStock,
     });
 
     setIsAdding(false);
@@ -246,13 +254,15 @@ export default function ProductCard({ product }) {
 
           <Button
             className={cn(
-              "w-full font-semibold rounded-xl transition-all duration-300 py-5 shadow-sm",
-              justAdded
+              "w-full font-semibold rounded-xl transition-all duration-300 py-5 shadow-sm cursor-pointer",
+              isOutOfStock
+                ? "bg-gray-200 text-gray-500 hover:bg-gray-200 cursor-not-allowed shadow-none"
+                : justAdded
                 ? "bg-emerald-600 text-white hover:bg-emerald-600 shadow-emerald-500/20"
                 : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
             onClick={handleAddToCart}
-            disabled={isAdding}
+            disabled={isAdding || isOutOfStock}
           >
             {isAdding ? (
               <div className="flex items-center gap-2">
@@ -264,6 +274,8 @@ export default function ProductCard({ product }) {
                 <Check className="h-4 w-4" />
                 <span>Added to Cart!</span>
               </div>
+            ) : isOutOfStock ? (
+              <span>Out of Stock</span>
             ) : (
               <div className="flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4" />

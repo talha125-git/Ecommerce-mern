@@ -1,0 +1,64 @@
+================================================================================
+          NOTE 15: REAL-TIME STOCK VALIDATION & INVENTORY CONTROL
+================================================================================
+
+1. ISSUE DIAGNOSIS:
+   - Root Cause:
+     * When adding a product in the admin dashboard with a specific stock (e.g. Stock = 2),
+       the customer-facing storefront had no upper-bound validation on quantity.
+     * The stepper on `ProductDetailsPage` could increment to any number (e.g., 7).
+     * The shopping cart allowed adding and incrementing beyond available stock.
+     * Backend `POST /api/orders` did not verify whether requested quantities exceeded
+       the product's `stock` in MongoDB, nor did it decrement stock when orders were placed.
+     * `CheckoutPage` had a `finally` block that confirmed orders locally even when
+       server validation failed.
+
+2. SOLUTIONS IMPLEMENTED:
+
+   A. PRODUCT DETAILS PAGE (`ProductDetailsPage.jsx`):
+      - Real-Time Stock Status Badge:
+        * Out of Stock (stock <= 0): Red badge "Out of Stock".
+        * Low Stock (1 to 5 units): Pulsing amber badge "Only {X} left in stock • Order soon".
+        * Standard Stock (> 5 units): Emerald badge "In Stock ({X} available)".
+      - Quantity Stepper Enforcement:
+        * Quantity is capped at `availableStock`.
+        * `+` button is disabled when `quantity >= availableStock`.
+        * If user clicks `+` or selects more than stock, an immediate warning banner appears:
+          "⚠️ Maximum stock reached! Only {X} item(s) available in stock."
+      - Add to Cart Cart-Aware Validation:
+        * Checks how many units are already in the buyer's cart (`inCartQty`).
+        * If `inCartQty + quantity > availableStock`, blocks addition and shows:
+          "You already have {inCartQty} in your cart. Only {availableStock} total in stock!"
+        * Disables Add to Cart button when `inCartQty >= availableStock` or out of stock.
+
+   B. SHOPPING CART CONTEXT & CART ITEM (`CartContext.jsx` & `CartItem.jsx`):
+      - `CartContext.jsx`:
+        * `addToCart`: Stores `stock` on each cart item and caps total quantity at `item.stock`.
+        * `updateQuantity`: Prevents cart quantity from exceeding `item.stock`.
+      - `CartItem.jsx`:
+        * Disables the `+` button when `item.quantity >= item.stock`.
+        * Displays warning badge: "⚠️ Max stock reached ({X} in stock)".
+        * Shows low-stock notice ("Only {X} left in stock") when inventory is <= 5.
+
+   C. CHECKOUT PRE-VALIDATION & ERROR HANDLING (`CheckoutPage.jsx`):
+      - Pre-Checkout Client Validation:
+        * Checks all cart items before submitting. If any item exceeds available stock
+          or is out of stock, checkout is blocked with an error banner:
+          "Cannot place order: '{Item}' only has {X} item(s) in stock. Please reduce quantity."
+      - Server Error Handling:
+        * Fixed `handleSubmitOrder` so order confirmation and cart clearing ONLY happen
+          upon HTTP 200/201 success from the server.
+        * Displays backend error messages in a prominent red alert banner above the submit button.
+
+   D. BACKEND INVENTORY REST API (`backend/index.js`):
+      - `POST /api/orders`:
+        * Step 1: Fetches each ordered product from MongoDB by `_id`, `id`, or `name`.
+        * Step 2: Validates `product.stock >= requestedQty`. If any item is insufficient,
+          immediately rejects with HTTP 400:
+          "Insufficient stock for '{Product Name}'. Only {X} unit(s) available in stock,
+          but you requested {Y}. Please reduce the quantity."
+        * Step 3: Upon order creation, automatically decrements MongoDB stock:
+          `ProductModel.updateOne({ _id: prod._id }, { $set: { stock: Math.max(0, prod.stock - requestedQty) } })`.
+        * Logs real-time stock deduction in backend server console.
+
+================================================================================

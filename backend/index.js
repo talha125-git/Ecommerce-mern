@@ -905,6 +905,44 @@ app.post("/api/orders", async (req, res) => {
             return res.status(400).json({ message: "Missing required order details" });
         }
 
+        if (!Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: "Order must contain at least one item" });
+        }
+
+        // 1. Strict Stock Inventory Validation
+        for (const item of items) {
+            const pId = item.id || item._id;
+            let product = null;
+
+            if (mongoose.Types.ObjectId.isValid(pId)) {
+                product = await ProductModel.findById(pId);
+            }
+            if (!product) {
+                product = await ProductModel.findOne({ id: String(pId) });
+            }
+            if (!product) {
+                product = await ProductModel.findOne({ name: item.name });
+            }
+
+            if (product && product.stock !== undefined && product.stock !== null) {
+                const requestedQty = Number(item.quantity) || 1;
+                const availableStock = Number(product.stock);
+
+                if (availableStock <= 0) {
+                    return res.status(400).json({
+                        message: `"${product.name}" is currently Out of Stock. Please remove it from your cart to proceed.`
+                    });
+                }
+
+                if (requestedQty > availableStock) {
+                    return res.status(400).json({
+                        message: `Insufficient stock for "${product.name}". Only ${availableStock} unit(s) available in stock, but you requested ${requestedQty}. Please reduce the quantity.`
+                    });
+                }
+            }
+        }
+
+        // 2. Create the Order in MongoDB
         const newOrder = await OrderModel.create({
             orderId,
             customer,
@@ -913,6 +951,26 @@ app.post("/api/orders", async (req, res) => {
             paymentMethod: paymentMethod || "card",
             status: "Pending",
         });
+
+        // 3. Automatically Decrement Product Stock in MongoDB
+        for (const item of items) {
+            const pId = item.id || item._id;
+            const requestedQty = Number(item.quantity) || 1;
+
+            let query = {};
+            if (mongoose.Types.ObjectId.isValid(pId)) {
+                query = { _id: pId };
+            } else {
+                query = { $or: [{ id: String(pId) }, { name: item.name }] };
+            }
+
+            const prod = await ProductModel.findOne(query);
+            if (prod && prod.stock !== undefined && prod.stock !== null) {
+                const updatedStock = Math.max(0, Number(prod.stock) - requestedQty);
+                await ProductModel.updateOne({ _id: prod._id }, { $set: { stock: updatedStock } });
+                console.log(`📦 Stock updated for "${prod.name}": ${prod.stock} -> ${updatedStock} (decreased by ${requestedQty})`);
+            }
+        }
 
         console.log(`✅ Order "${newOrder.orderId}" created successfully for ${customer.fullName}`);
         return res.status(201).json({ message: "Order placed successfully", order: newOrder });

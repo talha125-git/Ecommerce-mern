@@ -19,7 +19,8 @@ import {
   Sparkles,
   Globe,
   Building2,
-  Loader2
+  Loader2,
+  AlertCircle
 } from "lucide-react";
 import { getPakistanCities, PAKISTAN_CITIES, getPostalCodeForCity } from "@/utils/locationData";
 
@@ -50,6 +51,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState("");
+  const [orderError, setOrderError] = useState("");
 
   // Login check & session autofill
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -142,6 +144,32 @@ export default function CheckoutPage() {
     e.preventDefault();
     if (cart.length === 0) return;
 
+    // 1. Client-Side Stock Pre-Validation
+    const overstock = cart.find(
+      (item) =>
+        item.stock !== undefined &&
+        item.stock !== null &&
+        Number(item.quantity) > Number(item.stock)
+    );
+    if (overstock) {
+      setOrderError(
+        `Cannot place order: "${overstock.name}" only has ${overstock.stock} item(s) in stock, but you have ${overstock.quantity} in your cart. Please reduce the quantity.`
+      );
+      return;
+    }
+
+    const outOfStockItem = cart.find(
+      (item) =>
+        item.stock !== undefined && item.stock !== null && Number(item.stock) <= 0
+    );
+    if (outOfStockItem) {
+      setOrderError(
+        `Cannot place order: "${outOfStockItem.name}" is currently Out of Stock. Please remove it from your cart.`
+      );
+      return;
+    }
+
+    setOrderError("");
     setIsSubmitting(true);
     const generatedId = "ORD-" + Math.floor(100000 + Math.random() * 900000);
 
@@ -169,9 +197,7 @@ export default function CheckoutPage() {
     try {
       await axios.post(`${API_URL}/api/orders`, orderPayload);
       console.log("✅ Order saved to MongoDB:", generatedId);
-    } catch (err) {
-      console.warn("Could not persist order to server, saving locally:", err);
-    } finally {
+
       if (formData.email) {
         const key = `user_orders_${formData.email.toLowerCase()}`;
         try {
@@ -180,15 +206,24 @@ export default function CheckoutPage() {
             ...orderPayload,
             _id: generatedId,
             createdAt: new Date().toISOString(),
-            status: "Pending"
+            status: "Pending",
           };
           localStorage.setItem(key, JSON.stringify([newLocalOrder, ...existing]));
         } catch (e) {}
       }
       setPlacedOrderId(generatedId);
-      setIsSubmitting(false);
       setOrderPlaced(true);
       clearCart();
+    } catch (err) {
+      console.error("❌ Order placement failed:", err);
+      const serverMsg = err.response?.data?.message;
+      if (serverMsg) {
+        setOrderError(serverMsg);
+      } else {
+        setOrderError("Failed to place order. Please check item stock and try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -672,6 +707,19 @@ export default function CheckoutPage() {
                   <span className="font-black text-xl text-primary">${total.toFixed(2)}</span>
                 </div>
               </div>
+
+              {/* Order Error Notification Banner */}
+              {orderError && (
+                <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs font-bold text-rose-950 flex items-start gap-2.5 animate-in slide-in-from-top-1">
+                  <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <span className="font-extrabold block text-rose-900">Order Notice:</span>
+                    <span className="font-medium text-rose-800 leading-relaxed block">
+                      {orderError}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               {/* Submit Order Button */}
               <Button
