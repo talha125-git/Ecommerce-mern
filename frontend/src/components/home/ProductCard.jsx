@@ -5,47 +5,7 @@ import { cn } from "@/lib/utils";
 import { Check, Eye, Heart, ShoppingCart, Star, Flame, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-// ─── Wishlist helpers (shared localStorage key used by dashboard) ─────────────
-function getWishlistKey() {
-  try {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const email = user.email || "";
-    return `user_wishlist_${email.toLowerCase()}`;
-  } catch {
-    return "user_wishlist_guest";
-  }
-}
-
-function readWishlist() {
-  try {
-    return JSON.parse(localStorage.getItem(getWishlistKey()) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function writeWishlist(items) {
-  try {
-    localStorage.setItem(getWishlistKey(), JSON.stringify(items));
-    // Dispatch a storage event so the dashboard re-reads if open in same tab
-    window.dispatchEvent(new Event("wishlist-updated"));
-  } catch {}
-}
-
-async function syncWishlistToAPI(items) {
-  try {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const email = user.email;
-    if (!email) return;
-    const API_URL = import.meta.env.VITE_API_URL || "";
-    await axios.put(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`, { wishlist: items });
-  } catch (err) {
-    console.warn("Could not sync wishlist to API:", err);
-  }
-}
-// ─────────────────────────────────────────────────────────────────────────────
+import { isProductInWishlist, toggleWishlistItem } from "@/utils/wishlist";
 
 export default function ProductCard({ product }) {
   const [imageError, setImageError] = useState(false);
@@ -58,10 +18,20 @@ export default function ProductCard({ product }) {
 
   const productId = product._id || product.id;
 
-  // Sync heart state from localStorage on mount
+  // Sync heart state on mount and on wishlist updates
   useEffect(() => {
-    const wl = readWishlist();
-    setIsLiked(wl.some((w) => (w._id || w.id) === productId));
+    setIsLiked(isProductInWishlist(productId));
+
+    const handleWishlistUpdated = () => {
+      setIsLiked(isProductInWishlist(productId));
+    };
+
+    window.addEventListener("wishlist-updated", handleWishlistUpdated);
+    window.addEventListener("storage", handleWishlistUpdated);
+    return () => {
+      window.removeEventListener("wishlist-updated", handleWishlistUpdated);
+      window.removeEventListener("storage", handleWishlistUpdated);
+    };
   }, [productId]);
 
   const availableStock = product?.stock !== undefined && product?.stock !== null
@@ -97,31 +67,12 @@ export default function ProductCard({ product }) {
     e.preventDefault();
     e.stopPropagation();
 
-    const current = readWishlist();
-    const exists = current.some((w) => (w._id || w.id) === productId);
-
-    let updated;
-    if (exists) {
-      updated = current.filter((w) => (w._id || w.id) !== productId);
-      setIsLiked(false);
-    } else {
-      updated = [
-        ...current,
-        {
-          id: productId,
-          _id: productId,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-        },
-      ];
-      setIsLiked(true);
+    const { inWishlist } = toggleWishlistItem(product);
+    setIsLiked(inWishlist);
+    if (inWishlist) {
       setJustLiked(true);
       setTimeout(() => setJustLiked(false), 1800);
     }
-
-    writeWishlist(updated);
-    syncWishlistToAPI(updated); // persist to MongoDB for cross-device sync
   };
 
   const discount = product.originalPrice

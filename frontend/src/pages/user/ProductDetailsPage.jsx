@@ -23,6 +23,7 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isProductInWishlist, toggleWishlistItem } from "@/utils/wishlist";
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
@@ -36,6 +37,7 @@ export default function ProductDetailsPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [justLiked, setJustLiked] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [stockWarning, setStockWarning] = useState("");
 
@@ -151,6 +153,24 @@ export default function ProductDetailsPage() {
     }
   }, [allImages, activeImage]);
 
+  // Sync wishlist status with localStorage / API (must be placed before conditional returns)
+  useEffect(() => {
+    if (!product) return;
+    const prodId = product._id || product.id;
+    setIsLiked(isProductInWishlist(prodId));
+
+    const handleWishlistUpdated = () => {
+      setIsLiked(isProductInWishlist(prodId));
+    };
+
+    window.addEventListener("wishlist-updated", handleWishlistUpdated);
+    window.addEventListener("storage", handleWishlistUpdated);
+    return () => {
+      window.removeEventListener("wishlist-updated", handleWishlistUpdated);
+      window.removeEventListener("storage", handleWishlistUpdated);
+    };
+  }, [product]);
+
   const activeIndex = allImages.indexOf(activeImage);
 
   const handleNextImage = () => {
@@ -251,6 +271,22 @@ export default function ProductDetailsPage() {
     setTimeout(() => setJustAdded(false), 2000);
   };
 
+
+
+  const handleToggleWishlist = () => {
+    if (!product) return;
+    const itemToToggle = {
+      ...product,
+      image: activeImage || product.image || (Array.isArray(product.images) && product.images[0]) || "",
+    };
+    const { inWishlist } = toggleWishlistItem(itemToToggle);
+    setIsLiked(inWishlist);
+    if (inWishlist) {
+      setJustLiked(true);
+      setTimeout(() => setJustLiked(false), 2200);
+    }
+  };
+
   const availableSizes = (Array.isArray(product.sizes) && product.sizes.length > 0)
     ? product.sizes
     : [7, 8, 9, 10, 11, 12];
@@ -303,12 +339,21 @@ export default function ProductDetailsPage() {
               size="icon"
               className={cn(
                 "absolute top-5 right-5 z-10 h-11 w-11 rounded-full bg-white/90 backdrop-blur-md hover:bg-white transition-all hover:scale-105 shadow-md",
-                isLiked && "text-rose-500 hover:text-rose-600"
+                isLiked ? "text-rose-500 hover:text-rose-600" : "text-slate-600 hover:text-rose-500"
               )}
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleToggleWishlist}
+              title={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
+              aria-label={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
             >
-              <Heart className={cn("h-5 w-5", isLiked && "fill-current text-rose-500")} />
+              <Heart className={cn("h-5 w-5 transition-transform duration-200", isLiked ? "fill-rose-500 text-rose-500 scale-110" : "text-slate-600 hover:text-rose-500")} />
             </Button>
+
+            {/* Added to Wishlist Toast Indicator */}
+            {justLiked && (
+              <div className="absolute top-18 right-5 z-20 bg-rose-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 whitespace-nowrap flex items-center gap-1.5">
+                ♥ Added to Wishlist
+              </div>
+            )}
 
             {/* Main Product Image with Smooth Transition */}
             <img
@@ -556,6 +601,26 @@ export default function ProductDetailsPage() {
                     Add to Cart &bull; ${(Number(product.price || 0) * quantity).toFixed(2)}
                   </>
                 )}
+              </Button>
+
+              {/* Wishlist Button next to Add to Cart */}
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={handleToggleWishlist}
+                className={cn(
+                  "h-12 px-4 rounded-xl border-2 transition-all duration-200 cursor-pointer flex items-center gap-2 font-bold",
+                  isLiked
+                    ? "border-rose-300 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:border-rose-400"
+                    : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                )}
+                title={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <Heart className={cn("h-5 w-5 transition-colors", isLiked ? "fill-rose-500 text-rose-500" : "")} />
+                <span className="hidden sm:inline text-xs font-bold">
+                  {isLiked ? "Saved to Wishlist" : "Add to Wishlist"}
+                </span>
               </Button>
             </div>
 

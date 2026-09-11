@@ -53,26 +53,29 @@ export default function UserDashboardPage() {
   // Helper: localStorage cache key
   const getWishlistKey = (email) => `user_wishlist_${(email || "guest").toLowerCase()}`;
 
-  // Load wishlist — tries MongoDB first, falls back to localStorage cache
+  // Load wishlist — reads localStorage cache immediately, then fetches from MongoDB
   const loadWishlist = async (email) => {
-    if (!email) return;
-    try {
-      const res = await axios.get(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`);
-      if (res.data && Array.isArray(res.data.wishlist)) {
-        setWishlist(res.data.wishlist);
-        // Keep localStorage in sync as cache
-        localStorage.setItem(getWishlistKey(email), JSON.stringify(res.data.wishlist));
-        return;
-      }
-    } catch (err) {
-      console.warn("Could not fetch wishlist from API, using localStorage cache:", err);
-    }
-    // Fallback: read from localStorage
+    // 1. Instant local read so UI is immediately responsive
     try {
       const stored = JSON.parse(localStorage.getItem(getWishlistKey(email)) || "[]");
-      setWishlist(Array.isArray(stored) ? stored : []);
+      if (Array.isArray(stored)) {
+        setWishlist(stored);
+      }
     } catch (e) {
       setWishlist([]);
+    }
+
+    // 2. Fetch from MongoDB API if logged in
+    if (email) {
+      try {
+        const res = await axios.get(`${API_URL}/api/wishlist/${encodeURIComponent(email)}`);
+        if (res.data && Array.isArray(res.data.wishlist)) {
+          setWishlist(res.data.wishlist);
+          localStorage.setItem(getWishlistKey(email), JSON.stringify(res.data.wishlist));
+        }
+      } catch (err) {
+        console.warn("Could not fetch wishlist from API, using localStorage cache:", err);
+      }
     }
   };
 
@@ -93,14 +96,18 @@ export default function UserDashboardPage() {
     }
   };
 
-  // Re-read wishlist when ProductCard fires the wishlist-updated event
+  // Re-read wishlist when ProductCard or ProductDetailsPage fires the wishlist-updated event
   useEffect(() => {
     const onWishlistUpdated = () => {
       const email = profileData.email || (user && user.email) || "";
       loadWishlist(email);
     };
     window.addEventListener("wishlist-updated", onWishlistUpdated);
-    return () => window.removeEventListener("wishlist-updated", onWishlistUpdated);
+    window.addEventListener("storage", onWishlistUpdated);
+    return () => {
+      window.removeEventListener("wishlist-updated", onWishlistUpdated);
+      window.removeEventListener("storage", onWishlistUpdated);
+    };
   }, [profileData.email, user]);
 
   // Real User Orders state fetched dynamically from MongoDB / API
@@ -191,12 +198,25 @@ export default function UserDashboardPage() {
 
   const handleToggleWishlist = (product) => {
     const email = profileData.email || (user && user.email) || "";
-    const exists = wishlist.some(item => (item._id || item.id) === (product._id || product.id));
+    const prodId = product._id || product.id;
+    const exists = wishlist.some(item => String(item._id || item.id) === String(prodId));
     let updated;
     if (exists) {
-      updated = wishlist.filter(item => (item._id || item.id) !== (product._id || product.id));
+      updated = wishlist.filter(item => String(item._id || item.id) !== String(prodId));
     } else {
-      updated = [...wishlist, product];
+      updated = [
+        ...wishlist,
+        {
+          id: prodId,
+          _id: prodId,
+          name: product.name,
+          price: Number(product.price) || 0,
+          originalPrice: product.originalPrice ? Number(product.originalPrice) : undefined,
+          image: product.image || (Array.isArray(product.images) && product.images[0]) || "",
+          category: product.category || "",
+          stock: product.stock,
+        },
+      ];
     }
     setWishlist(updated);
     saveWishlist(email, updated);

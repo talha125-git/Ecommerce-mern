@@ -30,7 +30,7 @@ export default function BrowseProductsTab({ productsList, wishlist, handleToggle
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {productsList.map((prod) => {
           const prodId = prod._id || prod.id;
-          const isWishlisted = wishlist.some((w) => (w._id || w.id) === prodId);
+          const isWishlisted = wishlist.some((w) => String(w._id || w.id) === String(prodId));
           const isJustAdded = !!addedIds[prodId];
           return (
             <div

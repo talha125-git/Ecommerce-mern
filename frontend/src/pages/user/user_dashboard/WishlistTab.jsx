@@ -47,15 +47,20 @@ export default function WishlistTab({ wishlist, handleToggleWishlist, addToCart 
                 key={itemId}
                 className="border border-gray-200 rounded-2xl p-4 flex gap-4 items-center bg-white hover:shadow-sm transition group"
               >
-                <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-muted border border-gray-100">
+                <Link
+                  to={`/product/${itemId}`}
+                  className="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-muted border border-gray-100 block"
+                >
                   <img
                     src={item.image}
                     alt={item.name}
                     className="w-full h-full object-cover aspect-square group-hover:scale-105 transition duration-300"
                   />
-                </div>
+                </Link>
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <h4 className="font-bold text-xs text-gray-900 truncate">{item.name}</h4>
+                  <Link to={`/product/${itemId}`} className="hover:underline block">
+                    <h4 className="font-bold text-xs text-gray-900 truncate">{item.name}</h4>
+                  </Link>
                   <p className="text-sm font-black text-gray-900">${Number(item.price).toFixed(2)}</p>
                   <div className="flex gap-2">
                     <Button
