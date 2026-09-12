@@ -20,6 +20,32 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
+// ── Badge Style Helper for Luxury Aesthetics ──
+const getBadgeClass = (badge, isSpecial) => {
+  if (badge === "HOT" || badge === "SALE") {
+    return "bg-rose-50 text-rose-600 border border-rose-200/80";
+  }
+  if (badge === "NEW") {
+    return "bg-blue-50 text-blue-600 border border-blue-200/80";
+  }
+  if (badge === "POPULAR") {
+    return "bg-purple-50 text-purple-600 border border-purple-200/80";
+  }
+  if (badge === "TOP PICK" || badge === "MUST HAVE" || isSpecial) {
+    return "bg-orange-50 text-[#C84B31] border border-orange-200/80";
+  }
+  if (badge === "CUTE") {
+    return "bg-pink-50 text-pink-600 border border-pink-200/80";
+  }
+  if (badge === "EASY WEAR" || badge === "EASY") {
+    return "bg-emerald-50 text-emerald-700 border border-emerald-200/80";
+  }
+  if (badge === "BEST") {
+    return "bg-amber-50 text-amber-700 border border-amber-200/80";
+  }
+  return "bg-gray-100 text-gray-700 border border-gray-200/80";
+};
+
 // ── Navigation Categories Matching Reference Image ──
 const NAV_CATEGORIES = [
   {
@@ -33,7 +59,7 @@ const NAV_CATEGORIES = [
         links: [
           { name: "All New Releases", href: "/shop?category=new", badge: "NEW" },
           { name: "Trending This Week", href: "/shop?category=trending", badge: "HOT" },
-          { name: "Best Sellers 2026", href: "/shop?category=bestseller", badge: "POPULAR" },
+          { name: "Best Sellers", href: "/shop?category=bestseller", badge: "POPULAR" },
         ],
       },
       {
@@ -512,45 +538,35 @@ export default function Header() {
                 <div
                   className={`absolute top-full ${getDropdownAlignment(
                     cat.id
-                  )} pt-3 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
-                  style={{ minWidth: "600px", maxWidth: "90vw" }}
+                  )} pt-3.5 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
+                  style={{ minWidth: "690px", maxWidth: "90vw" }}
                 >
-                  <div className="bg-white/98 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-2xl p-5 ring-1 ring-black/5">
-                    <div className="grid grid-cols-12 gap-5">
+                  <div className="bg-white/98 backdrop-blur-2xl border border-gray-100/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] p-6 ring-1 ring-black/[0.04]">
+                    <div className="grid grid-cols-12 gap-7 items-stretch">
                       {/* Subcategories Section */}
-                      <div
-                        className={`grid gap-6 ${
-                          cat.columns.length === 3 ? "col-span-8 grid-cols-3" : "col-span-7 grid-cols-2"
-                        }`}
-                      >
+                      <div className="col-span-7 grid grid-cols-2 gap-6 pr-6 border-r border-gray-100/90">
                         {cat.columns.map((col, cIdx) => (
-                          <div key={cIdx} className="space-y-3">
-                            <h4 className="text-[11px] font-bold tracking-widest text-gray-400 uppercase border-b border-gray-100 pb-1.5">
+                          <div key={cIdx} className="space-y-3.5">
+                            <h4 className="text-[10px] font-extrabold tracking-[0.14em] text-gray-400 uppercase flex items-center gap-1.5 pb-1 border-b border-gray-100/80">
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary/50 inline-block" />
                               {col.title}
                             </h4>
-                            <ul className="space-y-2">
+                            <ul className="space-y-1">
                               {col.links.map((link, lIdx) => (
                                 <li key={lIdx}>
                                   <Link
                                     to={link.href}
-                                    className="group/link flex items-center justify-between text-xs font-medium text-gray-700 hover:text-black transition-colors py-0.5"
+                                    className="group/link flex items-center justify-between py-2 px-2.5 -mx-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50/90 transition-all duration-150"
                                   >
-                                    <span className="group-hover/link:translate-x-1 group-hover/link:text-primary transition-all duration-150">
+                                    <span className="group-hover/link:translate-x-1 group-hover/link:text-primary transition-all duration-150 truncate font-medium">
                                       {link.name}
                                     </span>
                                     {link.badge && (
                                       <span
-                                        className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
-                                          link.badge === "HOT" || link.badge === "SALE"
-                                            ? "bg-rose-100 text-rose-600"
-                                            : link.badge === "NEW"
-                                            ? "bg-blue-100 text-blue-600"
-                                            : link.badge === "TOP PICK" ||
-                                              link.badge === "MUST HAVE" ||
-                                              cat.isSpecial
-                                            ? "bg-orange-100 text-[#C84B31]"
-                                            : "bg-gray-100 text-gray-600"
-                                        }`}
+                                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ml-2 shadow-2xs ${getBadgeClass(
+                                          link.badge,
+                                          cat.isSpecial
+                                        )}`}
                                       >
                                         {link.badge}
                                       </span>
@@ -565,29 +581,30 @@ export default function Header() {
 
                       {/* Featured Spotlight Card */}
                       {cat.featured && (
-                        <div
-                          className={`${
-                            cat.columns.length === 3 ? "col-span-4" : "col-span-5"
-                          }`}
-                        >
+                        <div className="col-span-5 flex flex-col">
                           <div
-                            className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-5 text-white flex flex-col justify-between shadow-lg relative overflow-hidden group/card`}
+                            className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-5 text-white flex flex-col justify-between shadow-md relative overflow-hidden group/card`}
                           >
-                            <div className="relative z-10 space-y-2">
-                              <span className="inline-block text-[10px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full text-white shadow-sm">
+                            {/* Ambient luxury light glows */}
+                            <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-white/10 blur-xl pointer-events-none" />
+                            <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-black/20 blur-xl pointer-events-none" />
+
+                            <div className="relative z-10 space-y-2.5">
+                              <span className="inline-block text-[10px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md border border-white/25 px-2.5 py-1 rounded-full text-white shadow-sm">
                                 {cat.featured.badge}
                               </span>
-                              <h5 className="text-base font-extrabold leading-snug">
+                              <h5 className="text-[15px] font-black leading-snug tracking-tight text-white">
                                 {cat.featured.title}
                               </h5>
-                              <p className="text-xs text-white/80 line-clamp-3 leading-relaxed">
+                              <p className="text-xs text-white/85 line-clamp-3 leading-relaxed font-normal">
                                 {cat.featured.desc}
                               </p>
                             </div>
-                            <div className="relative z-10 pt-5">
+
+                            <div className="relative z-10 pt-4">
                               <Link
                                 to={cat.featured.href}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-white/20 hover:bg-white hover:text-gray-950 px-4 py-2 rounded-xl backdrop-blur-sm transition-all duration-200 group-hover/card:gap-2 shadow-sm"
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-950 bg-white hover:bg-white/95 px-4 py-2 rounded-full transition-all duration-200 shadow-md group-hover/card:gap-2 group-hover/card:shadow-lg"
                               >
                                 <span>{cat.featured.cta}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
