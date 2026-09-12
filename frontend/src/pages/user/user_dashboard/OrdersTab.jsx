@@ -254,7 +254,7 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
 
                       <div className="text-right">
                         <p className="text-[11px] text-gray-400 font-medium">Total</p>
-                        <p className="font-extrabold text-gray-900 text-sm">${totalAmt.toFixed(2)}</p>
+                        <p className="font-extrabold text-gray-900 text-sm">Rs. {Number(totalAmt).toLocaleString()}</p>
                       </div>
 
                       <button
@@ -310,10 +310,10 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
                                 />
                                 <div className="flex-1 min-w-0">
                                   <p className="text-xs font-bold text-gray-900 truncate">{it.name}</p>
-                                  <p className="text-[10px] text-gray-400">Qty {it.quantity} × ${it.price}</p>
+                                  <p className="text-[10px] text-gray-400">Qty {it.quantity} × Rs. {Number(it.price).toLocaleString()}</p>
                                 </div>
                                 <p className="text-xs font-extrabold text-gray-900 shrink-0">
-                                  ${(it.quantity * it.price).toFixed(2)}
+                                  Rs. {(it.quantity * it.price).toLocaleString()}
                                 </p>
                               </div>
                             ))
@@ -332,7 +332,7 @@ export default function OrdersTab({ orders, loading, fetchUserOrders, setActiveT
                       </div>
                       <div className="text-right">
                         <span className="text-[10px] text-gray-400 block">Order Total</span>
-                        <span className="text-base font-extrabold text-gray-900">${totalAmt.toFixed(2)}</span>
+                        <span className="text-base font-extrabold text-gray-900">Rs. {Number(totalAmt).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>

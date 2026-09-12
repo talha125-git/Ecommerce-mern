@@ -310,7 +310,7 @@ export default function OrdersTab() {
                           {/* Total Price & Payment */}
                           <td className="p-4 align-top">
                             <div className="font-black text-sm text-slate-900">
-                              ${Number(ord.totalAmount || 0).toFixed(2)}
+                              Rs. {Number(ord.totalAmount || 0).toLocaleString()}
                             </div>
                             <div className="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-1 flex items-center gap-1">
                               <CreditCard className="w-3 h-3 text-gray-400" />
@@ -409,11 +409,11 @@ export default function OrdersTab() {
                                           <div className="flex-1 min-w-0">
                                             <div className="font-bold text-gray-900 truncate">{it.name}</div>
                                             <div className="text-gray-500 text-[10px]">
-                                              Qty: {it.quantity} × ${it.price}
+                                              Qty: {it.quantity} × Rs. {Number(it.price).toLocaleString()}
                                             </div>
                                           </div>
                                           <div className="font-black text-gray-900 shrink-0">
-                                            ${(it.quantity * it.price).toFixed(2)}
+                                            Rs. {(it.quantity * it.price).toLocaleString()}
                                           </div>
                                         </div>
                                       ))}
@@ -542,7 +542,7 @@ export default function OrdersTab() {
                       </div>
                       <div className="text-right">
                         <div className="font-black text-sm text-slate-900">
-                          ${Number(ord.totalAmount || 0).toFixed(2)}
+                          Rs. {Number(ord.totalAmount || 0).toLocaleString()}
                         </div>
                         <div className="text-[9px] text-gray-400 uppercase font-bold flex items-center gap-0.5 justify-end">
                           <CreditCard className="w-2.5 h-2.5" />
@@ -596,11 +596,11 @@ export default function OrdersTab() {
                               <div className="flex-1 min-w-0">
                                 <div className="font-bold text-gray-900 truncate">{it.name}</div>
                                 <div className="text-gray-500 text-[10px]">
-                                  Qty: {it.quantity} × ${it.price}
+                                  Qty: {it.quantity} × Rs. {Number(it.price).toLocaleString()}
                                 </div>
                               </div>
                               <div className="font-black text-gray-900 shrink-0 text-xs">
-                                ${(it.quantity * it.price).toFixed(2)}
+                                Rs. {(it.quantity * it.price).toLocaleString()}
                               </div>
                             </div>
                           ))}
@@ -613,7 +613,7 @@ export default function OrdersTab() {
                           <CreditCard className="w-3 h-3" /> Payment: <strong className="uppercase text-slate-900">{ord.paymentMethod || "Card"}</strong>
                         </span>
                         <span className="font-black text-slate-900 text-sm">
-                          Total: ${Number(ord.totalAmount || 0).toFixed(2)}
+                          Total: Rs. {Number(ord.totalAmount || 0).toLocaleString()}
                         </span>
                       </div>
                     </div>
@@ -690,11 +690,11 @@ export default function OrdersTab() {
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-gray-900 truncate">{it.name}</div>
                       <div className="text-gray-400 text-[10px]">
-                        Qty: {it.quantity} × ${it.price}
+                        Qty: {it.quantity} × Rs. {Number(it.price).toLocaleString()}
                       </div>
                     </div>
                     <div className="font-black text-gray-900">
-                      ${(it.quantity * it.price).toFixed(2)}
+                      Rs. {(it.quantity * it.price).toLocaleString()}
                     </div>
                   </div>
                 ))}
@@ -723,7 +723,7 @@ export default function OrdersTab() {
               <div className="text-right">
                 <span className="text-xs text-gray-500 block">Total Amount Paid</span>
                 <span className="text-xl font-black text-slate-900">
-                  ${Number(selectedOrder.totalAmount || 0).toFixed(2)}
+                  Rs. {Number(selectedOrder.totalAmount || 0).toLocaleString()}
                 </span>
               </div>
             </div>

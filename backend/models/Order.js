@@ -21,6 +21,7 @@ const OrderSchema = new mongoose.Schema(
       },
     ],
     totalAmount: { type: Number, required: true },
+    shippingAmount: { type: Number, default: 0 },
     paymentMethod: { type: String, default: "card" },
     status: {
       type: String,

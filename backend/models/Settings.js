@@ -11,8 +11,8 @@ const SettingsSchema = new mongoose.Schema({
   supportEmail: { type: String, default: "support@bloomshop.com" },
   supportPhone: { type: String, default: "+92 347 6722423" },
   storeAddress: { type: String, default: "Shabqadar Charsadda, Peshawar, Pakistan" },
-  currency: { type: String, default: "USD ($)" },
-  currencySymbol: { type: String, default: "$" },
+  currency: { type: String, default: "PKR (Rs.)" },
+  currencySymbol: { type: String, default: "Rs." },
   timezone: { type: String, default: "UTC+05:00 (Pakistan Standard Time)" },
 
   // About Us Content
@@ -46,10 +46,15 @@ const SettingsSchema = new mongoose.Schema({
   adminEmail: { type: String, default: "admin@bloomshop.com" },
   adminRole: { type: String, default: "Super Administrator" },
 
-  // Payment & Financial Settings
-  taxRate: { type: Number, default: 5 },
-  flatShippingRate: { type: Number, default: 15 },
-  freeShippingThreshold: { type: Number, default: 150 },
+  // Payment & Financial Settings (PKR)
+  taxRate: { type: Number, default: 0 },
+  flatShippingRate: { type: Number, default: 250 },
+  freeShippingCity: { type: String, default: "Peshawar" },
+  shippingRateNear: { type: Number, default: 250 },
+  shippingRateFar: { type: Number, default: 500 },
+  shippingRateMoreFar: { type: Number, default: 700 },
+  freeShippingThreshold: { type: Number, default: 5000 },
+  customCityZones: { type: Object, default: {} },
   enableCOD: { type: Boolean, default: true },
   enableCardPayment: { type: Boolean, default: true },
   enablePaypal: { type: Boolean, default: false },

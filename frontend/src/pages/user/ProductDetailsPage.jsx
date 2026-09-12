@@ -484,16 +484,16 @@ export default function ProductDetailsPage() {
           {/* Pricing Block */}
           <div className="flex items-baseline gap-3 p-4 bg-muted/40 rounded-2xl border border-border/60">
             <span className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
-              ${Number(product.price || 0).toFixed(2)}
+              Rs. {Number(product.price || 0).toLocaleString()}
             </span>
             {product.originalPrice && Number(product.originalPrice) > Number(product.price) && (
               <span className="text-lg font-semibold text-muted-foreground line-through">
-                ${Number(product.originalPrice).toFixed(2)}
+                Rs. {Number(product.originalPrice).toLocaleString()}
               </span>
             )}
             {discount > 0 && (
               <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                Save ${(product.originalPrice - product.price).toFixed(2)}
+                Save Rs. {(Number(product.originalPrice) - Number(product.price)).toLocaleString()}
               </span>
             )}
           </div>
@@ -598,7 +598,7 @@ export default function ProductDetailsPage() {
                 ) : (
                   <>
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    Add to Cart &bull; ${(Number(product.price || 0) * quantity).toFixed(2)}
+                    Add to Cart &bull; Rs. {(Number(product.price || 0) * quantity).toLocaleString()}
                   </>
                 )}
               </Button>
@@ -641,7 +641,7 @@ export default function ProductDetailsPage() {
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="flex items-center gap-2.5 text-xs font-semibold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-border/50">
                 <Truck className="h-4 w-4 text-primary shrink-0" />
-                <span>Free express shipping over $50</span>
+                <span>Free shipping in Peshawar &amp; over Rs. 5,000</span>
               </div>
               <div className="flex items-center gap-2.5 text-xs font-semibold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-border/50">
                 <RotateCcw className="h-4 w-4 text-primary shrink-0" />

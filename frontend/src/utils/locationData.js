@@ -184,6 +184,141 @@ export function getPostalCodeForCity(cityName) {
 }
 
 /**
+ * Distance-based Shipping Zones from Peshawar:
+ * - Free: Peshawar (Rs. 0)
+ * - Near: KPK, Islamabad, Rawalpindi & close northern areas (Default: Rs. 250)
+ * - Far: Punjab & central Pakistan (Default: Rs. 500)
+ * - More Far: Sindh, Balochistan & remote south areas (Default: Rs. 700)
+ */
+export const PAKISTAN_SHIPPING_ZONES = {
+  near: [
+    "Charsadda", "Shabqadar", "Mardan", "Nowshera", "Swabi", "Kohat",
+    "Abbottabad", "Haripur", "Attock", "Islamabad", "Rawalpindi",
+    "Wah Cantonment", "Taxila", "Swat", "Mingora", "Malakand", "Batkhela",
+    "Buner", "Chitral", "Dir", "Lower Dir", "Upper Dir", "Hangu", "Karak",
+    "Khyber", "Kohistan", "Lakki Marwat", "Mansehra", "Parachinar", "Tank",
+    "Timergara", "Torghar", "Bannu", "Dera Ismail Khan", "Wana", "Murree"
+  ],
+  far: [
+    "Lahore", "Faisalabad", "Gujranwala", "Sialkot", "Multan", "Sargodha",
+    "Gujrat", "Sheikhupura", "Jhelum", "Chakwal", "Kasur", "Okara", "Chiniot",
+    "Hafizabad", "Sadiqabad", "Burewala", "Khanewal", "Muzaffargarh",
+    "Mandi Bahauddin", "Bhakkar", "Layyah", "Toba Tek Singh", "Vehari",
+    "Bahawalnagar", "Narowal", "Kamoke", "Muridke", "Daska", "Samundri",
+    "Jaranwala", "Chishtian", "Ahmedpur East", "Hasilpur", "Pattoki",
+    "Mianwali", "Kallar Syedan", "Gujar Khan", "Kot Addu", "Pasrur", "Phalia",
+    "Bahawalpur", "Rahim Yar Khan", "Dera Ghazi Khan", "Muzaffarabad", "Mirpur",
+    "Rawalakot", "Kotli", "Bhimber", "Bagh", "Hajira", "Neelum Valley",
+    "Pallandri", "Gilgit", "Skardu", "Hunza", "Ghanche", "Diamer", "Ghizer",
+    "Nagar", "Astore"
+  ],
+  more_far: [
+    "Karachi", "Hyderabad", "Sukkur", "Larkana", "Nawabshah (Shaheed Benazirabad)",
+    "Mirpur Khas", "Shikarpur", "Jacobabad", "Thatta", "Badin", "Ghotki",
+    "Dadu", "Tando Allahyar", "Tando Muhammad Khan", "Khairpur", "Kashmore",
+    "Matiari", "Umerkot", "Kotri", "Jamshoro", "Daharki", "Sanghar",
+    "Kandiaro", "Shahdadkot", "Quetta", "Turbat", "Khuzdar", "Chaman", "Hub",
+    "Gwadar", "Sibi", "Zhob", "Pishin", "Dera Murad Jamali", "Dera Allah Yar",
+    "Nushki", "Loralai", "Kharan", "Panjgur", "Mastung", "Kalat", "Jafarabad"
+  ]
+};
+
+export const SHIPPING_ZONE_DETAILS = {
+  free: {
+    id: "free",
+    label: "Free Delivery City",
+    description: "Peshawar (100% Free Shipping)",
+    badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-200"
+  },
+  near: {
+    id: "near",
+    label: "Near to Peshawar",
+    description: "KPK, Islamabad, Rawalpindi & close areas",
+    badgeColor: "bg-blue-100 text-blue-800 border-blue-200"
+  },
+  far: {
+    id: "far",
+    label: "Far from Peshawar",
+    description: "Punjab & Central Pakistan",
+    badgeColor: "bg-amber-100 text-amber-800 border-amber-200"
+  },
+  more_far: {
+    id: "more_far",
+    label: "More Far Away",
+    description: "Sindh, Balochistan & Southern Pakistan",
+    badgeColor: "bg-rose-100 text-rose-800 border-rose-200"
+  }
+};
+
+/**
+ * Determine the shipping zone for a given city
+ */
+export function getShippingZoneForCity(cityName, freeCity = "Peshawar", customOverrides = {}) {
+  if (!cityName) return "near";
+
+  const normalized = cityName.trim().toLowerCase();
+  const freeNorm = (freeCity || "Peshawar").trim().toLowerCase();
+
+  // 1. Free Shipping City (Peshawar)
+  if (normalized === freeNorm) {
+    return "free";
+  }
+
+  // 2. Custom Admin Override (if configured)
+  if (customOverrides && typeof customOverrides === "object") {
+    for (const [city, zone] of Object.entries(customOverrides)) {
+      if (city.toLowerCase() === normalized && zone) {
+        return zone;
+      }
+    }
+  }
+
+  // 3. Check Near Zone (KPK, Islamabad, etc.)
+  for (const c of PAKISTAN_SHIPPING_ZONES.near) {
+    if (c.toLowerCase() === normalized || normalized.includes(c.toLowerCase()) || c.toLowerCase().includes(normalized)) {
+      return "near";
+    }
+  }
+
+  // 4. Check More Far Zone (Sindh, Balochistan)
+  for (const c of PAKISTAN_SHIPPING_ZONES.more_far) {
+    if (c.toLowerCase() === normalized || normalized.includes(c.toLowerCase()) || c.toLowerCase().includes(normalized)) {
+      return "more_far";
+    }
+  }
+
+  // 5. Check Far Zone (Punjab, etc.)
+  for (const c of PAKISTAN_SHIPPING_ZONES.far) {
+    if (c.toLowerCase() === normalized || normalized.includes(c.toLowerCase()) || c.toLowerCase().includes(normalized)) {
+      return "far";
+    }
+  }
+
+  // Default for unknown or remote Pakistani city
+  return "more_far";
+}
+
+/**
+ * Calculate dynamic shipping charge in PKR based purely on distance tiers:
+ * - Peshawar: Free (Rs. 0)
+ * - Near: Rs. 250
+ * - Far: Rs. 500
+ * - More Far: Rs. 700
+ */
+export function calculateShippingRate(cityName, subtotal = 0, storeSettings = {}) {
+  const freeCity = storeSettings.freeShippingCity || "Peshawar";
+  const customOverrides = storeSettings.customCityZones || {};
+  const zone = getShippingZoneForCity(cityName, freeCity, customOverrides);
+
+  if (zone === "free") return 0;
+  if (zone === "near") return Number(storeSettings.shippingRateNear ?? 250);
+  if (zone === "far") return Number(storeSettings.shippingRateFar ?? 500);
+  if (zone === "more_far") return Number(storeSettings.shippingRateMoreFar ?? 700);
+
+  return Number(storeSettings.flatShippingRate ?? 250);
+}
+
+/**
  * Fetch complete list of Pakistani cities from API, merged with comprehensive local list
  */
 export async function getPakistanCities() {

@@ -1121,8 +1121,8 @@ const DEFAULT_SETTINGS = {
     supportEmail: "support@bloomshop.com",
     supportPhone: "+92 347 6722423",
     storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
-    currency: "USD ($)",
-    currencySymbol: "$",
+    currency: "PKR (Rs.)",
+    currencySymbol: "Rs.",
     timezone: "UTC+05:00 (Pakistan Standard Time)",
 
     // About Us Content
@@ -1139,9 +1139,14 @@ const DEFAULT_SETTINGS = {
     adminName: "Talha (Admin)",
     adminEmail: "admin@bloomshop.com",
     adminRole: "Super Administrator",
-    taxRate: 5,
-    flatShippingRate: 15,
-    freeShippingThreshold: 150,
+    taxRate: 0,
+    flatShippingRate: 250,
+    freeShippingCity: "Peshawar",
+    shippingRateNear: 250,
+    shippingRateFar: 500,
+    shippingRateMoreFar: 700,
+    freeShippingThreshold: 5000,
+    customCityZones: {},
     enableCOD: true,
     enableCardPayment: true,
     enablePaypal: false,
@@ -1164,6 +1169,46 @@ app.get("/api/settings", async (req, res) => {
         if (!settingsDoc) {
             console.log("ℹ️ Initializing default store settings in MongoDB...");
             settingsDoc = await SettingsModel.create(DEFAULT_SETTINGS);
+        } else {
+            // Auto-migrate legacy USD defaults if found
+            let needsUpdate = false;
+            const updateObj = {};
+            if (settingsDoc.currencySymbol === "$" || settingsDoc.currency === "USD ($)") {
+                updateObj.currency = "PKR (Rs.)";
+                updateObj.currencySymbol = "Rs.";
+                needsUpdate = true;
+            }
+            if (!settingsDoc.freeShippingCity) {
+                updateObj.freeShippingCity = "Peshawar";
+                needsUpdate = true;
+            }
+            if (settingsDoc.flatShippingRate === 15 || !settingsDoc.flatShippingRate) {
+                updateObj.flatShippingRate = 250;
+                needsUpdate = true;
+            }
+            if (settingsDoc.freeShippingThreshold === 150 || !settingsDoc.freeShippingThreshold) {
+                updateObj.freeShippingThreshold = 5000;
+                needsUpdate = true;
+            }
+            if (settingsDoc.shippingRateNear === undefined || settingsDoc.shippingRateNear === null) {
+                updateObj.shippingRateNear = 250;
+                needsUpdate = true;
+            }
+            if (settingsDoc.shippingRateFar === undefined || settingsDoc.shippingRateFar === null) {
+                updateObj.shippingRateFar = 500;
+                needsUpdate = true;
+            }
+            if (settingsDoc.shippingRateMoreFar === undefined || settingsDoc.shippingRateMoreFar === null) {
+                updateObj.shippingRateMoreFar = 700;
+                needsUpdate = true;
+            }
+            if (needsUpdate) {
+                settingsDoc = await SettingsModel.findOneAndUpdate(
+                    { key: "store_settings" },
+                    { $set: updateObj },
+                    { new: true }
+                );
+            }
         }
         // Merge defaults to guarantee all fields exist even if created earlier
         const settings = { ...DEFAULT_SETTINGS, ...settingsDoc.toObject() };

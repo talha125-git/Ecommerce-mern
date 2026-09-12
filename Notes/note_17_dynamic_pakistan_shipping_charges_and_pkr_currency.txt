@@ -1,0 +1,82 @@
+================================================================================
+NOTE 17: DYNAMIC DISTANCE-TIERED PAKISTAN SHIPPING CHARGES & PKR CURRENCY
+================================================================================
+
+1. OVERVIEW & USER REQUIREMENTS
+--------------------------------------------------------------------------------
+- Implemented a clean, distance-tiered dynamic shipping charges system for Pakistan:
+  * Peshawar (Home Base): 100% FREE Delivery (Rs. 0).
+  * Near to Peshawar (KPK & Capital Region: Charsadda, Mardan, Nowshera, Swabi, Kohat, Abbottabad, Haripur, Swat, Islamabad, Rawalpindi, etc.): Rs. 250 (in PKR).
+  * Far away from Peshawar (Punjab, AJK & Gilgit-Baltistan: Lahore, Faisalabad, Gujranwala, Multan, Sialkot, Sargodha, etc.): Rs. 500 (in PKR).
+  * More far away from Peshawar (Sindh & Balochistan: Karachi, Hyderabad, Sukkur, Quetta, Gwadar, Turbat, etc.): Rs. 700 (in PKR).
+- Cleaned up the Admin Shipping Rates page (`/admin/dashboard?tab=shipping`):
+  * Removed confusing "Live Shipping Rate Tester" widget.
+  * Removed "Nationwide Free Delivery Order Minimum" threshold.
+  * Preserved clean 4 distance tier cards and the 100+ cities Pakistan directory table.
+- Ensured all prices across the entire application remain strictly in PKR (Rs.).
+
+2. BACKEND & DATABASE SCHEMA
+--------------------------------------------------------------------------------
+File: backend/models/Settings.js
+- SettingsSchema distance-tiered shipping fields:
+  * freeShippingCity: { type: String, default: "Peshawar" }
+  * shippingRateNear: { type: Number, default: 250 }     // KPK, Islamabad, Rawalpindi
+  * shippingRateFar: { type: Number, default: 500 }      // Punjab, AJK, GB
+  * shippingRateMoreFar: { type: Number, default: 700 }  // Sindh, Balochistan
+  * flatShippingRate: { type: Number, default: 250 }     // Fallback
+  * customCityZones: { type: Map, of: String, default: {} }
+  * currency: { type: String, default: "PKR (Rs.)" }
+  * currencySymbol: { type: String, default: "Rs." }
+
+File: backend/models/Order.js
+- Added shippingAmount field to OrderSchema:
+  * shippingAmount: { type: Number, default: 0 }
+
+3. PAKISTAN SHIPPING ZONES ENGINE
+--------------------------------------------------------------------------------
+File: frontend/src/utils/locationData.js
+- Distance classification of 100+ Pakistani cities:
+  * `free`: Peshawar (Rs. 0).
+  * `near` (Rs. 250): KPK + Islamabad + Rawalpindi + Attock + Taxila + Wah Cantt.
+  * `far` (Rs. 500): Punjab + AJK + Gilgit-Baltistan.
+  * `more_far` (Rs. 700): Sindh + Balochistan.
+- Clean rate calculation in `calculateShippingRate`:
+  * Returns exact fee based purely on distance from Peshawar (Free, Near Rs. 250, Far Rs. 500, More Far Rs. 700).
+
+4. ADMIN SHIPPING RATES TAB
+--------------------------------------------------------------------------------
+File: frontend/src/pages/admin/ShippingTab.jsx
+- Clean shipping management interface in Admin Dashboard:
+  * 4 Distance Tier Configuration Cards:
+    1. Free Delivery Zone (Peshawar): Rs. 0
+    2. Near Peshawar Zone: Editable rate (default Rs. 250)
+    3. Far from Peshawar Zone: Editable rate (default Rs. 500)
+    4. More Far Zone: Editable rate (default Rs. 700)
+  * Pakistan Cities Zone Directory: Searchable and filterable table displaying 100+ cities with badges, postal codes, and live rates.
+  * One-click save that updates MongoDB via `PUT /api/settings`.
+
+5. CUSTOMER CHECKOUT EXPERIENCE
+--------------------------------------------------------------------------------
+File: frontend/src/pages/user/CheckoutPage.jsx
+- City Selection Dropdown:
+  * Peshawar highlighted at top: `⭐ Peshawar (FREE Delivery - Rs. 0)`
+  * All other cities annotated with their zone and rate: e.g. `Charsadda (Near KPK/ISB - Rs. 250)`, `Lahore (Punjab - Rs. 500)`, `Karachi (Sindh/Balochistan - Rs. 700)`.
+- Dynamic Color-Coded Shipping Notification Banner:
+  * For Peshawar: Emerald banner with `🎉 Special Offer: 100% FREE Shipping applied for Peshawar delivery! [Rs. 0 Free]`
+  * For Near cities: Blue banner with `🚚 Delivery to Charsadda (Near Peshawar Region): Rs. 250 • 1-2 Days Delivery`
+  * For Far cities: Amber banner with `🚚 Delivery to Lahore (Punjab Region): Rs. 500 • 2-3 Days Delivery`
+  * For More Far cities: Purple banner with `🚚 Delivery to Karachi (Sindh & Balochistan Region): Rs. 700 • 3-5 Days Delivery`
+- Order Summary: Shows exact shipping fee with zone badge and saves `shippingAmount` and `shippingZone` in the order record.
+
+6. ORDER SUMMARY CART COMPONENT
+--------------------------------------------------------------------------------
+File: frontend/src/components/cart/OrderSummary.jsx
+- Clean perks box displaying:
+  * Free delivery badge for Peshawar.
+  * Distance rate breakdown: `Near: Rs. 250 • Punjab: Rs. 500 • Sindh/Balochistan: Rs. 700`.
+
+7. VERIFICATION
+--------------------------------------------------------------------------------
+- Backend Node syntax check passed on all modified models and endpoints.
+- Frontend production build (`npm run build`) succeeded with 0 errors (1905 modules transformed in 3.73s).
+================================================================================

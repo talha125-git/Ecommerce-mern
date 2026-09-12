@@ -18,7 +18,9 @@ import {
   Share2,
   Copy,
   Check,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Truck,
+  Banknote
 } from 'lucide-react';
 
 // Brand SVG Icons
@@ -554,7 +556,136 @@ export default function SettingsTab() {
         </div>
       </div>
 
-      {/* ─── 4. SOCIAL MEDIA CHANNELS ────────────────────────────────────── */}
+      {/* ─── 4. DYNAMIC SHIPPING CHARGES & PAKISTAN DELIVERY RATES (PKR) ── */}
+      <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-amber-50 text-amber-700 rounded-2xl">
+              <Truck className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-black text-gray-900">
+                  Shipping Charges & Delivery Rates (PKR)
+                </h2>
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-full">
+                  Peshawar Free
+                </span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Delivery fees scale dynamically based on distance from Peshawar: Free in Peshawar, Near Rs. 250, Far Rs. 500, More Far Rs. 700.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/admin/dashboard?tab=shipping"
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer shrink-0"
+          >
+            <Truck className="w-3.5 h-3.5 text-amber-400" />
+            <span>Open Dedicated Shipping Page ↗</span>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Free Shipping City */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+              <span>Free City (Peshawar)</span>
+              <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                Rs. 0 (Free)
+              </span>
+            </label>
+            <input
+              type="text"
+              value={formData.freeShippingCity ?? "Peshawar"}
+              onChange={(e) => handleInputChange("freeShippingCity", e.target.value)}
+              placeholder="Peshawar"
+              className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+            />
+          </div>
+
+          {/* Near Rate */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
+              <span>Near Peshawar (KPK)</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
+              <input
+                type="number"
+                min="0"
+                step="10"
+                value={formData.shippingRateNear ?? 250}
+                onChange={(e) => handleInputChange("shippingRateNear", Number(e.target.value))}
+                placeholder="250"
+                className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+              />
+            </div>
+          </div>
+
+          {/* Far Rate */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
+              <span>Far (Punjab)</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
+              <input
+                type="number"
+                min="0"
+                step="10"
+                value={formData.shippingRateFar ?? 500}
+                onChange={(e) => handleInputChange("shippingRateFar", Number(e.target.value))}
+                placeholder="500"
+                className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+              />
+            </div>
+          </div>
+
+          {/* More Far Rate */}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
+              <span>More Far (Sindh/Balochistan)</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
+              <input
+                type="number"
+                min="0"
+                step="10"
+                value={formData.shippingRateMoreFar ?? 700}
+                onChange={(e) => handleInputChange("shippingRateMoreFar", Number(e.target.value))}
+                placeholder="700"
+                className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Live Delivery Summary Box */}
+        <div className="p-4 bg-slate-900 text-white rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="font-extrabold uppercase text-[10px] tracking-wider text-amber-400">
+                Active Dynamic Distance Formula
+              </span>
+              <span className="px-2 py-0.5 bg-white/10 rounded text-[10px] font-mono">
+                PKR (Rs.)
+              </span>
+            </div>
+            <p className="text-gray-300 text-xs leading-relaxed">
+              • <strong className="text-white">{formData.freeShippingCity || "Peshawar"}</strong>: <strong className="text-emerald-400 font-black">Rs. 0 (Free Delivery)</strong>
+              <br />
+              • <strong className="text-white">Near Peshawar (KPK/ISB)</strong>: <strong className="text-blue-300 font-black">Rs. {formData.shippingRateNear ?? 250}</strong>
+              {' '}• <strong className="text-white">Far (Punjab)</strong>: <strong className="text-amber-300 font-black">Rs. {formData.shippingRateFar ?? 500}</strong>
+              {' '}• <strong className="text-white">More Far (Sindh/Balochistan)</strong>: <strong className="text-rose-300 font-black">Rs. {formData.shippingRateMoreFar ?? 700}</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 5. SOCIAL MEDIA CHANNELS ────────────────────────────────────── */}
       <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-7 shadow-xs space-y-6">
         <div className="flex items-center gap-3 border-b border-gray-100 pb-4">
           <div className="p-2.5 bg-purple-50 text-purple-700 rounded-2xl">

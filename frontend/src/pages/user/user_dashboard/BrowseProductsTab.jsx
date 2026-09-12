@@ -49,7 +49,7 @@ export default function BrowseProductsTab({ productsList, wishlist, handleToggle
                   {prod.cat}
                 </span>
                 <h3 className="font-bold text-sm text-gray-900 leading-snug">{prod.name}</h3>
-                <p className="text-sm font-black text-gray-900">${prod.price.toFixed(2)}</p>
+                <p className="text-sm font-black text-gray-900">Rs. {Number(prod.price).toLocaleString()}</p>
                 <div className="flex items-center gap-2 pt-1 flex-wrap">
                   {isJustAdded ? (
                     <Button

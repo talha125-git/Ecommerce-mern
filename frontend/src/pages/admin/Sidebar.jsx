@@ -12,7 +12,8 @@ import {
   Tag,
   Info,
   X,
-  PlusCircle
+  PlusCircle,
+  Truck
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -31,6 +32,7 @@ export default function Sidebar({
     // { id: 'about', label: 'About Us', icon: Info },
     { id: 'orders', label: 'Orders', icon: ShoppingBag, badge: '' },
     { id: 'customers', label: 'Customers', icon: Users },
+    { id: 'shipping', label: 'Shipping Rates', icon: Truck, badge: 'PKR' },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
 

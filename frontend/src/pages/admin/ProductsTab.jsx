@@ -592,16 +592,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                         {/* Price & Savings */}
                         <div className="flex items-baseline gap-2 mt-2">
                           <span className="text-base font-black text-slate-900 leading-none">
-                            ${prod.price}
+                            Rs. {prod.price}
                           </span>
                           {prod.originalPrice && (
                             <span className="text-xs text-gray-400 line-through leading-none">
-                              ${prod.originalPrice}
+                              Rs. {prod.originalPrice}
                             </span>
                           )}
                           {hasDiscount && (
                             <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded leading-none">
-                              Save ${(Number(prod.originalPrice) - Number(prod.price)).toFixed(0)}
+                              Save Rs. {(Number(prod.originalPrice) - Number(prod.price)).toFixed(0)}
                             </span>
                           )}
                         </div>
@@ -677,10 +677,10 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                           </span>
                         </td>
                         <td className="p-4">
-                          <div className="font-extrabold text-gray-900">${prod.price}</div>
+                          <div className="font-extrabold text-gray-900">Rs. {prod.price}</div>
                           {prod.originalPrice && (
                             <div className="text-[10px] text-gray-400 line-through">
-                              ${prod.originalPrice}
+                              Rs. {prod.originalPrice}
                             </div>
                           )}
                         </td>
@@ -794,13 +794,13 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                 {/* Price */}
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Price ($) <span className="text-rose-500">*</span>
+                    Price (PKR / Rs.) <span className="text-rose-500">*</span>
                   </label>
                   <input
                     type="number"
                     step="0.01"
                     required
-                    placeholder="99.99"
+                    placeholder="2500"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"
@@ -810,12 +810,12 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                 {/* Original Price */}
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Original Price ($) (Optional)
+                    Original Price (PKR / Rs.) (Optional)
                   </label>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="129.99"
+                    placeholder="3500"
                     value={formData.originalPrice}
                     onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
                     className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"

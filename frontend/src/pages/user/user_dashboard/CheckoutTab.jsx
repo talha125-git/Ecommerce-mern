@@ -24,7 +24,7 @@ export default function CheckoutTab({ profileData, cartSubtotal }) {
 
         <div className="border-t border-gray-100 pt-3 flex justify-between text-sm font-bold">
           <span>Order Total:</span>
-          <span>${cartSubtotal > 0 ? cartSubtotal.toFixed(2) : "64.99"}</span>
+          <span>Rs. {cartSubtotal > 0 ? Number(cartSubtotal).toLocaleString() : "5,000"}</span>
         </div>
 
         <Button onClick={() => alert("Order Placed Successfully!")} className="w-full rounded-xl text-xs font-bold py-2.5">

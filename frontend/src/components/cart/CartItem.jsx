@@ -29,7 +29,7 @@ export default function CartItem({ item, isLast }) {
                 {item.name}
               </h2>
               <p className="text-sm text-muted-foreground mt-1">
-                ${item.price.toFixed(2)} each
+                Rs. {Number(item.price).toLocaleString()} each
               </p>
             </div>
 
@@ -87,7 +87,7 @@ export default function CartItem({ item, isLast }) {
 
             <div className="text-right">
               <p className="text-lg font-bold text-foreground">
-                ${(item.price * item.quantity).toFixed(2)}
+                Rs. {(Number(item.price) * item.quantity).toLocaleString()}
               </p>
             </div>
           </div>

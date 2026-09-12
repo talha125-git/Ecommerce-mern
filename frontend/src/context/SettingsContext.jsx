@@ -9,8 +9,8 @@ export const DEFAULT_SETTINGS = {
   supportEmail: "support@bloomshop.com",
   supportPhone: "+92 347 6722423",
   storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
-  currency: "USD ($)",
-  currencySymbol: "$",
+  currency: "PKR (Rs.)",
+  currencySymbol: "Rs.",
   timezone: "UTC+05:00 (Pakistan Standard Time)",
 
   // About Us Content
@@ -35,9 +35,14 @@ export const DEFAULT_SETTINGS = {
   socialTwitter: "https://twitter.com/bloomshop",
   socialWhatsapp: "+923476722423",
 
-  taxRate: 5,
-  flatShippingRate: 15,
-  freeShippingThreshold: 150,
+  taxRate: 0,
+  flatShippingRate: 250,
+  freeShippingCity: "Peshawar",
+  shippingRateNear: 250,
+  shippingRateFar: 500,
+  shippingRateMoreFar: 700,
+  freeShippingThreshold: 5000,
+  customCityZones: {},
   enableCOD: true,
   enableCardPayment: true,
 };

@@ -61,7 +61,7 @@ export default function WishlistTab({ wishlist, handleToggleWishlist, addToCart 
                   <Link to={`/product/${itemId}`} className="hover:underline block">
                     <h4 className="font-bold text-xs text-gray-900 truncate">{item.name}</h4>
                   </Link>
-                  <p className="text-sm font-black text-gray-900">${Number(item.price).toFixed(2)}</p>
+                  <p className="text-sm font-black text-gray-900">Rs. {Number(item.price).toLocaleString()}</p>
                   <div className="flex gap-2">
                     <Button
                       onClick={() => {

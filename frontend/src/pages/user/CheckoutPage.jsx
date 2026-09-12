@@ -23,7 +23,14 @@ import {
   Loader2,
   AlertCircle
 } from "lucide-react";
-import { getPakistanCities, PAKISTAN_CITIES, getPostalCodeForCity } from "@/utils/locationData";
+import {
+  getPakistanCities,
+  PAKISTAN_CITIES,
+  getPostalCodeForCity,
+  calculateShippingRate,
+  getShippingZoneForCity,
+  SHIPPING_ZONE_DETAILS,
+} from "@/utils/locationData";
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
@@ -121,12 +128,33 @@ export default function CheckoutPage() {
     loadCities();
   }, []);
 
+  const freeCityName = storeSettings?.freeShippingCity || "Peshawar";
+  const freeShippingCity = freeCityName.trim().toLowerCase();
+  const selectedCity = (formData.city || "").trim();
+  const isPeshawarFree = selectedCity.toLowerCase() === freeShippingCity;
+
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const shipping = subtotal > 50 || cart.length === 0 ? 0 : 9.99;
-  const tax = subtotal * 0.08;
+
+  // Dynamic distance-tiered shipping calculation (Peshawar: Rs. 0, Near: Rs. 250, Far: Rs. 500, More Far: Rs. 700)
+  const shipping =
+    cart.length === 0
+      ? 0
+      : calculateShippingRate(selectedCity, subtotal, storeSettings);
+
+  const currentZone = selectedCity
+    ? getShippingZoneForCity(
+        selectedCity,
+        freeCityName,
+        storeSettings?.customCityZones
+      )
+    : null;
+  const zoneDetails = currentZone ? SHIPPING_ZONE_DETAILS[currentZone] : null;
+
+  const taxRate = Number(storeSettings?.taxRate ?? 0);
+  const tax = taxRate > 0 ? (subtotal * taxRate) / 100 : 0;
   const total = subtotal + shipping + tax;
 
   const handleChange = (e) => {
@@ -193,6 +221,8 @@ export default function CheckoutPage() {
         quantity: item.quantity,
         image: item.image,
       })),
+      shippingAmount: shipping,
+      shippingZone: currentZone || "standard",
       totalAmount: total,
       paymentMethod: formData.paymentMethod,
     };
@@ -344,7 +374,7 @@ export default function CheckoutPage() {
             </div>
             <div>
               <span className="text-muted-foreground block">Total Amount Paid</span>
-              <strong className="text-primary font-black text-sm">${total.toFixed(2)}</strong>
+              <strong className="text-primary font-black text-sm">Rs. {Number(total).toLocaleString()}</strong>
             </div>
           </div>
         </Card>
@@ -521,12 +551,40 @@ export default function CheckoutPage() {
                       onChange={handleChange}
                       className="w-full pl-9 pr-8 py-2.5 bg-muted/40 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium appearance-none cursor-pointer text-xs"
                     >
-                      <option value="">-- Choose City ({cities.length}) --</option>
-                      {cities.map((ct) => (
-                        <option key={ct} value={ct}>
-                          {ct}
-                        </option>
-                      ))}
+                      <option value="">-- Choose Pakistan City ({cities.length}) --</option>
+                      <option value="Peshawar" className="font-bold text-emerald-700 bg-emerald-50">
+                        ⭐ Peshawar (FREE Delivery - Rs. 0)
+                      </option>
+                      {cities
+                        .filter(
+                          (ct) =>
+                            ct.toLowerCase() !==
+                            (storeSettings?.freeShippingCity || "peshawar").toLowerCase()
+                        )
+                        .map((ct) => {
+                          const zone = getShippingZoneForCity(
+                            ct,
+                            storeSettings?.freeShippingCity || "Peshawar",
+                            storeSettings?.customCityZones
+                          );
+                          const rate =
+                            zone === "near"
+                              ? storeSettings?.shippingRateNear ?? 250
+                              : zone === "far"
+                              ? storeSettings?.shippingRateFar ?? 500
+                              : storeSettings?.shippingRateMoreFar ?? 700;
+                          const zoneShort =
+                            zone === "near"
+                              ? "Near KPK/ISB"
+                              : zone === "far"
+                              ? "Punjab"
+                              : "Sindh/Balochistan";
+                          return (
+                            <option key={ct} value={ct}>
+                              {ct} ({zoneShort} - Rs. {rate})
+                            </option>
+                          );
+                        })}
                     </select>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-xs">▼</div>
                   </div>
@@ -550,6 +608,59 @@ export default function CheckoutPage() {
                   </p>
                 </div>
               </div>
+
+              {/* Dynamic Shipping Alert Badge */}
+              {formData.city ? (
+                isPeshawarFree ? (
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>🎉 Special Offer: 100% FREE Shipping applied for {formData.city} delivery!</span>
+                    </div>
+                    <span className="bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0">
+                      Rs. 0 Free
+                    </span>
+                  </div>
+                ) : (
+                  <div
+                    className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-between ${
+                      currentZone === "near"
+                        ? "bg-blue-50/80 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-950 dark:text-blue-200"
+                        : currentZone === "far"
+                        ? "bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-950 dark:text-amber-200"
+                        : "bg-purple-50/80 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800 text-purple-950 dark:text-purple-200"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Truck className="w-4 h-4 shrink-0 text-current" />
+                      <div>
+                        <div>
+                          🚚 Delivery to {formData.city} ({zoneDetails?.label || "Standard Rate"}):{" "}
+                          <span className="font-extrabold underline">Rs. {shipping}</span>
+                        </div>
+                        <p className="text-[10px] font-normal opacity-80 mt-0.5">
+                          {currentZone === "near" &&
+                            "Near Peshawar Region (KPK, Islamabad, Rawalpindi) • 1-2 Days Delivery"}
+                          {currentZone === "far" &&
+                            "Punjab, AJK & Gilgit-Baltistan Region • 2-3 Days Delivery"}
+                          {currentZone === "more_far" &&
+                            "Sindh & Balochistan Region • 3-5 Days Delivery"}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="bg-foreground text-background px-3 py-1 rounded-full text-[11px] font-black shrink-0 shadow-xs">
+                      Rs. {shipping}
+                    </span>
+                  </div>
+                )
+              ) : (
+                <div className="p-3 bg-muted/60 border border-border rounded-xl text-[11px] text-muted-foreground flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-primary shrink-0" />
+                  <span>
+                    Distance Rates: <strong>Peshawar FREE</strong> • Near KPK/ISB: <strong>Rs. {storeSettings?.shippingRateNear ?? 250}</strong> • Punjab: <strong>Rs. {storeSettings?.shippingRateFar ?? 500}</strong> • Sindh/Balochistan: <strong>Rs. {storeSettings?.shippingRateMoreFar ?? 700}</strong>
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -699,11 +810,11 @@ export default function CheckoutPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-foreground truncate">{item.name}</div>
                       <div className="text-muted-foreground text-[11px]">
-                        Qty: {item.quantity} × ${item.price}
+                        Qty: {item.quantity} × Rs. {Number(item.price).toLocaleString()}
                       </div>
                     </div>
                     <div className="font-black text-foreground shrink-0">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      Rs. {(Number(item.price) * item.quantity).toLocaleString()}
                     </div>
                   </div>
                 ))}
@@ -713,21 +824,41 @@ export default function CheckoutPage() {
               <div className="border-t border-border pt-4 space-y-2 text-xs">
                 <div className="flex justify-between text-muted-foreground">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-foreground">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-foreground">Rs. {Number(subtotal).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-muted-foreground">
                   <span>Shipping</span>
                   <span className="font-semibold text-foreground">
-                    {shipping === 0 ? <span className="text-emerald-600 font-extrabold">FREE</span> : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? (
+                      <span className="text-emerald-600 font-extrabold flex items-center gap-1">
+                        <span>FREE</span>
+                        {isPeshawarFree && (
+                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
+                            {freeCityName}
+                          </span>
+                        )}
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <span>Rs. {shipping}</span>
+                        {zoneDetails && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border bg-muted/60 text-muted-foreground">
+                            {zoneDetails.label.split(" ")[0]}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </span>
                 </div>
-                <div className="flex justify-between text-muted-foreground">
-                  <span>Est. Tax (8%)</span>
-                  <span className="font-semibold text-foreground">${tax.toFixed(2)}</span>
-                </div>
+                {taxRate > 0 && (
+                  <div className="flex justify-between text-muted-foreground">
+                    <span>Est. Tax ({taxRate}%)</span>
+                    <span className="font-semibold text-foreground">Rs. {tax.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="border-t border-border pt-3 flex justify-between items-baseline text-sm">
                   <span className="font-bold text-foreground">Total</span>
-                  <span className="font-black text-xl text-primary">${total.toFixed(2)}</span>
+                  <span className="font-black text-xl text-primary">Rs. {Number(total).toLocaleString()}</span>
                 </div>
               </div>
 
@@ -759,7 +890,7 @@ export default function CheckoutPage() {
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <CheckCircle2 className="w-5 h-5" />
-                    <span>Place Order (${total.toFixed(2)})</span>
+                    <span>Place Order (Rs. {Number(total).toLocaleString()})</span>
                   </div>
                 )}
               </Button>

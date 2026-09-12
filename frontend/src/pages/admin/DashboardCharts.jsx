@@ -329,7 +329,7 @@ const DashboardCharts = ({ orders = [], products = [], customers = [] }) => {
               Selected Period Revenue
             </span>
             <div className="text-lg font-black text-gray-900">
-              ${periodStats.totalRev.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs. {periodStats.totalRev.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
             </div>
           </div>
           <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 space-y-1">
@@ -345,7 +345,7 @@ const DashboardCharts = ({ orders = [], products = [], customers = [] }) => {
               Avg Order Value (AOV)
             </span>
             <div className="text-lg font-black text-emerald-600">
-              ${periodStats.avgOrderVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              Rs. {periodStats.avgOrderVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
             </div>
           </div>
           <div className="bg-slate-50 border border-slate-100 rounded-2xl p-3.5 space-y-1">
@@ -394,7 +394,7 @@ const DashboardCharts = ({ orders = [], products = [], customers = [] }) => {
                   fontFamily="monospace"
                 >
                   {metricView === 'revenue'
-                    ? `$${tick.val >= 1000 ? (tick.val / 1000).toFixed(1) + 'k' : tick.val}`
+                    ? `Rs. ${tick.val >= 1000 ? (tick.val / 1000).toFixed(1) + 'k' : tick.val}`
                     : tick.val}
                 </text>
               </g>
@@ -486,7 +486,7 @@ const DashboardCharts = ({ orders = [], products = [], customers = [] }) => {
               <div className="pt-1 flex justify-between gap-4">
                 <span className="text-slate-400">Total Revenue:</span>
                 <span className="font-extrabold text-emerald-400 font-mono">
-                  ${points[hoveredPointIndex].data.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  Rs. {points[hoveredPointIndex].data.revenue.toLocaleString('en-US', { minimumFractionDigits: 0 })}
                 </span>
               </div>
               <div className="flex justify-between gap-4">
@@ -611,7 +611,7 @@ const DashboardCharts = ({ orders = [], products = [], customers = [] }) => {
                     <div className="flex justify-between text-xs font-medium">
                       <span className="text-gray-800 font-semibold">{cat.category}</span>
                       <span className="text-gray-500 font-mono">
-                        {cat.count} items <span className="text-emerald-600 font-bold">(${cat.totalValue.toLocaleString()})</span>
+                        {cat.count} items <span className="text-emerald-600 font-bold">(Rs. {cat.totalValue.toLocaleString()})</span>
                       </span>
                     </div>
                     <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">

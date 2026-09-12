@@ -194,11 +194,11 @@ export default function ProductCard({ product }) {
         <div className="space-y-3 pt-1">
           <div className="flex items-baseline gap-2">
             <span className="text-xl font-black text-foreground tracking-tight">
-              ${product.price.toFixed(2)}
+              Rs. {Number(product.price).toLocaleString()}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (
               <span className="text-sm font-medium text-muted-foreground line-through">
-                ${product.originalPrice.toFixed(2)}
+                Rs. {Number(product.originalPrice).toLocaleString()}
               </span>
             )}
           </div>

@@ -206,7 +206,7 @@ export default function ShopPage() {
                     </p>
                     <div className="flex items-center justify-between pt-1">
                       <span className="text-base font-extrabold text-foreground">
-                        ${Number(product.price || 0).toFixed(2)}
+                        Rs. {Number(product.price || 0).toLocaleString()}
                       </span>
                       <button
                         onClick={() => addToCart(product)}

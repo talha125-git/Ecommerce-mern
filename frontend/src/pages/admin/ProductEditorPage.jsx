@@ -902,20 +902,20 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
               {/* Selling Price */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-gray-700">
-                  Selling Price ($) *
+                  Selling Price (PKR / Rs.) *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">
-                    $
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">
+                    Rs.
                   </span>
                   <input
                     type="number"
                     step="0.01"
                     required
-                    placeholder="99.00"
+                    placeholder="2500"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full pl-8 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
                   />
                 </div>
               </div>
@@ -923,19 +923,19 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
               {/* Compare At / Original Price */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-gray-700">
-                  Original Price ($) (Optional)
+                  Original Price (PKR / Rs.) (Optional)
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-gray-400">
-                    $
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">
+                    Rs.
                   </span>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="129.00"
+                    placeholder="3500"
                     value={formData.originalPrice}
                     onChange={(e) => setFormData({ ...formData, originalPrice: e.target.value })}
-                    className="w-full pl-8 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
+                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
                   />
                 </div>
                 {discountPercentage > 0 && (
@@ -1153,11 +1153,11 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
 
                 <div className="flex items-baseline gap-2 pt-1">
                   <span className="text-base font-black text-gray-900">
-                    ${formData.price ? Number(formData.price).toFixed(2) : "0.00"}
+                    Rs. {formData.price ? Number(formData.price).toLocaleString() : "0"}
                   </span>
                   {formData.originalPrice && Number(formData.originalPrice) > Number(formData.price) && (
                     <span className="text-xs text-gray-400 line-through">
-                      ${Number(formData.originalPrice).toFixed(2)}
+                      Rs. {Number(formData.originalPrice).toLocaleString()}
                     </span>
                   )}
                 </div>

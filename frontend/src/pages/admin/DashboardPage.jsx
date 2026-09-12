@@ -9,6 +9,7 @@ import ProductsTab from './ProductsTab';
 import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
 import SettingsTab from './SettingsTab';
+import ShippingTab from './ShippingTab';
 import SliderTab from './Setup/SliderTab';
 import CategoryTab from './Setup/CategoryTab';
 import AboutTab from './Setup/AboutTab';
@@ -228,8 +229,8 @@ const DashboardPage = () => {
             {statsLoading ? (
               <div className="h-8 w-28 bg-gray-100 animate-pulse rounded-lg" />
             ) : (
-              `$${stats.totalRevenue.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
+              `Rs. ${stats.totalRevenue.toLocaleString("en-US", {
+                minimumFractionDigits: 0,
                 maximumFractionDigits: 2,
               })}`
             )}
@@ -356,7 +357,7 @@ const DashboardPage = () => {
                       {ord.items ? ord.items.length : 0} item(s)
                     </td>
                     <td className="py-3 px-2 font-bold font-mono text-emerald-600">
-                      ${Number(ord.totalAmount || 0).toFixed(2)}
+                      Rs. {Number(ord.totalAmount || 0).toLocaleString()}
                     </td>
                     <td className="py-3 px-2">
                       <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border ${getStatusBadgeClass(ord.status || 'Pending')}`}>
@@ -414,6 +415,8 @@ const DashboardPage = () => {
         return <OrdersTab />;
       case 'customers':
         return <CustomersTab />;
+      case 'shipping':
+        return <ShippingTab />;
       case 'settings':
         return <SettingsTab />;
       default:

@@ -54,7 +54,7 @@ export default function CartTab({ cart, updateQuantity, removeFromCart, clearCar
                     )}
                     <div>
                       <h4 className="font-bold text-xs text-gray-900 line-clamp-1">{item.name}</h4>
-                      <p className="text-xs text-gray-500">${unitPrice.toFixed(2)} each</p>
+                      <p className="text-xs text-gray-500">Rs. {Number(unitPrice).toLocaleString()} each</p>
                     </div>
                   </div>
 
@@ -76,8 +76,8 @@ export default function CartTab({ cart, updateQuantity, removeFromCart, clearCar
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
-                    <span className="font-bold text-xs text-gray-900 w-16 text-right">
-                      ${totalItemPrice.toFixed(2)}
+                    <span className="font-bold text-xs text-gray-900 w-20 text-right">
+                      Rs. {Number(totalItemPrice).toLocaleString()}
                     </span>
                     <button
                       onClick={() => removeFromCart(itemId)}
@@ -95,7 +95,7 @@ export default function CartTab({ cart, updateQuantity, removeFromCart, clearCar
           <div className="border border-gray-200 rounded-2xl p-4 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Subtotal</p>
-              <p className="text-2xl font-black text-gray-900">${cartSubtotal.toFixed(2)}</p>
+              <p className="text-2xl font-black text-gray-900">Rs. {Number(cartSubtotal).toLocaleString()}</p>
               <p className="text-[11px] text-emerald-600 font-medium">★ Saved permanently in your account cart</p>
             </div>
             <Button onClick={() => navigate("/checkout")} className="rounded-xl text-xs gap-1.5 font-bold cursor-pointer w-full sm:w-auto">
