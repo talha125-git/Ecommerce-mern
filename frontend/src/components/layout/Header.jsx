@@ -33,20 +33,15 @@ const NAV_CATEGORIES = [
         links: [
           { name: "All New Releases", href: "/shop?category=new", badge: "NEW" },
           { name: "Trending This Week", href: "/shop?category=trending", badge: "HOT" },
-          { name: "Fresh Sneaker Drops", href: "/shop?category=casual" },
-          { name: "High-Performance Runners", href: "/shop?category=running" },
-          { name: "Retro Court Editions", href: "/shop?category=retro" },
           { name: "Best Sellers 2026", href: "/shop?category=bestseller", badge: "POPULAR" },
         ],
       },
       {
-        title: "SHOP BY GENDER & AGE",
+        title: "SHOP BY GENDER",
         links: [
           { name: "Men's New Arrivals", href: "/shop?category=men" },
           { name: "Women's Fresh Drops", href: "/shop?category=women" },
           { name: "Kids' Latest Releases", href: "/shop?category=kids" },
-          { name: "New Footwear Accessories", href: "/shop?category=accessories" },
-          { name: "Exclusive Online Editions", href: "/shop?category=new" },
         ],
       },
     ],
@@ -70,19 +65,14 @@ const NAV_CATEGORIES = [
         links: [
           { name: "Performance Running Shoes", href: "/shop?category=running", badge: "POPULAR" },
           { name: "Everyday Casual Sneakers", href: "/shop?category=casual" },
-          { name: "High-Top Streetwear", href: "/shop?category=high top" },
           { name: "Formal Loafers & Dress Shoes", href: "/shop?category=casual" },
-          { name: "Comfort Slides & Chappals", href: "/shop?category=casual" },
-          { name: "Retro Court Classics", href: "/shop?category=retro" },
         ],
       },
       {
         title: "BY ACTIVITY & FIT",
         links: [
           { name: "Gym & Cross-Training", href: "/shop?category=training" },
-          { name: "Marathon & Long Distance", href: "/shop?category=running" },
-          { name: "Office & Daily Commute", href: "/shop?category=casual" },
-          { name: "Trail & Outdoor Hiking", href: "/shop?category=performance" },
+          { name: "Walking & Daily Commute", href: "/shop?category=casual" },
           { name: "Wide-Fit Comfort Soles", href: "/shop?category=men" },
         ],
       },
@@ -107,20 +97,15 @@ const NAV_CATEGORIES = [
         links: [
           { name: "Everyday Sneakers", href: "/shop?category=casual", badge: "HOT" },
           { name: "Running & Training Kicks", href: "/shop?category=running" },
-          { name: "Chunky Platform Soles", href: "/shop?category=lifestyle" },
           { name: "Casual Flats & Loafers", href: "/shop?category=women" },
-          { name: "Slip-On Walking Shoes", href: "/shop?category=casual" },
-          { name: "Athletic Slides & Sandals", href: "/shop?category=women" },
         ],
       },
       {
-        title: "LIFESTYLE & ACTIVITY",
+        title: "LIFESTYLE & COMFORT",
         links: [
           { name: "Yoga & Studio Fitness", href: "/shop?category=training" },
-          { name: "Lightweight Commuter", href: "/shop?category=casual" },
-          { name: "Minimalist Pastels", href: "/shop?category=lifestyle", badge: "NEW" },
+          { name: "Chunky Platform Soles", href: "/shop?category=lifestyle", badge: "NEW" },
           { name: "Cloud-Comfort Cushioning", href: "/shop?category=running" },
-          { name: "Weekend Lifestyle Shoes", href: "/shop?category=casual" },
         ],
       },
     ],
@@ -140,29 +125,18 @@ const NAV_CATEGORIES = [
     isSpecial: false,
     columns: [
       {
-        title: "BOYS FOOTWEAR",
+        title: "BOYS & GIRLS",
         links: [
           { name: "Boys Active Sneakers", href: "/shop?category=kids", badge: "POPULAR" },
-          { name: "Running & Gym Shoes", href: "/shop?category=kids" },
-          { name: "Slip-On Casuals", href: "/shop?category=kids" },
-          { name: "High-Grip Play Soles", href: "/shop?category=kids" },
-        ],
-      },
-      {
-        title: "GIRLS FOOTWEAR",
-        links: [
           { name: "Girls Fashion Sneakers", href: "/shop?category=kids" },
-          { name: "Ballerinas & Flat Shoes", href: "/shop?category=kids", badge: "CUTE" },
-          { name: "Light-Up & Sparkle Soles", href: "/shop?category=kids" },
-          { name: "Everyday Comfort Loafers", href: "/shop?category=kids" },
+          { name: "Light-Up & Sparkle Soles", href: "/shop?category=kids", badge: "CUTE" },
         ],
       },
       {
-        title: "BY AGE & FIT",
+        title: "AGE & FASTENERS",
         links: [
           { name: "Toddlers (Sizes 22-27)", href: "/shop?category=kids" },
-          { name: "Young Kids (Sizes 28-34)", href: "/shop?category=kids" },
-          { name: "Juniors (Sizes 35-39)", href: "/shop?category=kids" },
+          { name: "Juniors (Sizes 28-35)", href: "/shop?category=kids" },
           { name: "Easy-Velcro Fasteners", href: "/shop?category=kids", badge: "EASY" },
         ],
       },
@@ -183,23 +157,19 @@ const NAV_CATEGORIES = [
     isSpecial: false,
     columns: [
       {
-        title: "SHOE CARE & CLEANING",
+        title: "SHOE CARE",
         links: [
           { name: "Sneaker Foam Cleaner", href: "/shop?category=accessories", badge: "HOT" },
           { name: "Water & Stain Shield Spray", href: "/shop?category=accessories" },
-          { name: "Leather Wax & Conditioner", href: "/shop?category=accessories" },
           { name: "Deep-Clean Bristle Brush", href: "/shop?category=accessories" },
-          { name: "Shoe Deodorizer & Freshener", href: "/shop?category=accessories" },
         ],
       },
       {
-        title: "ESSENTIALS & COMFORT",
+        title: "ESSENTIALS",
         links: [
           { name: "Memory Foam Insoles", href: "/shop?category=accessories", badge: "BEST" },
-          { name: "Athletic Cushioned Crew Socks", href: "/shop?category=accessories" },
-          { name: "Invisible No-Show Socks", href: "/shop?category=accessories" },
+          { name: "Athletic Cushioned Socks", href: "/shop?category=accessories" },
           { name: "Elastic & Flat Laces", href: "/shop?category=accessories" },
-          { name: "Gym Duffels & Backpacks", href: "/shop?category=accessories" },
         ],
       },
     ],
@@ -224,18 +194,14 @@ const NAV_CATEGORIES = [
           { name: "Boys Black Uniform Shoes", href: "/shop?category=school", badge: "TOP PICK" },
           { name: "Girls Black Strap Shoes", href: "/shop?category=school" },
           { name: "White PT & Sports Sneakers", href: "/shop?category=school", badge: "MUST HAVE" },
-          { name: "Durable Oxford Lace-Ups", href: "/shop?category=school" },
-          { name: "Comfort Slip-On Loafers", href: "/shop?category=school" },
         ],
       },
       {
-        title: "CLOSURE & COMFORT",
+        title: "COMFORT & FIT",
         links: [
           { name: "Easy Hook & Loop (Velcro)", href: "/shop?category=school", badge: "EASY WEAR" },
-          { name: "Classic Formal Lace-Up", href: "/shop?category=school" },
           { name: "Anti-Scuff Genuine Leather", href: "/shop?category=school" },
           { name: "Non-Marking Traction Soles", href: "/shop?category=school" },
-          { name: "Orthopedic Breathable Insoles", href: "/shop?category=school" },
         ],
       },
     ],
@@ -546,11 +512,11 @@ export default function Header() {
                 <div
                   className={`absolute top-full ${getDropdownAlignment(
                     cat.id
-                  )} pt-2.5 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
-                  style={{ minWidth: "680px", maxWidth: "90vw" }}
+                  )} pt-3 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
+                  style={{ minWidth: "600px", maxWidth: "90vw" }}
                 >
-                  <div className="bg-white/98 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-2xl p-6 ring-1 ring-black/5">
-                    <div className="grid grid-cols-12 gap-6">
+                  <div className="bg-white/98 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-2xl p-5 ring-1 ring-black/5">
+                    <div className="grid grid-cols-12 gap-5">
                       {/* Subcategories Section */}
                       <div
                         className={`grid gap-6 ${

@@ -1,51 +1,44 @@
 ================================================================================
-NOTE 18: HEADER REDESIGN & SMOOTH ON-HOVER MEGA-DROPDOWNS
+NOTE 18: HEADER REDESIGN & STREAMLINED SMOOTH MEGA-DROPDOWNS
 ================================================================================
 
 1. OVERVIEW & OBJECTIVE
-   - Redesigned the main storefront navigation header to match the reference
-     category layout:
+   - Redesigned the storefront navigation header matching the reference category bar:
      [ NEW ARRIVALS | MEN | WOMEN | KIDS | ACCESSORIES | SCHOOL SHOES ]
-   - Highlighted "SCHOOL SHOES" with a distinct burnt-orange/rust accent (#C84B31).
-   - Implemented silky-smooth on-hover dropdown mega-menus for every category with
-     zero-flicker transitions (fade-in, slide-down, safe hover bridge).
-   - Connected all navigation category and subcategory links to the shop page with
-     live query filtering (?category=... and ?search=...).
+   - Highlighted "SCHOOL SHOES" with a prominent rust/burnt-orange accent (#C84B31).
+   - Streamlined dropdown menus: Reduced the number of subcategory links to 3 top,
+     curated items per column for a clean, concise, and lightweight visual profile.
+   - Positioned dropdowns with comfortable breathing room (pt-3) and zero-flicker
+     smooth on-hover transitions.
+   - Connected all navigation links to /shop?category=... and /shop?search=... with
+     live filtering.
 
 2. KEY CHANGES & IMPLEMENTATION DETAILS
 
    a) frontend/src/components/layout/Header.jsx
-      - Configured 6 primary categories:
-        1. NEW ARRIVALS: Trending releases, what's new, best sellers, season drops.
-        2. MEN: Running, casual, high-top, loafers, slides, workout.
-        3. WOMEN: Sneakers, chunky soles, flats, yoga, pastel collections.
-        4. KIDS: Boys footwear, girls ballerinas/sneakers, toddler sizes, velcro.
-        5. ACCESSORIES: Sneaker cleaner foam, protector spray, memory foam insoles, socks.
-        6. SCHOOL SHOES: Black uniform shoes, white PT sports shoes, scuff-resistant
-           leather, velcro & lace-up closures. Styled in rust (#C84B31).
-      - Smooth On-Hover Animation:
-        - CSS transition: opacity-0 invisible -translate-y-2 group-hover:opacity-100
+      - Streamlined NAV_CATEGORIES to 3 top items per section:
+        1. NEW ARRIVALS: What's New (All New Releases, Trending This Week, Best Sellers)
+           + Shop by Gender (Men's, Women's, Kids') + Season Drops Card.
+        2. MEN: Footwear Styles (Running Shoes, Casual Sneakers, Formal Loafers)
+           + By Activity (Gym & Training, Walking & Commute, Wide-Fit) + Hero Card.
+        3. WOMEN: Popular Styles (Everyday Sneakers, Running & Fitness, Flats & Loafers)
+           + Lifestyle (Yoga & Studio, Chunky Platforms, Cloud-Comfort) + Favorite Card.
+        4. KIDS: Boys & Girls (Boys Active, Girls Fashion, Light-Up)
+           + Age & Fasteners (Toddlers, Juniors, Easy-Velcro) + Active Kids Card.
+        5. ACCESSORIES: Shoe Care (Foam Cleaner, Water Shield, Bristle Brush)
+           + Essentials (Memory Foam Insoles, Cushioned Socks, Laces) + Care Kit Card.
+        6. SCHOOL SHOES: Uniform Footwear (Boys Black Uniform, Girls Strap, White PT)
+           + Comfort & Fit (Easy-Velcro, Anti-Scuff Leather, Traction Soles) + Uniform Card.
+      - Dropdown layout optimizations:
+        - Width adjusted to 600px and padding to p-5 for a compact, balanced look.
+        - Spacing adjusted to pt-3 for a smooth, relaxed drop-in below the nav bar.
+        - Transition: opacity-0 invisible -translate-y-2 to group-hover:opacity-100
           group-hover:visible group-hover:translate-y-0 duration-300 ease-out.
-        - Hover bridge (pt-2.5 padding on dropdown container) ensures cursor travels
-          freely from nav link to menu without flickering or closing prematurely.
-        - Smart alignment (left, center, or right) prevents off-screen overflow on
-          various screen resolutions.
-        - Each dropdown features categorized sub-links with badges ("HOT", "NEW",
-          "POPULAR", "MUST HAVE", "EASY WEAR") and a spotlight promo card with CTA.
-      - Preserved core header utility:
-        - Brand logo with dynamic fallback to settings.storeName.
-        - Search bar with instant query submission to /shop?search=...
-        - Shopping cart button with animated counter pill badge.
-        - Sign In dropdown (User Login / Admin Login) and User Dashboard pill.
-      - Mobile Drawer:
-        - Responsive slide-in mobile navigation menu with expandable accordion
-          sections for each category, quick links, and account controls.
 
    b) frontend/src/pages/user/ShopPage.jsx
-      - Added react-router-dom useSearchParams support.
-      - Automatically reads ?category=... and ?search=... from URL parameters.
-      - Intelligently matches category, subcategories, product name, and description.
+      - Reads query params (?category=... and ?search=...) via useSearchParams.
+      - Filters product list dynamically upon clicking any dropdown item.
 
 3. BUILD & VERIFICATION
-   - Frontend built with Vite: 0 errors, compiled in 3.10s.
+   - Frontend built successfully with Vite (1905 modules transformed, 0 errors).
 ================================================================================
