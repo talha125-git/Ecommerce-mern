@@ -75,12 +75,13 @@ export default function ShippingTab() {
     setFormData((prev) => ({
       ...prev,
       freeShippingCity: 'Peshawar',
+      shippingRatePeshawar: 0,
       shippingRateNear: 250,
       shippingRateFar: 500,
       shippingRateMoreFar: 700,
       flatShippingRate: 250
     }));
-    showNotification('success', 'Reset rates to recommended defaults: Near Rs. 250 • Far Rs. 500 • More Far Rs. 700');
+    showNotification('success', 'Reset rates to recommended defaults: Peshawar Rs. 0 (Free) • Near Rs. 250 • Far Rs. 500 • More Far Rs. 700');
   };
 
   // Filtered Cities List for Explorer
@@ -88,7 +89,7 @@ export default function ShippingTab() {
     return PAKISTAN_CITIES.map((city) => {
       const zone = getShippingZoneForCity(city, formData.freeShippingCity || 'Peshawar', formData.customCityZones || {});
       let rate = 0;
-      if (zone === 'free') rate = 0;
+      if (zone === 'free') rate = formData.shippingRatePeshawar ?? 0;
       else if (zone === 'near') rate = formData.shippingRateNear ?? 250;
       else if (zone === 'far') rate = formData.shippingRateFar ?? 500;
       else if (zone === 'more_far') rate = formData.shippingRateMoreFar ?? 700;
@@ -192,50 +193,149 @@ export default function ShippingTab() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* TIER 0: PESHAWAR FREE */}
-          <div className="bg-white border-2 border-emerald-500/80 rounded-2xl p-5 shadow-xs space-y-4 relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-xs">
-              100% Free
-            </div>
+          {/* TIER 0: PESHAWAR / FREE CITY */}
+          <div
+            className={`bg-white rounded-2xl p-5 shadow-xs space-y-4 relative overflow-hidden transition ${
+              Number(formData.shippingRatePeshawar ?? 0) === 0
+                ? 'border-2 border-emerald-500/90 shadow-emerald-500/5'
+                : 'border border-gray-200 hover:border-emerald-400'
+            }`}
+          >
+            {Number(formData.shippingRatePeshawar ?? 0) === 0 && (
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-xs">
+                100% Free
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-1.5 text-xs font-black text-emerald-700 uppercase tracking-wider">
-                <MapPin className="w-3.5 h-3.5" /> Tier 0: Free City
+                <MapPin className="w-3.5 h-3.5" /> Tier 0: {formData.freeShippingCity || "Peshawar"}
               </div>
-              <p className="text-2xl font-black text-emerald-600 mt-1">Rs. 0</p>
-              <p className="text-[11px] text-gray-500 mt-0.5">Free delivery for residents</p>
+              <div className="flex items-baseline gap-1 mt-1">
+                <span
+                  className={`text-2xl font-black ${
+                    Number(formData.shippingRatePeshawar ?? 0) === 0
+                      ? 'text-emerald-600'
+                      : 'text-gray-900'
+                  }`}
+                >
+                  Rs. {formData.shippingRatePeshawar ?? 0}
+                </span>
+                {Number(formData.shippingRatePeshawar ?? 0) === 0 && (
+                  <span className="text-xs font-black text-emerald-600 ml-1 uppercase">Free</span>
+                )}
+              </div>
+              <p className="text-[11px] text-gray-500 mt-0.5">Origin / Base Store City</p>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-gray-100">
-              <label className="block text-[11px] font-bold text-gray-700">Free Shipping City</label>
-              <input
-                type="text"
-                value={formData.freeShippingCity ?? 'Peshawar'}
-                onChange={(e) => handleTextChange('freeShippingCity', e.target.value)}
-                placeholder="Peshawar"
-                className="w-full px-3 py-2 text-xs bg-emerald-50/50 border border-emerald-200 rounded-xl font-bold text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+            <div className="space-y-3 pt-2 border-t border-gray-100">
+              {/* City Name input */}
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-gray-700">City Name</label>
+                <input
+                  type="text"
+                  value={formData.freeShippingCity ?? 'Peshawar'}
+                  onChange={(e) => handleTextChange('freeShippingCity', e.target.value)}
+                  placeholder="Peshawar"
+                  className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              {/* Delivery Rate input + Free Offer Toggle */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleRateChange(
+                        'shippingRatePeshawar',
+                        Number(formData.shippingRatePeshawar ?? 0) === 0 ? 100 : 0
+                      )
+                    }
+                    className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md transition cursor-pointer ${
+                      Number(formData.shippingRatePeshawar ?? 0) === 0
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700'
+                    }`}
+                  >
+                    {Number(formData.shippingRatePeshawar ?? 0) === 0 ? '✓ Free Active' : '⚡ Make Free (Rs. 0)'}
+                  </button>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="10"
+                    value={formData.shippingRatePeshawar ?? 0}
+                    onChange={(e) => handleRateChange('shippingRatePeshawar', e.target.value)}
+                    placeholder="0"
+                    className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              </div>
             </div>
             <p className="text-[10px] text-gray-400 leading-tight">
-              Selected city automatically gets Rs. 0 shipping at checkout.
+              {Number(formData.shippingRatePeshawar ?? 0) === 0
+                ? `${formData.freeShippingCity || 'Peshawar'} residents receive 100% free delivery.`
+                : `${formData.freeShippingCity || 'Peshawar'} residents charged Rs. ${formData.shippingRatePeshawar}.`}
             </p>
           </div>
 
           {/* TIER 1: NEAR TO PESHAWAR */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4 hover:border-blue-400 transition">
+          <div
+            className={`bg-white rounded-2xl p-5 shadow-xs space-y-4 relative overflow-hidden transition ${
+              Number(formData.shippingRateNear ?? 250) === 0
+                ? 'border-2 border-emerald-500/90 shadow-emerald-500/5'
+                : 'border border-gray-200 hover:border-blue-400'
+            }`}
+          >
+            {Number(formData.shippingRateNear ?? 250) === 0 && (
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-xs">
+                100% Free
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-1.5 text-xs font-black text-blue-700 uppercase tracking-wider">
                 <Truck className="w-3.5 h-3.5" /> Tier 1: Near {formData.freeShippingCity || "Peshawar"}
               </div>
               <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-black text-gray-900">
+                <span
+                  className={`text-2xl font-black ${
+                    Number(formData.shippingRateNear ?? 250) === 0
+                      ? 'text-emerald-600'
+                      : 'text-gray-900'
+                  }`}
+                >
                   Rs. {formData.shippingRateNear ?? 250}
                 </span>
+                {Number(formData.shippingRateNear ?? 250) === 0 && (
+                  <span className="text-xs font-black text-emerald-600 ml-1 uppercase">Free</span>
+                )}
               </div>
               <p className="text-[11px] text-gray-500 mt-0.5">KPK, Islamabad, Rawalpindi</p>
             </div>
 
             <div className="space-y-1.5 pt-2 border-t border-gray-100">
-              <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleRateChange(
+                      'shippingRateNear',
+                      Number(formData.shippingRateNear ?? 250) === 0 ? 250 : 0
+                    )
+                  }
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md transition cursor-pointer ${
+                    Number(formData.shippingRateNear ?? 250) === 0
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-blue-50 hover:bg-blue-100 text-blue-700'
+                  }`}
+                >
+                  {Number(formData.shippingRateNear ?? 250) === 0 ? '✓ Free Active' : '⚡ Make Free (Rs. 0)'}
+                </button>
+              </div>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
                 <input
@@ -255,21 +355,59 @@ export default function ShippingTab() {
           </div>
 
           {/* TIER 2: FAR FROM PESHAWAR */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4 hover:border-amber-400 transition">
+          <div
+            className={`bg-white rounded-2xl p-5 shadow-xs space-y-4 relative overflow-hidden transition ${
+              Number(formData.shippingRateFar ?? 500) === 0
+                ? 'border-2 border-emerald-500/90 shadow-emerald-500/5'
+                : 'border border-gray-200 hover:border-amber-400'
+            }`}
+          >
+            {Number(formData.shippingRateFar ?? 500) === 0 && (
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-xs">
+                100% Free
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-1.5 text-xs font-black text-amber-700 uppercase tracking-wider">
                 <Truck className="w-3.5 h-3.5" /> Tier 2: Far Away
               </div>
               <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-black text-gray-900">
+                <span
+                  className={`text-2xl font-black ${
+                    Number(formData.shippingRateFar ?? 500) === 0
+                      ? 'text-emerald-600'
+                      : 'text-gray-900'
+                  }`}
+                >
                   Rs. {formData.shippingRateFar ?? 500}
                 </span>
+                {Number(formData.shippingRateFar ?? 500) === 0 && (
+                  <span className="text-xs font-black text-emerald-600 ml-1 uppercase">Free</span>
+                )}
               </div>
               <p className="text-[11px] text-gray-500 mt-0.5">Punjab &amp; Central Pakistan</p>
             </div>
 
             <div className="space-y-1.5 pt-2 border-t border-gray-100">
-              <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleRateChange(
+                      'shippingRateFar',
+                      Number(formData.shippingRateFar ?? 500) === 0 ? 500 : 0
+                    )
+                  }
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md transition cursor-pointer ${
+                    Number(formData.shippingRateFar ?? 500) === 0
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-amber-50 hover:bg-amber-100 text-amber-700'
+                  }`}
+                >
+                  {Number(formData.shippingRateFar ?? 500) === 0 ? '✓ Free Active' : '⚡ Make Free (Rs. 0)'}
+                </button>
+              </div>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
                 <input
@@ -289,21 +427,59 @@ export default function ShippingTab() {
           </div>
 
           {/* TIER 3: MORE FAR AWAY */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4 hover:border-rose-400 transition">
+          <div
+            className={`bg-white rounded-2xl p-5 shadow-xs space-y-4 relative overflow-hidden transition ${
+              Number(formData.shippingRateMoreFar ?? 700) === 0
+                ? 'border-2 border-emerald-500/90 shadow-emerald-500/5'
+                : 'border border-gray-200 hover:border-rose-400'
+            }`}
+          >
+            {Number(formData.shippingRateMoreFar ?? 700) === 0 && (
+              <div className="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-xs">
+                100% Free
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-1.5 text-xs font-black text-rose-700 uppercase tracking-wider">
                 <Truck className="w-3.5 h-3.5" /> Tier 3: More Far Away
               </div>
               <div className="flex items-baseline gap-1 mt-1">
-                <span className="text-2xl font-black text-gray-900">
+                <span
+                  className={`text-2xl font-black ${
+                    Number(formData.shippingRateMoreFar ?? 700) === 0
+                      ? 'text-emerald-600'
+                      : 'text-gray-900'
+                  }`}
+                >
                   Rs. {formData.shippingRateMoreFar ?? 700}
                 </span>
+                {Number(formData.shippingRateMoreFar ?? 700) === 0 && (
+                  <span className="text-xs font-black text-emerald-600 ml-1 uppercase">Free</span>
+                )}
               </div>
               <p className="text-[11px] text-gray-500 mt-0.5">Sindh, Balochistan &amp; South</p>
             </div>
 
             <div className="space-y-1.5 pt-2 border-t border-gray-100">
-              <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-gray-700">Delivery Rate (PKR)</label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleRateChange(
+                      'shippingRateMoreFar',
+                      Number(formData.shippingRateMoreFar ?? 700) === 0 ? 700 : 0
+                    )
+                  }
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md transition cursor-pointer ${
+                    Number(formData.shippingRateMoreFar ?? 700) === 0
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-rose-50 hover:bg-rose-100 text-rose-700'
+                  }`}
+                >
+                  {Number(formData.shippingRateMoreFar ?? 700) === 0 ? '✓ Free Active' : '⚡ Make Free (Rs. 0)'}
+                </button>
+              </div>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">Rs.</span>
                 <input

@@ -1,3 +1,3 @@
 git add .
-git commit -m "feat: make shipping subtitle and origin labels fully dynamic based on inputs"
+git commit -m "feat: add delivery price input for peshawar and free offer tags/toggles for all shipping tiers"
 git push origin main

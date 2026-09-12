@@ -588,27 +588,53 @@ export default function SettingsTab() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Free Shipping City */}
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center justify-between">
-              <span>Free City (Peshawar)</span>
-              <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                Rs. 0 (Free)
-              </span>
-            </label>
-            <input
-              type="text"
-              value={formData.freeShippingCity ?? "Peshawar"}
-              onChange={(e) => handleInputChange("freeShippingCity", e.target.value)}
-              placeholder="Peshawar"
-              className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
-            />
+          {/* Free Shipping City & Rate */}
+          <div className="space-y-2">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                <span>City Name</span>
+                {Number(formData.shippingRatePeshawar ?? 0) === 0 && (
+                  <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                    100% Free
+                  </span>
+                )}
+              </label>
+              <input
+                type="text"
+                value={formData.freeShippingCity ?? "Peshawar"}
+                onChange={(e) => handleInputChange("freeShippingCity", e.target.value)}
+                placeholder="Peshawar"
+                className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+                <span>{formData.freeShippingCity || "Peshawar"} Rate (PKR)</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="10"
+                  value={formData.shippingRatePeshawar ?? 0}
+                  onChange={(e) => handleInputChange("shippingRatePeshawar", Number(e.target.value))}
+                  placeholder="0"
+                  className="w-full pl-9 pr-3 py-2 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Near Rate */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
-              <span>Near Peshawar (KPK)</span>
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center justify-between">
+              <span>Near {formData.freeShippingCity || "Peshawar"} (KPK)</span>
+              {Number(formData.shippingRateNear ?? 250) === 0 && (
+                <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  Free
+                </span>
+              )}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
@@ -626,8 +652,13 @@ export default function SettingsTab() {
 
           {/* Far Rate */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center justify-between">
               <span>Far (Punjab)</span>
+              {Number(formData.shippingRateFar ?? 500) === 0 && (
+                <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  Free
+                </span>
+              )}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
@@ -645,8 +676,13 @@ export default function SettingsTab() {
 
           {/* More Far Rate */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1.5">
+            <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center justify-between">
               <span>More Far (Sindh/Balochistan)</span>
+              {Number(formData.shippingRateMoreFar ?? 700) === 0 && (
+                <span className="text-[10px] text-emerald-700 font-extrabold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  Free
+                </span>
+              )}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">Rs.</span>
@@ -675,11 +711,23 @@ export default function SettingsTab() {
               </span>
             </div>
             <p className="text-gray-300 text-xs leading-relaxed">
-              • <strong className="text-white">{formData.freeShippingCity || "Peshawar"}</strong>: <strong className="text-emerald-400 font-black">Rs. 0 (Free Delivery)</strong>
+              • <strong className="text-white">{formData.freeShippingCity || "Peshawar"}</strong>:{" "}
+              <strong className="text-emerald-400 font-black">
+                {Number(formData.shippingRatePeshawar ?? 0) === 0 ? "Rs. 0 (Free Delivery)" : `Rs. ${formData.shippingRatePeshawar}`}
+              </strong>
               <br />
-              • <strong className="text-white">Near Peshawar (KPK/ISB)</strong>: <strong className="text-blue-300 font-black">Rs. {formData.shippingRateNear ?? 250}</strong>
-              {' '}• <strong className="text-white">Far (Punjab)</strong>: <strong className="text-amber-300 font-black">Rs. {formData.shippingRateFar ?? 500}</strong>
-              {' '}• <strong className="text-white">More Far (Sindh/Balochistan)</strong>: <strong className="text-rose-300 font-black">Rs. {formData.shippingRateMoreFar ?? 700}</strong>
+              • <strong className="text-white">Near {formData.freeShippingCity || "Peshawar"} (KPK/ISB)</strong>:{" "}
+              <strong className="text-blue-300 font-black">
+                {Number(formData.shippingRateNear ?? 250) === 0 ? "FREE" : `Rs. ${formData.shippingRateNear ?? 250}`}
+              </strong>
+              {' '}• <strong className="text-white">Far (Punjab)</strong>:{" "}
+              <strong className="text-amber-300 font-black">
+                {Number(formData.shippingRateFar ?? 500) === 0 ? "FREE" : `Rs. ${formData.shippingRateFar ?? 500}`}
+              </strong>
+              {' '}• <strong className="text-white">More Far (Sindh/Balochistan)</strong>:{" "}
+              <strong className="text-rose-300 font-black">
+                {Number(formData.shippingRateMoreFar ?? 700) === 0 ? "FREE" : `Rs. ${formData.shippingRateMoreFar ?? 700}`}
+              </strong>
             </p>
           </div>
         </div>

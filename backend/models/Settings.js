@@ -50,6 +50,7 @@ const SettingsSchema = new mongoose.Schema({
   taxRate: { type: Number, default: 0 },
   flatShippingRate: { type: Number, default: 250 },
   freeShippingCity: { type: String, default: "Peshawar" },
+  shippingRatePeshawar: { type: Number, default: 0 },
   shippingRateNear: { type: Number, default: 250 },
   shippingRateFar: { type: Number, default: 500 },
   shippingRateMoreFar: { type: Number, default: 700 },

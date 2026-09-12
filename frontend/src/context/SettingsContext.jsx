@@ -38,6 +38,7 @@ export const DEFAULT_SETTINGS = {
   taxRate: 0,
   flatShippingRate: 250,
   freeShippingCity: "Peshawar",
+  shippingRatePeshawar: 0,
   shippingRateNear: 250,
   shippingRateFar: 500,
   shippingRateMoreFar: 700,

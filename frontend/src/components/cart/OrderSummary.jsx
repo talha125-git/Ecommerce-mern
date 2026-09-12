@@ -11,6 +11,7 @@ export default function OrderSummary() {
   const { cart } = useCart();
   const { settings: storeSettings } = useSettings();
 
+  const shippingRatePeshawar = Number(storeSettings?.shippingRatePeshawar ?? 0);
   const shippingRateNear = Number(storeSettings?.shippingRateNear ?? 250);
   const shippingRateFar = Number(storeSettings?.shippingRateFar ?? 500);
   const shippingRateMoreFar = Number(storeSettings?.shippingRateMoreFar ?? 700);
@@ -21,8 +22,8 @@ export default function OrderSummary() {
     0
   );
 
-  // In cart preview, estimated shipping starts from Near rate
-  const estimatedShipping = cart.length === 0 ? 0 : shippingRateNear;
+  // In cart preview, estimated shipping starts from local rate
+  const estimatedShipping = cart.length === 0 ? 0 : shippingRatePeshawar;
   const taxRate = Number(storeSettings?.taxRate ?? 0);
   const tax = taxRate > 0 ? (subtotal * taxRate) / 100 : 0;
   const total = subtotal + estimatedShipping + tax;
@@ -79,15 +80,17 @@ export default function OrderSummary() {
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-emerald-600 shrink-0" />
               <span className="text-xs font-bold text-emerald-900 dark:text-emerald-200">
-                FREE delivery to {freeCity}!
+                {shippingRatePeshawar === 0
+                  ? `FREE delivery to ${freeCity}!`
+                  : `Delivery to ${freeCity}: Rs. ${shippingRatePeshawar}`}
               </span>
             </div>
             <Badge variant="outline" className="text-[10px] bg-emerald-100/80 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-bold border-emerald-300">
-              Rs. 0
+              {shippingRatePeshawar === 0 ? 'Rs. 0 Free' : `Rs. ${shippingRatePeshawar}`}
             </Badge>
           </div>
           <p className="text-[11px] text-emerald-800 dark:text-emerald-300 leading-snug">
-            {`Distance delivery: Near: Rs. ${shippingRateNear} • Punjab: Rs. ${shippingRateFar} • Sindh/Balochistan: Rs. ${shippingRateMoreFar}`}
+            {`Distance delivery: Near: ${shippingRateNear === 0 ? 'FREE' : `Rs. ${shippingRateNear}`} • Punjab: ${shippingRateFar === 0 ? 'FREE' : `Rs. ${shippingRateFar}`} • Sindh/Balochistan: ${shippingRateMoreFar === 0 ? 'FREE' : `Rs. ${shippingRateMoreFar}`}`}
           </p>
         </div>
 

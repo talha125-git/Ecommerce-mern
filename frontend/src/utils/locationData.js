@@ -310,7 +310,7 @@ export function calculateShippingRate(cityName, subtotal = 0, storeSettings = {}
   const customOverrides = storeSettings.customCityZones || {};
   const zone = getShippingZoneForCity(cityName, freeCity, customOverrides);
 
-  if (zone === "free") return 0;
+  if (zone === "free") return Number(storeSettings.shippingRatePeshawar ?? 0);
   if (zone === "near") return Number(storeSettings.shippingRateNear ?? 250);
   if (zone === "far") return Number(storeSettings.shippingRateFar ?? 500);
   if (zone === "more_far") return Number(storeSettings.shippingRateMoreFar ?? 700);

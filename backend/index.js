@@ -1142,6 +1142,7 @@ const DEFAULT_SETTINGS = {
     taxRate: 0,
     flatShippingRate: 250,
     freeShippingCity: "Peshawar",
+    shippingRatePeshawar: 0,
     shippingRateNear: 250,
     shippingRateFar: 500,
     shippingRateMoreFar: 700,
@@ -1180,6 +1181,10 @@ app.get("/api/settings", async (req, res) => {
             }
             if (!settingsDoc.freeShippingCity) {
                 updateObj.freeShippingCity = "Peshawar";
+                needsUpdate = true;
+            }
+            if (settingsDoc.shippingRatePeshawar === undefined || settingsDoc.shippingRatePeshawar === null) {
+                updateObj.shippingRatePeshawar = 0;
                 needsUpdate = true;
             }
             if (settingsDoc.flatShippingRate === 15 || !settingsDoc.flatShippingRate) {

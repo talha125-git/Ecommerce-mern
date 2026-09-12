@@ -552,8 +552,15 @@ export default function CheckoutPage() {
                       className="w-full pl-9 pr-8 py-2.5 bg-muted/40 border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium appearance-none cursor-pointer text-xs"
                     >
                       <option value="">-- Choose Pakistan City ({cities.length}) --</option>
-                      <option value="Peshawar" className="font-bold text-emerald-700 bg-emerald-50">
-                        ⭐ Peshawar (FREE Delivery - Rs. 0)
+                      <option
+                        value={freeCityName}
+                        className="font-bold text-emerald-700 bg-emerald-50"
+                      >
+                        ⭐ {freeCityName} (
+                        {Number(storeSettings?.shippingRatePeshawar ?? 0) === 0
+                          ? "FREE Delivery - Rs. 0"
+                          : `Delivery - Rs. ${storeSettings?.shippingRatePeshawar}`}
+                        )
                       </option>
                       {cities
                         .filter(
@@ -569,10 +576,10 @@ export default function CheckoutPage() {
                           );
                           const rate =
                             zone === "near"
-                              ? storeSettings?.shippingRateNear ?? 250
+                              ? Number(storeSettings?.shippingRateNear ?? 250)
                               : zone === "far"
-                              ? storeSettings?.shippingRateFar ?? 500
-                              : storeSettings?.shippingRateMoreFar ?? 700;
+                              ? Number(storeSettings?.shippingRateFar ?? 500)
+                              : Number(storeSettings?.shippingRateMoreFar ?? 700);
                           const zoneShort =
                             zone === "near"
                               ? "Near KPK/ISB"
@@ -581,7 +588,7 @@ export default function CheckoutPage() {
                               : "Sindh/Balochistan";
                           return (
                             <option key={ct} value={ct}>
-                              {ct} ({zoneShort} - Rs. {rate})
+                              {ct} ({zoneShort} - {rate === 0 ? "FREE Delivery" : `Rs. ${rate}`})
                             </option>
                           );
                         })}
@@ -611,11 +618,11 @@ export default function CheckoutPage() {
 
               {/* Dynamic Shipping Alert Badge */}
               {formData.city ? (
-                isPeshawarFree ? (
+                shipping === 0 ? (
                   <div className="p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span>🎉 Special Offer: 100% FREE Shipping applied for {formData.city} delivery!</span>
+                      <span>🎉 Free Shipping Offer: 100% FREE Delivery applied for {formData.city}!</span>
                     </div>
                     <span className="bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0">
                       Rs. 0 Free
@@ -628,6 +635,8 @@ export default function CheckoutPage() {
                         ? "bg-blue-50/80 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800 text-blue-950 dark:text-blue-200"
                         : currentZone === "far"
                         ? "bg-amber-50/80 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800 text-amber-950 dark:text-amber-200"
+                        : currentZone === "free"
+                        ? "bg-emerald-50/80 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-950 dark:text-emerald-200"
                         : "bg-purple-50/80 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800 text-purple-950 dark:text-purple-200"
                     }`}
                   >
@@ -639,6 +648,8 @@ export default function CheckoutPage() {
                           <span className="font-extrabold underline">Rs. {shipping}</span>
                         </div>
                         <p className="text-[10px] font-normal opacity-80 mt-0.5">
+                          {currentZone === "free" &&
+                            `${freeCityName} Origin Store Delivery`}
                           {currentZone === "near" &&
                             "Near Peshawar Region (KPK, Islamabad, Rawalpindi) • 1-2 Days Delivery"}
                           {currentZone === "far" &&
@@ -657,7 +668,7 @@ export default function CheckoutPage() {
                 <div className="p-3 bg-muted/60 border border-border rounded-xl text-[11px] text-muted-foreground flex items-center gap-2">
                   <Truck className="w-4 h-4 text-primary shrink-0" />
                   <span>
-                    Distance Rates: <strong>Peshawar FREE</strong> • Near KPK/ISB: <strong>Rs. {storeSettings?.shippingRateNear ?? 250}</strong> • Punjab: <strong>Rs. {storeSettings?.shippingRateFar ?? 500}</strong> • Sindh/Balochistan: <strong>Rs. {storeSettings?.shippingRateMoreFar ?? 700}</strong>
+                    Distance Rates: <strong>{freeCityName} {Number(storeSettings?.shippingRatePeshawar ?? 0) === 0 ? "FREE" : `Rs. ${storeSettings?.shippingRatePeshawar}`}</strong> • Near KPK/ISB: <strong>{Number(storeSettings?.shippingRateNear ?? 250) === 0 ? "FREE" : `Rs. ${storeSettings?.shippingRateNear ?? 250}`}</strong> • Punjab: <strong>{Number(storeSettings?.shippingRateFar ?? 500) === 0 ? "FREE" : `Rs. ${storeSettings?.shippingRateFar ?? 500}`}</strong> • Sindh/Balochistan: <strong>{Number(storeSettings?.shippingRateMoreFar ?? 700) === 0 ? "FREE" : `Rs. ${storeSettings?.shippingRateMoreFar ?? 700}`}</strong>
                   </span>
                 </div>
               )}
@@ -832,11 +843,9 @@ export default function CheckoutPage() {
                     {shipping === 0 ? (
                       <span className="text-emerald-600 font-extrabold flex items-center gap-1">
                         <span>FREE</span>
-                        {isPeshawarFree && (
-                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
-                            {freeCityName}
-                          </span>
-                        )}
+                        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
+                          {isPeshawarFree ? freeCityName : "Free Offer"}
+                        </span>
                       </span>
                     ) : (
                       <span className="flex items-center gap-1.5">
