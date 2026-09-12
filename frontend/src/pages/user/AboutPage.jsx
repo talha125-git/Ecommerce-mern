@@ -67,7 +67,7 @@ export default function AboutPage() {
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800">
               <img
                 src={data.image}
-                alt="About BloomShop"
+                alt={data.title || "About BloomShop"}
                 className="w-full h-112 object-cover hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-transparent" />

@@ -28,6 +28,7 @@ import Footer from './components/layout/Footer'
 
 // ── Providers & Router ──
 import { CartProvider } from './context/CartContext'
+import { SettingsProvider } from './context/SettingsContext'
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom'
 
@@ -64,8 +65,9 @@ const StoreLayout = () => (
 
 function App() {
   return (
-    <CartProvider>
-      <BrowserRouter>
+    <SettingsProvider>
+      <CartProvider>
+        <BrowserRouter>
         <ScrollToTop />
         <Routes>
           {/* ═══════════════════════════════════
@@ -103,6 +105,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </CartProvider>
+    </SettingsProvider>
   )
 }
 

@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageSquare, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function ContactPage() {
+  const { settings } = useSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,30 +22,36 @@ export default function ContactPage() {
     setTimeout(() => setSubmitted(false), 4000);
   };
 
+  const cleanWhatsapp = (settings.socialWhatsapp || "").replace(/[^0-9]/g, "");
+
   const contactInfo = [
     {
       icon: MapPin,
       title: "Visit Us",
-      detail: "123 Fashion Street, Style City, SC 12345",
-      color: "text-blue-500 bg-blue-50"
+      detail: settings.storeAddress || "Shabqadar Charsadda, Peshawar, Pakistan",
+      color: "text-blue-500 bg-blue-50",
+      link: null
     },
     {
       icon: Phone,
       title: "Call Us",
-      detail: "+1 (555) 123-4567",
-      color: "text-emerald-500 bg-emerald-50"
+      detail: settings.supportPhone || "+92 347 6722423",
+      color: "text-emerald-500 bg-emerald-50",
+      link: `tel:${settings.supportPhone || "+923476722423"}`
+    },
+    {
+      icon: MessageCircle,
+      title: "WhatsApp Chat",
+      detail: settings.socialWhatsapp || "+92 347 6722423",
+      color: "text-green-600 bg-green-50",
+      link: cleanWhatsapp ? `https://wa.me/${cleanWhatsapp}` : null
     },
     {
       icon: Mail,
       title: "Email Us",
-      detail: "hello@bloomshop.com",
-      color: "text-purple-500 bg-purple-50"
-    },
-    {
-      icon: Clock,
-      title: "Business Hours",
-      detail: "Mon - Fri: 9AM - 6PM (EST)",
-      color: "text-amber-500 bg-amber-50"
+      detail: settings.supportEmail || "support@bloomshop.com",
+      color: "text-purple-500 bg-purple-50",
+      link: `mailto:${settings.supportEmail || "support@bloomshop.com"}`
     }
   ];
 

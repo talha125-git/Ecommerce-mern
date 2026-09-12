@@ -6,11 +6,11 @@ import {
   Phone,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
-import axios from "axios";
+import { useSettings } from "@/context/SettingsContext";
 
 // Brand SVG Icons for Storefront Footer
 const InstagramIcon = ({ className = "h-4 w-4" }) => (
@@ -41,34 +41,7 @@ const WhatsAppIcon = ({ className = "h-4 w-4" }) => (
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [storeSettings, setStoreSettings] = useState({
-    supportEmail: "support@bloomshop.com",
-    supportPhone: "+92 347 6722423",
-    storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
-    socialInstagram: "https://instagram.com/bloomshop",
-    socialFacebook: "https://facebook.com/bloomshop",
-    socialTwitter: "https://twitter.com/bloomshop",
-    socialWhatsapp: "+923476722423"
-  });
-
-  useEffect(() => {
-    // Check cached settings
-    const cached = localStorage.getItem("bloom_admin_settings");
-    if (cached) {
-      try {
-        setStoreSettings(JSON.parse(cached));
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    // Fetch latest from API
-    const API_URL = import.meta.env.VITE_API_URL || "";
-    axios.get(`${API_URL}/api/settings`).then(res => {
-      if (res.data?.settings) {
-        setStoreSettings(res.data.settings);
-      }
-    }).catch(() => {});
-  }, []);
+  const { settings: storeSettings } = useSettings();
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -156,15 +129,14 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
             <div className="lg:col-span-2">
               <Link
-                className="text-2xl tracking-tight text-gray-900 hover:text-gray-700 transition-colors"
+                className="text-2xl tracking-tight text-gray-900 hover:text-gray-700 transition-colors inline-block mb-4 font-extrabold"
                 to="/"
                 aria-label="BloomShop Home"
               >
                 BLOOM<span className="text-primary">SHOP</span>
               </Link>
-              <p className="text-muted-foreground mb-6 max-w-sm">
-                Discover unique products that inspire your lifestyle. Quality
-                craftsmanship meets modern design.
+              <p className="text-muted-foreground mb-6 max-w-sm text-sm">
+                {storeSettings.storeTagline || "Discover unique products that inspire your lifestyle. Quality craftsmanship meets modern design."}
               </p>
 
               <div className="space-y-3">

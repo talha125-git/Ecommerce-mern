@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "@/context/CartContext";
+import { useSettings } from "@/context/SettingsContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -26,8 +27,10 @@ import { getPakistanCities, PAKISTAN_CITIES, getPostalCodeForCity } from "@/util
 
 export default function CheckoutPage() {
   const { cart, clearCart } = useCart();
+  const { settings: storeSettings } = useSettings();
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "";
+  const cleanWhatsapp = (storeSettings?.socialWhatsapp || "").replace(/[^0-9]/g, "");
 
   // Form State
   const [formData, setFormData] = useState({
@@ -346,7 +349,27 @@ export default function CheckoutPage() {
           </div>
         </Card>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+        {/* Dynamic Store Support on Order Placed */}
+        <div className="p-4 bg-muted/40 rounded-2xl border border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div className="text-left">
+            <p className="font-bold text-foreground">Need quick help or order updates?</p>
+            <p className="text-muted-foreground text-[11px]">
+              {storeSettings.storeName} Helpline: {storeSettings.supportPhone || "+92 347 6722423"} • {storeSettings.supportEmail}
+            </p>
+          </div>
+          {cleanWhatsapp && (
+            <a
+              href={`https://wa.me/${cleanWhatsapp}?text=Hi%20${encodeURIComponent(storeSettings.storeName || "BloomShop")},%20I%20have%20an%20inquiry%20regarding%20Order%20%23${placedOrderId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl font-bold flex items-center gap-1.5 shadow-xs shrink-0 transition"
+            >
+              <span>WhatsApp Support</span>
+            </a>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button asChild size="lg" className="rounded-xl px-8 font-bold">
             <Link to="/">Continue Shopping</Link>
           </Button>
@@ -741,7 +764,25 @@ export default function CheckoutPage() {
                 )}
               </Button>
 
-              <div className="text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1 pt-2">
+              {/* Dynamic WhatsApp Support Helpline Assistance */}
+              {cleanWhatsapp && (
+                <div className="pt-2 border-t border-border flex items-center justify-between text-xs bg-emerald-50/60 dark:bg-emerald-950/20 p-2.5 rounded-xl border border-emerald-200/60">
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-900 dark:text-emerald-300">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Need order help?</span>
+                  </div>
+                  <a
+                    href={`https://wa.me/${cleanWhatsapp}?text=Hi%20${encodeURIComponent(storeSettings.storeName || "BloomShop")},%20I%20have%20a%20question%20about%20placing%20my%20order`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold hover:underline"
+                  >
+                    Chat on WhatsApp ↗
+                  </a>
+                </div>
+              )}
+
+              <div className="text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1 pt-1">
                 <Truck className="w-3.5 h-3.5 text-blue-500" />
                 <span>Fast & Reliable Delivery across Pakistan</span>
               </div>

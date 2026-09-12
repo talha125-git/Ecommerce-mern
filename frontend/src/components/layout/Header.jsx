@@ -1,11 +1,13 @@
 import { useCart } from "@/context/CartContext";
-import { Menu, Search, ShoppingCart, X, ChevronDown, User, ShieldCheck, LayoutDashboard } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
+import { Menu, Search, ShoppingCart, X, ChevronDown, User, ShieldCheck, LayoutDashboard, Phone } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
 export default function Header() {
   const { cart } = useCart();
+  const { settings } = useSettings();
   const cartCount = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -53,6 +55,7 @@ export default function Header() {
     { href: "/#hero-slider", label: "Home" },
     { href: "/#products", label: "All Products" },
     { href: "/#about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
   ];
 
   const handleNavClick = (e, href) => {
@@ -90,7 +93,7 @@ export default function Header() {
           : "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm"
         }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 py-4">
+      <div className="container mx-auto px-4 sm:px-6 py-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-8 lg:space-x-12">
             <Link

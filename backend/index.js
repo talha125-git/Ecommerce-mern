@@ -450,6 +450,51 @@ app.post("/api/upload-about-image", async (req, res) => {
     }
 });
 
+// Endpoint to upload Brand Assets (Logo, Favicon) to Cloudinary (or fallback base64)
+app.post("/api/upload-brand-asset", async (req, res) => {
+    try {
+        const { imageBase64, type } = req.body;
+        if (!imageBase64) {
+            return res.status(400).json({ message: "No image data provided" });
+        }
+
+        const hasCredentials = process.env.CLOUDINARY_API_KEY &&
+            process.env.CLOUDINARY_API_KEY !== "YOUR_API_KEY_HERE" &&
+            process.env.CLOUDINARY_API_SECRET &&
+            process.env.CLOUDINARY_API_SECRET !== "YOUR_API_SECRET_HERE";
+
+        if (!hasCredentials) {
+            return res.json({
+                message: "Cloudinary credentials not configured, fell back to base64",
+                url: imageBase64
+            });
+        }
+
+        const folder = type === "favicon" ? "ecommerce/brand/favicons" : "ecommerce/brand/logos";
+        const transformation = type === "favicon"
+            ? [{ width: 128, height: 128, crop: "limit", fetch_format: "auto" }]
+            : [{ width: 600, height: 600, crop: "limit", quality: "auto", fetch_format: "auto" }];
+
+        const result = await cloudinary.uploader.upload(imageBase64, {
+            folder: folder,
+            resource_type: "image",
+            transformation: transformation
+        });
+
+        console.log(`✅ Brand asset (${type || 'logo'}) uploaded to Cloudinary: ${result.secure_url}`);
+        return res.json({
+            message: "Brand asset uploaded to Cloudinary successfully",
+            url: result.secure_url,
+        });
+    } catch (err) {
+        console.error("❌ Cloudinary upload error:", err);
+        return res.json({
+            message: "Cloudinary upload failed, fell back to base64",
+            url: req.body.imageBase64
+        });
+    }
+});
+
 // GET /api/about: Fetch saved About section details (seed default if empty)
 app.get("/api/about", async (req, res) => {
     try {
@@ -1071,12 +1116,26 @@ const DEFAULT_SETTINGS = {
     key: "store_settings",
     storeName: "BloomShop",
     storeTagline: "Premium Footwear & Streetwear Lifestyle",
+    logo: "",
+    favicon: "/favicon.svg",
     supportEmail: "support@bloomshop.com",
     supportPhone: "+92 347 6722423",
     storeAddress: "Shabqadar Charsadda, Peshawar, Pakistan",
     currency: "USD ($)",
     currencySymbol: "$",
     timezone: "UTC+05:00 (Pakistan Standard Time)",
+
+    // About Us Content
+    aboutUsBadge: "About BloomShop",
+    aboutUsTitle: "Where Modern Style Meets Uncompromised Comfort",
+    aboutUsDescription: "Founded with a passion for elevated footwear, BloomShop merges aesthetic innovation with day-long ergonomic support. We craft shoes for those who walk with confidence.",
+    aboutUsStory: "Whether you're hitting the pavement, training for your next milestone, or making a sleek fashion statement, our curated sneaker lineup delivers optimum support without compromising on trendsetting design.",
+    aboutUsImage: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
+
+    // Legal Policies
+    termsConditions: "Welcome to BloomShop. By accessing and using our website, you accept and agree to be bound by these terms and conditions. All orders placed through our website are subject to product availability and acceptance. We reserve the right to cancel or refuse any order for reasons including pricing inaccuracies, product shortages, or suspected unauthorized activity. All returns must be initiated within 30 days of delivery in original condition.",
+    privacyPolicy: "Your privacy is paramount to us at BloomShop. We collect essential information such as customer name, shipping address, contact phone, and email solely to process orders, communicate tracking updates, and deliver exceptional service. We implement industry-standard 256-bit SSL encryption to safeguard all checkout transactions and never sell or rent your personal data to unauthorized third parties.",
+
     adminName: "Talha (Admin)",
     adminEmail: "admin@bloomshop.com",
     adminRole: "Super Administrator",
@@ -1101,11 +1160,13 @@ const DEFAULT_SETTINGS = {
 // GET /api/settings: Fetch store settings from MongoDB
 app.get("/api/settings", async (req, res) => {
     try {
-        let settings = await SettingsModel.findOne({ key: "store_settings" });
-        if (!settings) {
+        let settingsDoc = await SettingsModel.findOne({ key: "store_settings" });
+        if (!settingsDoc) {
             console.log("ℹ️ Initializing default store settings in MongoDB...");
-            settings = await SettingsModel.create(DEFAULT_SETTINGS);
+            settingsDoc = await SettingsModel.create(DEFAULT_SETTINGS);
         }
+        // Merge defaults to guarantee all fields exist even if created earlier
+        const settings = { ...DEFAULT_SETTINGS, ...settingsDoc.toObject() };
         return res.json({ settings });
     } catch (err) {
         console.error("❌ Error fetching settings:", err);

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useSettings } from '@/context/SettingsContext';
 import {
   LayoutDashboard,
   Package,
@@ -21,6 +22,7 @@ export default function Sidebar({
   setMobileMenuOpen,
   handleLogout,
 }) {
+  const { settings } = useSettings();
   const navTabs = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'products', label: 'Products', icon: Package, badge: '' },
