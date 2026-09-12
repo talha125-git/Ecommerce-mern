@@ -119,7 +119,7 @@ export default function ShippingTab() {
               Shipping Rates & Delivery Zones
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              Configure dynamic delivery charges based on distance from Peshawar: Free in Peshawar, Rs. 250 Near, Rs. 500 Far, and Rs. 700 More Far.
+              Configure dynamic delivery charges based on distance from {formData.freeShippingCity || "Peshawar"}: Free in {formData.freeShippingCity || "Peshawar"}, Rs. {formData.shippingRateNear ?? 250} Near, Rs. {formData.shippingRateFar ?? 500} Far, and Rs. {formData.shippingRateMoreFar ?? 700} More Far.
             </p>
           </div>
 
@@ -188,7 +188,7 @@ export default function ShippingTab() {
             <span>Distance-Based Shipping Tiers</span>
             <span className="text-xs text-gray-400 font-normal">(All amounts in PKR)</span>
           </h2>
-          <span className="text-xs font-bold text-gray-500">Origin: Peshawar 🇵🇰</span>
+          <span className="text-xs font-bold text-gray-500">Origin: {formData.freeShippingCity || "Peshawar"} 🇵🇰</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -224,7 +224,7 @@ export default function ShippingTab() {
           <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-4 hover:border-blue-400 transition">
             <div>
               <div className="flex items-center gap-1.5 text-xs font-black text-blue-700 uppercase tracking-wider">
-                <Truck className="w-3.5 h-3.5" /> Tier 1: Near Peshawar
+                <Truck className="w-3.5 h-3.5" /> Tier 1: Near {formData.freeShippingCity || "Peshawar"}
               </div>
               <div className="flex items-baseline gap-1 mt-1">
                 <span className="text-2xl font-black text-gray-900">
