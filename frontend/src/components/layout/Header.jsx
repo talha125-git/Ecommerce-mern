@@ -57,17 +57,50 @@ const NAV_CATEGORIES = [
       {
         title: "WHAT'S NEW",
         links: [
-          { name: "New Releases", href: "/shop?category=new", badge: "NEW" },
-          { name: "Trending Now", href: "/shop?category=trending", badge: "HOT" },
-          { name: "Best Sellers", href: "/shop?category=bestseller", badge: "POPULAR" },
+          {
+            name: "New Releases",
+            subtitle: "Fresh 2026 Drops",
+            href: "/shop?category=new&sub=release",
+            image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop",
+            badge: "NEW",
+          },
+          {
+            name: "Trending Now",
+            subtitle: "Most Wanted Styles",
+            href: "/shop?category=trending&sub=trending",
+            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
+            badge: "HOT",
+          },
+          {
+            name: "Best Sellers",
+            subtitle: "Top Rated Favorites",
+            href: "/shop?category=bestseller&sub=bestseller",
+            image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop",
+            badge: "POPULAR",
+          },
         ],
       },
       {
         title: "SHOP BY GENDER",
         links: [
-          { name: "Men's New In", href: "/shop?category=men" },
-          { name: "Women's New In", href: "/shop?category=women" },
-          { name: "Kids' New In", href: "/shop?category=kids" },
+          {
+            name: "Men's New In",
+            subtitle: "Performance & Comfort",
+            href: "/shop?category=men&sub=running",
+            image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Women's New In",
+            subtitle: "Chic & Cloud Comfort",
+            href: "/shop?category=women&sub=daily",
+            image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Kids' New In",
+            subtitle: "Durable & Play-Ready",
+            href: "/shop?category=kids&sub=boys",
+            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+          },
         ],
       },
     ],
@@ -89,23 +122,54 @@ const NAV_CATEGORIES = [
       {
         title: "FOOTWEAR STYLES",
         links: [
-          { name: "Running Shoes", href: "/shop?category=running", badge: "POPULAR" },
-          { name: "Casual Sneakers", href: "/shop?category=casual" },
-          { name: "Formal Loafers", href: "/shop?category=casual" },
+          {
+            name: "Running Shoes",
+            subtitle: "High-Mileage Cushion",
+            href: "/shop?category=men&sub=running",
+            image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop",
+            badge: "POPULAR",
+          },
+          {
+            name: "Casual Sneakers",
+            subtitle: "Everyday Streetwear",
+            href: "/shop?category=men&sub=casual",
+            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Formal Loafers",
+            subtitle: "Handcrafted Cowhide",
+            href: "/shop?category=men&sub=loafers",
+            image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop",
+          },
         ],
       },
       {
         title: "BY ACTIVITY & FIT",
         links: [
-          { name: "Gym & Training", href: "/shop?category=training" },
-          { name: "Daily Walking", href: "/shop?category=casual" },
-          { name: "Wide-Fit Shoes", href: "/shop?category=men" },
+          {
+            name: "Gym & Training",
+            subtitle: "Stability & Agility",
+            href: "/shop?category=men&sub=training",
+            image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Daily Walking",
+            subtitle: "Office & Commute",
+            href: "/shop?category=men&sub=walking",
+            image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Wide-Fit Shoes",
+            subtitle: "Pressure-Free Room",
+            href: "/shop?category=men&sub=wide",
+            image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&auto=format&fit=crop",
+          },
         ],
       },
     ],
     featured: {
       badge: "MEN'S BESTSELLER",
-      title: "AirFlex Runner Pro",
+      title: "AirStride Pro Running",
       desc: "Engineered dual-density sole with dynamic propulsion for all-day comfort.",
       cta: "Shop Men's",
       href: "/shop?category=men",
@@ -121,17 +185,49 @@ const NAV_CATEGORIES = [
       {
         title: "POPULAR STYLES",
         links: [
-          { name: "Daily Sneakers", href: "/shop?category=casual", badge: "HOT" },
-          { name: "Running Shoes", href: "/shop?category=running" },
-          { name: "Flats & Pumps", href: "/shop?category=women" },
+          {
+            name: "Daily Sneakers",
+            subtitle: "Featherlight Ease",
+            href: "/shop?category=women&sub=daily",
+            image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop",
+            badge: "HOT",
+          },
+          {
+            name: "Running Shoes",
+            subtitle: "Arch Support & Energy",
+            href: "/shop?category=women&sub=running",
+            image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Flats & Pumps",
+            subtitle: "Memory-Foam Insole",
+            href: "/shop?category=women&sub=flats",
+            image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop",
+          },
         ],
       },
       {
         title: "LIFESTYLE & COMFORT",
         links: [
-          { name: "Studio & Yoga", href: "/shop?category=training" },
-          { name: "Platform Soles", href: "/shop?category=lifestyle", badge: "NEW" },
-          { name: "Cloud Comfort", href: "/shop?category=running" },
+          {
+            name: "Studio & Yoga",
+            subtitle: "Barefoot Flexibility",
+            href: "/shop?category=women&sub=yoga",
+            image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Platform Soles",
+            subtitle: "Chunky 90s Platform",
+            href: "/shop?category=women&sub=platform",
+            image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop",
+            badge: "NEW",
+          },
+          {
+            name: "Cloud Comfort",
+            subtitle: "All-Day Plush Relief",
+            href: "/shop?category=women&sub=comfort",
+            image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=300&auto=format&fit=crop",
+          },
         ],
       },
     ],
@@ -153,17 +249,51 @@ const NAV_CATEGORIES = [
       {
         title: "BOYS & GIRLS",
         links: [
-          { name: "Boys Sneakers", href: "/shop?category=kids", badge: "POPULAR" },
-          { name: "Girls Sneakers", href: "/shop?category=kids" },
-          { name: "Light-Up Soles", href: "/shop?category=kids", badge: "CUTE" },
+          {
+            name: "Boys Sneakers",
+            subtitle: "Active & Anti-Scuff",
+            href: "/shop?category=kids&sub=boys",
+            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+            badge: "POPULAR",
+          },
+          {
+            name: "Girls Sneakers",
+            subtitle: "Glitter & Cushioned",
+            href: "/shop?category=kids&sub=girls",
+            image: "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=300&auto=format&fit=crop",
+            badge: "CUTE",
+          },
+          {
+            name: "Light-Up Soles",
+            subtitle: "Multi-Color LED Soles",
+            href: "/shop?category=kids&sub=light",
+            image: "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=300&auto=format&fit=crop",
+            badge: "GLOW",
+          },
         ],
       },
       {
         title: "AGE & FASTENERS",
         links: [
-          { name: "Toddlers (22–27)", href: "/shop?category=kids" },
-          { name: "Juniors (28–35)", href: "/shop?category=kids" },
-          { name: "Velcro Straps", href: "/shop?category=kids", badge: "EASY" },
+          {
+            name: "Toddlers (22–27)",
+            subtitle: "First Steps Soft Soles",
+            href: "/shop?category=kids&sub=toddler",
+            image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Juniors (28–35)",
+            subtitle: "Court & School Sports",
+            href: "/shop?category=kids&sub=junior",
+            image: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Velcro Straps",
+            subtitle: "Easy Self-Fasten Wear",
+            href: "/shop?category=kids&sub=velcro",
+            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+            badge: "EASY",
+          },
         ],
       },
     ],
@@ -185,17 +315,49 @@ const NAV_CATEGORIES = [
       {
         title: "SHOE CARE",
         links: [
-          { name: "Foam Cleaner", href: "/shop?category=accessories", badge: "HOT" },
-          { name: "Water Shield", href: "/shop?category=accessories" },
-          { name: "Cleaning Brush", href: "/shop?category=accessories" },
+          {
+            name: "Foam Cleaner",
+            subtitle: "Instant Ready Foam 200ml",
+            href: "/shop?category=accessories&sub=foam",
+            image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&auto=format&fit=crop",
+            badge: "HOT",
+          },
+          {
+            name: "Water Shield",
+            subtitle: "Nano Hydrophobic Barrier",
+            href: "/shop?category=accessories&sub=water",
+            image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Cleaning Brush",
+            subtitle: "Dual Hog-Hair Bristle",
+            href: "/shop?category=accessories&sub=brush",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&auto=format&fit=crop",
+          },
         ],
       },
       {
         title: "ESSENTIALS",
         links: [
-          { name: "Memory Insoles", href: "/shop?category=accessories", badge: "BEST" },
-          { name: "Cushioned Socks", href: "/shop?category=accessories" },
-          { name: "Shoe Laces", href: "/shop?category=accessories" },
+          {
+            name: "Memory Insoles",
+            subtitle: "Arch Support Cushion",
+            href: "/shop?category=accessories&sub=insoles",
+            image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop",
+            badge: "BEST",
+          },
+          {
+            name: "Cushioned Socks",
+            subtitle: "Anti-Odor Cotton 3-Pack",
+            href: "/shop?category=accessories&sub=socks",
+            image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Shoe Laces",
+            subtitle: "3M Reflective Braided",
+            href: "/shop?category=accessories&sub=laces",
+            image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop",
+          },
         ],
       },
     ],
@@ -211,23 +373,57 @@ const NAV_CATEGORIES = [
   {
     id: "school-shoes",
     label: "SCHOOL SHOES",
-    href: "/shop?category=school",
-    isSpecial: true, // Special styling: Burnt-orange / rust color (#C84B31)
+    href: "/shop?category=school-shoes",
+    isSpecial: true,
     columns: [
       {
         title: "UNIFORM FOOTWEAR",
         links: [
-          { name: "Black Uniform", href: "/shop?category=school", badge: "TOP PICK" },
-          { name: "Girls Strap Shoes", href: "/shop?category=school" },
-          { name: "White PT Shoes", href: "/shop?category=school", badge: "MUST HAVE" },
+          {
+            name: "Black Uniform",
+            subtitle: "Polishable Action Leather",
+            href: "/shop?category=school-shoes&sub=black",
+            image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=300&auto=format&fit=crop",
+            badge: "TOP PICK",
+          },
+          {
+            name: "Girls Strap Shoes",
+            subtitle: "Mary Jane Velcro Strap",
+            href: "/shop?category=school-shoes&sub=strap",
+            image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop",
+            badge: "APPROVED",
+          },
+          {
+            name: "White PT Shoes",
+            subtitle: "Morning Assembly Shoes",
+            href: "/shop?category=school-shoes&sub=white",
+            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
+            badge: "MUST HAVE",
+          },
         ],
       },
       {
         title: "COMFORT & FIT",
         links: [
-          { name: "Velcro Strap", href: "/shop?category=school", badge: "EASY WEAR" },
-          { name: "Genuine Leather", href: "/shop?category=school" },
-          { name: "Non-Marking Soles", href: "/shop?category=school" },
+          {
+            name: "Velcro Strap",
+            subtitle: "Quick On/Off Security",
+            href: "/shop?category=school-shoes&sub=velcro",
+            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+            badge: "EASY WEAR",
+          },
+          {
+            name: "Genuine Leather",
+            subtitle: "Durable Oxford Cowhide",
+            href: "/shop?category=school-shoes&sub=leather",
+            image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop",
+          },
+          {
+            name: "Non-Marking Soles",
+            subtitle: "Indoor Court Safe Rubber",
+            href: "/shop?category=school-shoes&sub=soles",
+            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+          },
         ],
       },
     ],
@@ -236,7 +432,7 @@ const NAV_CATEGORIES = [
       title: "Uniform Approved Shoes",
       desc: "Certified school-ready styles engineered with heavy-duty leather to survive the whole academic year.",
       cta: "Shop School Footwear",
-      href: "/shop?category=school",
+      href: "/shop?category=school-shoes",
       bgGradient: "from-[#C84B31] via-[#A83820] to-[#701E0E]",
     },
   },
@@ -254,7 +450,9 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
-  const { pathname } = useLocation();
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const location = useLocation();
+  const { pathname } = location;
 
   const userRole = localStorage.getItem("userRole");
   const isLoggedIn = !!localStorage.getItem("userLoggedIn") || !!localStorage.getItem("token");
@@ -269,9 +467,10 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
+    setActiveDropdown(null);
     setIsMobileOpen(false);
     setLoginDropdownOpen(false);
-  }, [pathname]);
+  }, [pathname, location.search]);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileOpen((prev) => !prev);
@@ -509,115 +708,153 @@ export default function Header() {
             role="navigation"
             aria-label="Main Store Navigation"
           >
-            {NAV_CATEGORIES.map((cat) => (
-              <div key={cat.id} className="relative group py-2.5">
-                {/* Category Navigation Link / Button */}
-                <Link
-                  to={cat.href}
-                  className={`inline-flex items-center gap-1.5 py-1 text-xs xl:text-[13px] tracking-wider uppercase font-semibold transition-all duration-200 relative ${
-                    cat.isSpecial
-                      ? "text-[#C84B31] font-bold hover:text-[#A83820]"
-                      : "text-gray-700 hover:text-black font-medium"
-                  }`}
-                >
-                  <span>{cat.label}</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-all duration-200 group-hover:rotate-180 ${
-                      cat.isSpecial ? "text-[#C84B31]" : "text-gray-400 group-hover:text-black"
-                    }`}
-                  />
-                  {/* Subtle active / hover bottom line indicator */}
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-0.5 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center ${
-                      cat.isSpecial ? "bg-[#C84B31]" : "bg-black"
-                    }`}
-                  />
-                </Link>
+            {NAV_CATEGORIES.map((cat) => {
+              const isOpen = activeDropdown === cat.id;
 
-                {/* ── SMOOTH ON-HOVER DROPDOWN MEGA MENU ── */}
+              return (
                 <div
-                  className={`absolute top-full ${getDropdownAlignment(
-                    cat.id
-                  )} pt-3.5 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
-                  style={{ minWidth: "780px", maxWidth: "95vw" }}
+                  key={cat.id}
+                  className="relative py-2.5"
+                  onMouseEnter={() => setActiveDropdown(cat.id)}
+                  onMouseLeave={() => setActiveDropdown(null)}
                 >
-                  <div className="bg-white/98 backdrop-blur-2xl border border-gray-100/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.16)] p-7 ring-1 ring-black/[0.04]">
-                    <div className="grid grid-cols-12 gap-8 items-stretch">
-                      {/* Subcategories Section */}
-                      <div className="col-span-7 grid grid-cols-2 gap-7 pr-7 border-r border-gray-100/90">
-                        {cat.columns.map((col, cIdx) => (
-                          <div key={cIdx} className="space-y-4">
-                            <h4 className="text-[10px] font-extrabold tracking-[0.14em] text-gray-400 uppercase flex items-center gap-1.5 pb-1.5 border-b border-gray-100/80">
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary/50 inline-block" />
-                              {col.title}
-                            </h4>
-                            <ul className="space-y-1.5">
-                              {col.links.map((link, lIdx) => (
-                                <li key={lIdx}>
-                                  <Link
-                                    to={link.href}
-                                    className="group/link flex items-center justify-between py-2 px-3 -mx-3 rounded-xl text-[13px] font-medium text-gray-700 hover:text-black hover:bg-gray-50/90 transition-all duration-150"
-                                  >
-                                    <span className="group-hover/link:translate-x-1 group-hover/link:text-primary transition-all duration-150 whitespace-nowrap font-medium">
-                                      {link.name}
-                                    </span>
-                                    {link.badge && (
-                                      <span
-                                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ml-3 shadow-2xs ${getBadgeClass(
-                                          link.badge,
-                                          cat.isSpecial
-                                        )}`}
-                                      >
-                                        {link.badge}
-                                      </span>
-                                    )}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </div>
+                  {/* Category Navigation Link / Button */}
+                  <Link
+                    to={cat.href}
+                    onClick={() => setActiveDropdown(null)}
+                    className={`inline-flex items-center gap-1.5 py-1 text-xs xl:text-[13px] tracking-wider uppercase font-semibold transition-all duration-200 relative ${
+                      cat.isSpecial
+                        ? "text-[#C84B31] font-bold hover:text-[#A83820]"
+                        : "text-gray-700 hover:text-black font-medium"
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 opacity-60 transition-all duration-200 ${
+                        isOpen ? "rotate-180 opacity-100" : ""
+                      } ${
+                        cat.isSpecial ? "text-[#C84B31]" : "text-gray-400"
+                      }`}
+                    />
+                    {/* Subtle active / hover bottom line indicator */}
+                    <span
+                      className={`absolute bottom-0 left-0 w-full h-0.5 rounded-full transition-transform duration-200 origin-center ${
+                        isOpen ? "scale-x-100" : "scale-x-0"
+                      } ${cat.isSpecial ? "bg-[#C84B31]" : "bg-black"}`}
+                    />
+                  </Link>
 
-                      {/* Featured Spotlight Card */}
-                      {cat.featured && (
-                        <div className="col-span-5 flex flex-col">
-                          <div
-                            className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-6 text-white flex flex-col justify-between shadow-md relative overflow-hidden group/card`}
-                          >
-                            {/* Ambient luxury light glows */}
-                            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
-                            <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-black/20 blur-xl pointer-events-none" />
+                  {/* ── SMOOTH ON-HOVER DROPDOWN MEGA MENU (Disappears instantly on click like Hush Puppies) ── */}
+                  <div
+                    className={`absolute top-full ${getDropdownAlignment(
+                      cat.id
+                    )} pt-3.5 z-50 transition-all duration-200 ease-out ${
+                      isOpen
+                        ? "opacity-100 visible pointer-events-auto translate-y-0"
+                        : "opacity-0 invisible pointer-events-none -translate-y-2"
+                    }`}
+                    style={{ minWidth: "860px", maxWidth: "95vw" }}
+                  >
+                    <div className="bg-white/98 backdrop-blur-2xl border border-gray-100/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.16)] p-6 ring-1 ring-black/[0.04]">
+                      <div className="grid grid-cols-12 gap-7 items-stretch">
+                        {/* Subcategories Section with Image Thumbnails */}
+                        <div className="col-span-8 grid grid-cols-2 gap-6 pr-6 border-r border-gray-100/90">
+                          {cat.columns.map((col, cIdx) => (
+                            <div key={cIdx} className="space-y-3">
+                              <h4 className="text-[10px] font-extrabold tracking-[0.14em] text-gray-400 uppercase flex items-center gap-1.5 pb-1.5 border-b border-gray-100/80">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary/50 inline-block" />
+                                {col.title}
+                              </h4>
+                              <ul className="space-y-1.5">
+                                {col.links.map((link, lIdx) => (
+                                  <li key={lIdx}>
+                                    <Link
+                                      to={link.href}
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="group/link flex items-center gap-3 p-2 -mx-2 rounded-2xl hover:bg-gray-50/90 transition-all duration-150 border border-transparent hover:border-gray-100"
+                                    >
+                                      {/* Thumbnail Image */}
+                                      <div className="w-11 h-11 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-100 shadow-2xs group-hover/link:scale-105 transition-transform duration-200">
+                                        <img
+                                          src={link.image}
+                                          alt={link.name}
+                                          className="w-full h-full object-cover object-center"
+                                          loading="lazy"
+                                        />
+                                      </div>
 
-                            <div className="relative z-10 space-y-3">
-                              <span className="inline-block text-[10px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md border border-white/25 px-3 py-1 rounded-full text-white shadow-sm">
-                                {cat.featured.badge}
-                              </span>
-                              <h5 className="text-base font-black leading-snug tracking-tight text-white">
-                                {cat.featured.title}
-                              </h5>
-                              <p className="text-xs text-white/85 line-clamp-3 leading-relaxed font-normal">
-                                {cat.featured.desc}
-                              </p>
+                                      {/* Link Details */}
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between gap-1.5">
+                                          <span className="text-[12.5px] font-semibold text-gray-800 group-hover/link:text-primary transition-colors truncate">
+                                            {link.name}
+                                          </span>
+                                          {link.badge && (
+                                            <span
+                                              className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 ml-1 shadow-2xs ${getBadgeClass(
+                                                link.badge,
+                                                cat.isSpecial
+                                              )}`}
+                                            >
+                                              {link.badge}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {link.subtitle && (
+                                          <p className="text-[10.5px] text-gray-400 truncate">
+                                            {link.subtitle}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
-
-                            <div className="relative z-10 pt-5">
-                              <Link
-                                to={cat.featured.href}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-950 bg-white hover:bg-white/95 px-4.5 py-2.5 rounded-full transition-all duration-200 shadow-md group-hover/card:gap-2 group-hover/card:shadow-lg"
-                              >
-                                <span>{cat.featured.cta}</span>
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </Link>
-                            </div>
-                          </div>
+                          ))}
                         </div>
-                      )}
+
+                        {/* Featured Spotlight Card */}
+                        {cat.featured && (
+                          <div className="col-span-4 flex flex-col">
+                            <div
+                              className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-5 text-white flex flex-col justify-between shadow-md relative overflow-hidden group/card`}
+                            >
+                              {/* Ambient luxury light glows */}
+                              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+                              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-black/20 blur-xl pointer-events-none" />
+
+                              <div className="relative z-10 space-y-2.5">
+                                <span className="inline-block text-[9px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md border border-white/25 px-2.5 py-0.5 rounded-full text-white shadow-sm">
+                                  {cat.featured.badge}
+                                </span>
+                                <h5 className="text-sm font-black leading-snug tracking-tight text-white">
+                                  {cat.featured.title}
+                                </h5>
+                                <p className="text-[11px] text-white/85 line-clamp-3 leading-relaxed font-normal">
+                                  {cat.featured.desc}
+                                </p>
+                              </div>
+
+                              <div className="relative z-10 pt-4">
+                                <Link
+                                  to={cat.featured.href}
+                                  onClick={() => setActiveDropdown(null)}
+                                  className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gray-950 bg-white hover:bg-white/95 px-3.5 py-2 rounded-full transition-all duration-200 shadow-md group-hover/card:gap-2 group-hover/card:shadow-lg"
+                                >
+                                  <span>{cat.featured.cta}</span>
+                                  <ArrowRight className="w-3 h-3" />
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </nav>
         </div>
       </div>
@@ -676,20 +913,35 @@ export default function Header() {
                                 key={lIdx}
                                 to={link.href}
                                 onClick={closeMobileMenu}
-                                className="flex items-center justify-between text-xs font-medium text-gray-700 hover:text-primary py-1"
+                                className="flex items-center gap-3 text-xs font-medium text-gray-700 hover:text-primary py-2 px-1 rounded-xl hover:bg-gray-50 transition-colors"
                               >
-                                <span>{link.name}</span>
-                                {link.badge && (
-                                  <span
-                                    className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full uppercase ${
-                                      cat.isSpecial
-                                        ? "bg-orange-100 text-[#C84B31]"
-                                        : "bg-gray-100 text-gray-600"
-                                    }`}
-                                  >
-                                    {link.badge}
-                                  </span>
+                                {link.image && (
+                                  <img
+                                    src={link.image}
+                                    alt={link.name}
+                                    className="w-10 h-10 rounded-lg object-cover bg-gray-100 shrink-0 border border-gray-100"
+                                    loading="lazy"
+                                  />
                                 )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-semibold text-gray-800">{link.name}</span>
+                                    {link.badge && (
+                                      <span
+                                        className={`text-[8px] font-extrabold px-1.5 py-0.5 rounded-full uppercase ${
+                                          cat.isSpecial
+                                            ? "bg-orange-100 text-[#C84B31]"
+                                            : "bg-gray-100 text-gray-600"
+                                        }`}
+                                      >
+                                        {link.badge}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {link.subtitle && (
+                                    <p className="text-[10px] text-gray-400 truncate">{link.subtitle}</p>
+                                  )}
+                                </div>
                               </Link>
                             ))}
                           </div>

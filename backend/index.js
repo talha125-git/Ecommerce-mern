@@ -55,6 +55,11 @@ const DEFAULT_ABOUT_SECTION = {
 
 const DEFAULT_CATEGORIES = [
     { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
+    { id: "men", name: "Men", slug: "men", active: true, isDefault: true, icon: "User", description: "Men's footwear, running, casual and formal shoes" },
+    { id: "women", name: "Women", slug: "women", active: true, isDefault: true, icon: "Heart", description: "Women's sneakers, flats, platforms and fitness shoes" },
+    { id: "kids", name: "Kids", slug: "kids", active: true, isDefault: true, icon: "Smile", description: "Kids' boys, girls, toddlers and velcro shoes" },
+    { id: "accessories", name: "Accessories", slug: "accessories", active: true, isDefault: true, icon: "Sparkles", description: "Shoe care kits, insoles, socks and laces" },
+    { id: "school-shoes", name: "School Shoes", slug: "school-shoes", active: true, isDefault: true, icon: "Shield", description: "Uniform approved black leather, velcro and white PT shoes" },
     { id: "running", name: "Running", slug: "running", active: true, isDefault: true, icon: "Zap", description: "High performance running & athletic footwear" },
     { id: "casual", name: "Casual", slug: "casual", active: true, isDefault: true, icon: "Smile", description: "Everyday comfort sneakers and shoes" },
     { id: "retro", name: "Retro", slug: "retro", active: true, isDefault: true, icon: "Sparkles", description: "Iconic timeless classic models" },

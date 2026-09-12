@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Search, ChevronDown, ShoppingBag } from "lucide-react";
+import { Search, ChevronDown, ShoppingBag, X } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import productsData from "@/data/products.json";
@@ -12,6 +12,7 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [subFilter, setSubFilter] = useState("");
   const [sortBy, setSortBy] = useState("default");
   const { addToCart } = useCart();
 
@@ -20,11 +21,24 @@ export default function ShopPage() {
   useEffect(() => {
     const catParam = searchParams.get("category");
     const searchParam = searchParams.get("search");
+    const subParam = searchParams.get("sub");
+
     if (catParam) {
       setSelectedCategory(catParam);
+    } else {
+      setSelectedCategory("all");
     }
+
     if (searchParam !== null && searchParam !== undefined) {
       setSearch(searchParam);
+    } else {
+      setSearch("");
+    }
+
+    if (subParam) {
+      setSubFilter(subParam);
+    } else {
+      setSubFilter("");
     }
   }, [searchParams]);
 
@@ -78,28 +92,95 @@ export default function ShopPage() {
 
   const safeProducts = Array.isArray(products) ? products : productsData;
 
+  const normalize = (s) => (s || "").toLowerCase().replace(/[-_]/g, " ").trim();
+
+  const SUB_KEYWORD_MAP = {
+    boys: ["boy", "boys"],
+    girls: ["girl", "girls", "sparkle", "rainbow"],
+    "light-up": ["light", "glow", "led"],
+    light: ["light", "glow", "led"],
+    glow: ["light", "glow", "led"],
+    toddler: ["toddler", "toddlers", "firststeps", "tinytoes", "walker", "22-27", "22–27"],
+    toddlers: ["toddler", "toddlers", "firststeps", "tinytoes", "walker", "22-27", "22–27"],
+    junior: ["junior", "juniors", "speedster", "court", "28-35", "28–35"],
+    juniors: ["junior", "juniors", "speedster", "court", "28-35", "28–35"],
+    velcro: ["velcro", "easylock", "playtime", "sturdywalk", "strap", "hook"],
+    running: ["run", "running", "runner", "airstride", "velocity", "stride"],
+    casual: ["casual", "sneaker", "urban", "pace"],
+    loafers: ["loafer", "loafers", "oxford", "formal", "leather"],
+    formal: ["loafer", "loafers", "oxford", "formal", "leather"],
+    training: ["train", "training", "gym", "crossfit", "apex", "power"],
+    walking: ["walk", "walking", "walker", "commute", "comfort"],
+    wide: ["wide", "extra-wide", "cloudgrip"],
+    daily: ["daily", "everyday", "cloud", "aura"],
+    flats: ["flat", "flats", "ballerina", "pumps"],
+    yoga: ["yoga", "studio", "pilates", "harmony", "flex"],
+    platform: ["platform", "chunky", "horizon"],
+    comfort: ["comfort", "cloud", "soft", "purecloud"],
+    black: ["black", "uniform", "scholar", "premier", "oxford"],
+    strap: ["strap", "mary jane", "buckle", "velcro"],
+    white: ["white", "pt", "canvas", "assembly", "all-star"],
+    leather: ["leather", "cowhide", "oxford", "toughgrip", "premier"],
+    soles: ["non-marking", "marking", "soles", "sole", "academy", "rubber"],
+    foam: ["foam", "cleaner"],
+    water: ["shield", "water", "spray", "nano", "hydrophobic"],
+    shield: ["shield", "water", "spray", "nano", "hydrophobic"],
+    brush: ["brush", "bristle"],
+    insoles: ["insole", "insoles", "memory foam", "cushion", "orthopedic"],
+    socks: ["sock", "socks", "crew", "cotton"],
+    laces: ["lace", "laces", "reflective", "ultralock"],
+    release: ["new", "release", "2026"],
+    trending: ["hot", "trend", "popular"],
+    bestseller: ["bestseller", "popular", "top pick", "must have", "best"],
+  };
+
   const filtered = safeProducts
     .filter((p) => {
       if (!p) return false;
-      const nameMatch = p.name ? p.name.toLowerCase().includes(search.toLowerCase()) : false;
-      const descMatch = p.description ? p.description.toLowerCase().includes(search.toLowerCase()) : false;
-      const matchSearch = nameMatch || descMatch;
+      const nameLower = normalize(p.name);
+      const descLower = normalize(p.description);
+      const catLower = normalize(p.category || p.categoryName);
+      const badgeLower = normalize(p.badge);
+      const combinedText = `${nameLower} ${descLower} ${catLower} ${badgeLower}`;
 
-      const pCat = (p.category || "").toLowerCase();
-      const pName = (p.name || "").toLowerCase();
-      const pDesc = (p.description || "").toLowerCase();
-      const catLower = (selectedCategory || "all").toLowerCase();
+      // 1. Search Query Match
+      const matchSearch =
+        !search ||
+        nameLower.includes(normalize(search)) ||
+        descLower.includes(normalize(search));
 
-      const matchCategory =
-        catLower === "all" ||
-        pCat === catLower ||
-        (p.categoryName && p.categoryName.toLowerCase() === catLower) ||
-        pCat.includes(catLower) ||
-        catLower.includes(pCat) ||
-        pName.includes(catLower) ||
-        pDesc.includes(catLower);
+      // 2. Category Match (normalize hyphens e.g. "school-shoes" -> "school shoes")
+      const selectedCatLower = normalize(selectedCategory);
+      let matchCategory = true;
+      if (selectedCatLower && selectedCatLower !== "all") {
+        if (selectedCatLower === "new") {
+          matchCategory = p.isNew || badgeLower.includes("new");
+        } else if (selectedCatLower === "trending" || selectedCatLower === "bestseller") {
+          matchCategory =
+            p.isHot ||
+            badgeLower.includes("hot") ||
+            badgeLower.includes("popular") ||
+            badgeLower.includes("bestseller");
+        } else {
+          matchCategory =
+            catLower === selectedCatLower ||
+            catLower.includes(selectedCatLower) ||
+            selectedCatLower.includes(catLower) ||
+            nameLower.includes(selectedCatLower);
+        }
+      }
 
-      return matchSearch && matchCategory;
+      // 3. Sub-item Match (e.g. boys, girls, toddler, light-up, velcro, running, etc.)
+      let matchSub = true;
+      if (subFilter) {
+        const normalizedSub = normalize(subFilter);
+        const keywords =
+          SUB_KEYWORD_MAP[normalizedSub] ||
+          normalizedSub.split(/\s+/).filter(Boolean);
+        matchSub = keywords.some((kw) => combinedText.includes(kw));
+      }
+
+      return matchSearch && matchCategory && matchSub;
     })
     .sort((a, b) => {
       if (sortBy === "price-low") return (a.price || 0) - (b.price || 0);
@@ -167,6 +248,59 @@ export default function ShopPage() {
           </div>
         </div>
 
+        {/* Active Filter Chips */}
+        {(selectedCategory !== "all" || subFilter || search) && (
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Filtered By:</span>
+            {selectedCategory !== "all" && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                <span>Category: {selectedCategory.toUpperCase().replace(/[-_]/g, " ")}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("all")}
+                  className="hover:opacity-75 p-0.5 cursor-pointer"
+                  title="Clear category filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {subFilter && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                <span>Item: {subFilter.toUpperCase()}</span>
+                <button
+                  type="button"
+                  onClick={() => setSubFilter("")}
+                  className="hover:opacity-75 p-0.5 cursor-pointer"
+                  title="Clear item filter"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {search && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-800 border border-gray-200">
+                <span>Search: &ldquo;{search}&rdquo;</span>
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="hover:opacity-75 p-0.5 cursor-pointer"
+                  title="Clear search"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => { setSelectedCategory("all"); setSubFilter(""); setSearch(""); }}
+              className="text-xs text-primary underline hover:opacity-80 font-bold ml-2 cursor-pointer"
+            >
+              Reset All
+            </button>
+          </div>
+        )}
+
         {/* Results count */}
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Showing {filtered.length} product{filtered.length !== 1 ? "s" : ""}
@@ -186,10 +320,19 @@ export default function ShopPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-20 text-center space-y-3">
+          <div className="py-20 text-center space-y-4">
             <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto" />
-            <p className="text-lg font-bold text-foreground">No products found</p>
-            <p className="text-sm text-muted-foreground">Try adjusting your search or filters.</p>
+            <div className="space-y-1">
+              <p className="text-lg font-bold text-foreground">No products found</p>
+              <p className="text-sm text-muted-foreground">Try adjusting your filters or browse all our shoes.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSelectedCategory("all"); setSubFilter(""); setSearch(""); }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-xl shadow-sm hover:opacity-90 transition-opacity"
+            >
+              View All Products
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">

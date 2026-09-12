@@ -1,0 +1,62 @@
+================================================================================
+NOTE 19: PRODUCTS & CATEGORIES SYNC FOR ALL HEADER DROPDOWNS
+================================================================================
+
+1. OVERVIEW & OBJECTIVE
+   - Added complete product catalog matching all header dropdown categories:
+     [ NEW ARRIVALS | MEN | WOMEN | KIDS | ACCESSORIES | SCHOOL SHOES ]
+   - Added high-resolution, curated direct Unsplash image links with multi-angle
+     gallery support for each product.
+   - Seeded all products directly into MongoDB and updated backend API routes so
+     every item is visible and manageable in the Admin Dashboard (ProductsTab).
+   - Added all 5 primary categories (Men, Women, Kids, Accessories, School Shoes)
+     into the categories collection and Admin category filter.
+
+2. PRODUCTS ADDED (25 NEW ITEMS, 37 TOTAL IN CATALOG)
+
+   a) MEN FOOTWEAR (5 Products)
+      - AirStride Pro Running Shoes (Rs. 4,499) - Running
+      - Oxford Classic Leather Loafers (Rs. 5,999) - Formal Loafers
+      - Urban Pace Casual Sneakers (Rs. 3,899) - Casual Sneakers
+      - Apex Power Training Shoes (Rs. 4,199) - Gym & Training
+      - CloudGrip Wide-Fit Walkers (Rs. 3,499) - Wide-Fit Shoes
+
+   b) WOMEN FOOTWEAR (5 Products)
+      - Aura Cloud Daily Sneakers (Rs. 3,999) - Daily Sneakers
+      - Zenith Velocity Women's Runner (Rs. 4,299) - Running Shoes
+      - Elegance Leather Ballerina Flats (Rs. 2,899) - Flats & Pumps
+      - Chunky Horizon Platform Sneakers (Rs. 4,699) - Platform Soles
+      - Harmony Flex Studio & Yoga Shoes (Rs. 3,199) - Studio & Yoga
+
+   c) KIDS FOOTWEAR (5 Products)
+      - TurboDash Boys Active Sneakers (Rs. 2,799) - Boys Sneakers
+      - Sparkle Step Girls Fashion Kicks (Rs. 2,999) - Girls Sneakers
+      - GlowFlex Light-Up Soles (Rs. 3,299) - Light-Up Soles
+      - FirstSteps Toddler Walker Shoes (Rs. 2,199) - Toddlers (22–27)
+      - SwiftStride Junior Court Shoes (Rs. 2,899) - Juniors (28–35)
+
+   d) ACCESSORIES (5 Products)
+      - Pro Sneaker Foam Cleaner (Rs. 1,199) - Foam Cleaner
+      - Nano-Tech Hydrophobic Water Shield (Rs. 1,499) - Water Shield
+      - Dual-Bristle Deep Clean Shoe Brush (Rs. 699) - Cleaning Brush
+      - Orthopedic Memory Foam Insoles (Rs. 999) - Memory Insoles
+      - Athletic Cushion Crew Socks (3-Pack) (Rs. 899) - Cushioned Socks
+
+   e) SCHOOL SHOES (5 Products)
+      - Premier Boys Black Uniform Shoes (Rs. 2,799) - Black Uniform
+      - Grace Girls Mary Jane Black Strap Shoes (Rs. 2,699) - Girls Strap Shoes
+      - All-Star White PT & Sports Shoes (Rs. 2,499) - White PT Shoes
+      - SturdyWalk Easy Velcro School Shoes (Rs. 2,599) - Velcro Strap
+      - ToughGrip Genuine Leather Oxford School Shoes (Rs. 3,199) - Genuine Leather
+
+3. DATABASE & API SYNC
+   - MongoDB: Total products increased from 12 to 37.
+   - Categories API: Men, Women, Kids, Accessories, School Shoes added.
+   - Admin Dashboard: ProductsTab displays all 37 products with images, stock,
+     prices in PKR, and category filter dropdown.
+   - Frontend fallback: products.json synced with all 37 items.
+
+4. BUILD & VERIFICATION
+   - Frontend built with Vite: 0 errors in 4.10s.
+   - Backend running and serving 37 products on http://localhost:5000/api/products.
+================================================================================

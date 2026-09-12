@@ -23,7 +23,7 @@ import {
   X
 } from 'lucide-react';
 
-const DEFAULT_CATEGORIES = ["Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
+const DEFAULT_CATEGORIES = ["Men", "Women", "Kids", "School Shoes", "Accessories", "Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
 
 export default function ProductsTab({ onAddNew, onEditProduct }) {
   const navigate = useNavigate();
