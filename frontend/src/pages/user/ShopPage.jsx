@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Search, ChevronDown, ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import productsData from "@/data/products.json";
 
 export default function ShopPage() {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState(productsData);
   const [categories, setCategories] = useState([{ slug: "all", name: "All" }]);
   const [loading, setLoading] = useState(true);
@@ -15,6 +16,17 @@ export default function ShopPage() {
   const { addToCart } = useCart();
 
   const API_URL = import.meta.env.VITE_API_URL || "";
+
+  useEffect(() => {
+    const catParam = searchParams.get("category");
+    const searchParam = searchParams.get("search");
+    if (catParam) {
+      setSelectedCategory(catParam);
+    }
+    if (searchParam !== null && searchParam !== undefined) {
+      setSearch(searchParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,10 +86,18 @@ export default function ShopPage() {
       const matchSearch = nameMatch || descMatch;
 
       const pCat = (p.category || "").toLowerCase();
+      const pName = (p.name || "").toLowerCase();
+      const pDesc = (p.description || "").toLowerCase();
+      const catLower = (selectedCategory || "all").toLowerCase();
+
       const matchCategory =
-        selectedCategory === "all" ||
-        pCat === selectedCategory.toLowerCase() ||
-        (p.categoryName && p.categoryName.toLowerCase() === selectedCategory.toLowerCase());
+        catLower === "all" ||
+        pCat === catLower ||
+        (p.categoryName && p.categoryName.toLowerCase() === catLower) ||
+        pCat.includes(catLower) ||
+        catLower.includes(pCat) ||
+        pName.includes(catLower) ||
+        pDesc.includes(catLower);
 
       return matchSearch && matchCategory;
     })
