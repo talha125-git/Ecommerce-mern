@@ -1,41 +1,34 @@
 ================================================================================
-NOTE 18: HEADER REDESIGN & LUXURY EDITORIAL MEGA-DROPDOWNS
+NOTE 18: HEADER REDESIGN & SHORTENED SPACIOUS MEGA-DROPDOWNS
 ================================================================================
 
 1. OVERVIEW & OBJECTIVE
-   - Elevated the storefront navigation header and smooth dropdown mega-menus to
-     an ultra-premium, luxury editorial standard:
+   - Redesigned and refined the storefront navigation header and smooth dropdowns:
      [ NEW ARRIVALS | MEN | WOMEN | KIDS | ACCESSORIES | SCHOOL SHOES ]
-   - Fixed text wrapping issues (e.g. "Best Sellers" with badges no longer wraps).
-   - Added subtle vertical hairline dividers, ambient light glow on promo cards,
-     pill hover backgrounds, soft pastel tinted badges, and a crisp white CTA button.
+   - Shortened all link item labels across all categories to eliminate long text.
+   - Expanded dropdown container width (780px) and removed text truncation so no
+     words get cut off with ellipses (...).
 
 2. KEY DESIGN ENHANCEMENTS
 
    a) frontend/src/components/layout/Header.jsx
-      - Fixed Text Wrapping & Width:
-        - Increased dropdown container to 690px with col-span-7 / col-span-5 grid.
-        - Simplified and tightened link labels (e.g. "Best Sellers" instead of
-          "Best Sellers 2026").
-        - Added shrink-0 and ml-2 to badges to guarantee single-line fit.
-      - Luxury Link Interactions:
-        - Added -mx-2.5 px-2.5 py-2 hover:bg-gray-50/90 rounded-xl hover pill.
-        - Added smooth group-hover/link:translate-x-1 translation.
-      - Refined Badges (getBadgeClass helper):
-        - Beautiful soft pastel backgrounds with delicate border tints:
-          * HOT / SALE: bg-rose-50 text-rose-600 border-rose-200/80
-          * NEW: bg-blue-50 text-blue-600 border-blue-200/80
-          * POPULAR: bg-purple-50 text-purple-600 border-purple-200/80
-          * TOP PICK / MUST HAVE: bg-orange-50 text-[#C84B31] border-orange-200/80
-          * CUTE: bg-pink-50 text-pink-600 border-pink-200/80
-          * EASY: bg-emerald-50 text-emerald-700 border-emerald-200/80
-      - Luxury Editorial Feature Card:
-        - Added soft radial ambient light glows (white/10 and black/20 blur-xl).
-        - Glassmorphism badge (bg-white/20 backdrop-blur-md border border-white/25).
-        - Crisp pure-white pill button with black text and smooth hover arrow.
-      - Container Depth:
-        - rounded-3xl with shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] and subtle
-          ring-1 ring-black/[0.04] for deep floating elevation.
+      - Short & Concise Item Labels for All Categories:
+        * NEW ARRIVALS: New Releases, Trending Now, Best Sellers
+        * MEN: Running Shoes, Casual Sneakers, Formal Loafers, Gym & Training,
+          Daily Walking, Wide-Fit Shoes
+        * WOMEN: Daily Sneakers, Running Shoes, Flats & Pumps, Studio & Yoga,
+          Platform Soles, Cloud Comfort
+        * KIDS: Boys Sneakers, Girls Sneakers, Light-Up Soles, Toddlers (22–27),
+          Juniors (28–35), Velcro Straps
+        * ACCESSORIES: Foam Cleaner, Water Shield, Cleaning Brush, Memory Insoles,
+          Cushioned Socks, Shoe Laces
+        * SCHOOL SHOES: Black Uniform, Girls Strap Shoes, White PT Shoes,
+          Velcro Strap, Genuine Leather, Non-Marking Soles
+      - Expanded Container & Zero-Truncation Layout:
+        * Increased minWidth to 780px (maxWidth 95vw) for spacious column room.
+        * Replaced truncate with whitespace-nowrap and ml-3 shrink-0 on badges.
+        * Increased padding to p-7 with gap-8 column grid.
+        * Soft ambient luxury glows inside editorial feature card with larger title.
 
 3. BUILD & VERIFICATION
    - Frontend compiled cleanly with Vite (0 errors, 1905 modules).

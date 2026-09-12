@@ -57,17 +57,17 @@ const NAV_CATEGORIES = [
       {
         title: "WHAT'S NEW",
         links: [
-          { name: "All New Releases", href: "/shop?category=new", badge: "NEW" },
-          { name: "Trending This Week", href: "/shop?category=trending", badge: "HOT" },
+          { name: "New Releases", href: "/shop?category=new", badge: "NEW" },
+          { name: "Trending Now", href: "/shop?category=trending", badge: "HOT" },
           { name: "Best Sellers", href: "/shop?category=bestseller", badge: "POPULAR" },
         ],
       },
       {
         title: "SHOP BY GENDER",
         links: [
-          { name: "Men's New Arrivals", href: "/shop?category=men" },
-          { name: "Women's Fresh Drops", href: "/shop?category=women" },
-          { name: "Kids' Latest Releases", href: "/shop?category=kids" },
+          { name: "Men's New In", href: "/shop?category=men" },
+          { name: "Women's New In", href: "/shop?category=women" },
+          { name: "Kids' New In", href: "/shop?category=kids" },
         ],
       },
     ],
@@ -89,17 +89,17 @@ const NAV_CATEGORIES = [
       {
         title: "FOOTWEAR STYLES",
         links: [
-          { name: "Performance Running Shoes", href: "/shop?category=running", badge: "POPULAR" },
-          { name: "Everyday Casual Sneakers", href: "/shop?category=casual" },
-          { name: "Formal Loafers & Dress Shoes", href: "/shop?category=casual" },
+          { name: "Running Shoes", href: "/shop?category=running", badge: "POPULAR" },
+          { name: "Casual Sneakers", href: "/shop?category=casual" },
+          { name: "Formal Loafers", href: "/shop?category=casual" },
         ],
       },
       {
         title: "BY ACTIVITY & FIT",
         links: [
-          { name: "Gym & Cross-Training", href: "/shop?category=training" },
-          { name: "Walking & Daily Commute", href: "/shop?category=casual" },
-          { name: "Wide-Fit Comfort Soles", href: "/shop?category=men" },
+          { name: "Gym & Training", href: "/shop?category=training" },
+          { name: "Daily Walking", href: "/shop?category=casual" },
+          { name: "Wide-Fit Shoes", href: "/shop?category=men" },
         ],
       },
     ],
@@ -121,17 +121,17 @@ const NAV_CATEGORIES = [
       {
         title: "POPULAR STYLES",
         links: [
-          { name: "Everyday Sneakers", href: "/shop?category=casual", badge: "HOT" },
-          { name: "Running & Training Kicks", href: "/shop?category=running" },
-          { name: "Casual Flats & Loafers", href: "/shop?category=women" },
+          { name: "Daily Sneakers", href: "/shop?category=casual", badge: "HOT" },
+          { name: "Running Shoes", href: "/shop?category=running" },
+          { name: "Flats & Pumps", href: "/shop?category=women" },
         ],
       },
       {
         title: "LIFESTYLE & COMFORT",
         links: [
-          { name: "Yoga & Studio Fitness", href: "/shop?category=training" },
-          { name: "Chunky Platform Soles", href: "/shop?category=lifestyle", badge: "NEW" },
-          { name: "Cloud-Comfort Cushioning", href: "/shop?category=running" },
+          { name: "Studio & Yoga", href: "/shop?category=training" },
+          { name: "Platform Soles", href: "/shop?category=lifestyle", badge: "NEW" },
+          { name: "Cloud Comfort", href: "/shop?category=running" },
         ],
       },
     ],
@@ -153,17 +153,17 @@ const NAV_CATEGORIES = [
       {
         title: "BOYS & GIRLS",
         links: [
-          { name: "Boys Active Sneakers", href: "/shop?category=kids", badge: "POPULAR" },
-          { name: "Girls Fashion Sneakers", href: "/shop?category=kids" },
-          { name: "Light-Up & Sparkle Soles", href: "/shop?category=kids", badge: "CUTE" },
+          { name: "Boys Sneakers", href: "/shop?category=kids", badge: "POPULAR" },
+          { name: "Girls Sneakers", href: "/shop?category=kids" },
+          { name: "Light-Up Soles", href: "/shop?category=kids", badge: "CUTE" },
         ],
       },
       {
         title: "AGE & FASTENERS",
         links: [
-          { name: "Toddlers (Sizes 22-27)", href: "/shop?category=kids" },
-          { name: "Juniors (Sizes 28-35)", href: "/shop?category=kids" },
-          { name: "Easy-Velcro Fasteners", href: "/shop?category=kids", badge: "EASY" },
+          { name: "Toddlers (22–27)", href: "/shop?category=kids" },
+          { name: "Juniors (28–35)", href: "/shop?category=kids" },
+          { name: "Velcro Straps", href: "/shop?category=kids", badge: "EASY" },
         ],
       },
     ],
@@ -185,17 +185,17 @@ const NAV_CATEGORIES = [
       {
         title: "SHOE CARE",
         links: [
-          { name: "Sneaker Foam Cleaner", href: "/shop?category=accessories", badge: "HOT" },
-          { name: "Water & Stain Shield Spray", href: "/shop?category=accessories" },
-          { name: "Deep-Clean Bristle Brush", href: "/shop?category=accessories" },
+          { name: "Foam Cleaner", href: "/shop?category=accessories", badge: "HOT" },
+          { name: "Water Shield", href: "/shop?category=accessories" },
+          { name: "Cleaning Brush", href: "/shop?category=accessories" },
         ],
       },
       {
         title: "ESSENTIALS",
         links: [
-          { name: "Memory Foam Insoles", href: "/shop?category=accessories", badge: "BEST" },
-          { name: "Athletic Cushioned Socks", href: "/shop?category=accessories" },
-          { name: "Elastic & Flat Laces", href: "/shop?category=accessories" },
+          { name: "Memory Insoles", href: "/shop?category=accessories", badge: "BEST" },
+          { name: "Cushioned Socks", href: "/shop?category=accessories" },
+          { name: "Shoe Laces", href: "/shop?category=accessories" },
         ],
       },
     ],
@@ -217,17 +217,17 @@ const NAV_CATEGORIES = [
       {
         title: "UNIFORM FOOTWEAR",
         links: [
-          { name: "Boys Black Uniform Shoes", href: "/shop?category=school", badge: "TOP PICK" },
-          { name: "Girls Black Strap Shoes", href: "/shop?category=school" },
-          { name: "White PT & Sports Sneakers", href: "/shop?category=school", badge: "MUST HAVE" },
+          { name: "Black Uniform", href: "/shop?category=school", badge: "TOP PICK" },
+          { name: "Girls Strap Shoes", href: "/shop?category=school" },
+          { name: "White PT Shoes", href: "/shop?category=school", badge: "MUST HAVE" },
         ],
       },
       {
         title: "COMFORT & FIT",
         links: [
-          { name: "Easy Hook & Loop (Velcro)", href: "/shop?category=school", badge: "EASY WEAR" },
-          { name: "Anti-Scuff Genuine Leather", href: "/shop?category=school" },
-          { name: "Non-Marking Traction Soles", href: "/shop?category=school" },
+          { name: "Velcro Strap", href: "/shop?category=school", badge: "EASY WEAR" },
+          { name: "Genuine Leather", href: "/shop?category=school" },
+          { name: "Non-Marking Soles", href: "/shop?category=school" },
         ],
       },
     ],
@@ -539,31 +539,31 @@ export default function Header() {
                   className={`absolute top-full ${getDropdownAlignment(
                     cat.id
                   )} pt-3.5 z-50 pointer-events-none opacity-0 invisible -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:pointer-events-auto group-hover:translate-y-0 transition-all duration-300 ease-out`}
-                  style={{ minWidth: "690px", maxWidth: "90vw" }}
+                  style={{ minWidth: "780px", maxWidth: "95vw" }}
                 >
-                  <div className="bg-white/98 backdrop-blur-2xl border border-gray-100/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.15)] p-6 ring-1 ring-black/[0.04]">
-                    <div className="grid grid-cols-12 gap-7 items-stretch">
+                  <div className="bg-white/98 backdrop-blur-2xl border border-gray-100/90 rounded-3xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.16)] p-7 ring-1 ring-black/[0.04]">
+                    <div className="grid grid-cols-12 gap-8 items-stretch">
                       {/* Subcategories Section */}
-                      <div className="col-span-7 grid grid-cols-2 gap-6 pr-6 border-r border-gray-100/90">
+                      <div className="col-span-7 grid grid-cols-2 gap-7 pr-7 border-r border-gray-100/90">
                         {cat.columns.map((col, cIdx) => (
-                          <div key={cIdx} className="space-y-3.5">
-                            <h4 className="text-[10px] font-extrabold tracking-[0.14em] text-gray-400 uppercase flex items-center gap-1.5 pb-1 border-b border-gray-100/80">
+                          <div key={cIdx} className="space-y-4">
+                            <h4 className="text-[10px] font-extrabold tracking-[0.14em] text-gray-400 uppercase flex items-center gap-1.5 pb-1.5 border-b border-gray-100/80">
                               <span className="w-1.5 h-1.5 rounded-full bg-primary/50 inline-block" />
                               {col.title}
                             </h4>
-                            <ul className="space-y-1">
+                            <ul className="space-y-1.5">
                               {col.links.map((link, lIdx) => (
                                 <li key={lIdx}>
                                   <Link
                                     to={link.href}
-                                    className="group/link flex items-center justify-between py-2 px-2.5 -mx-2.5 rounded-xl text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-50/90 transition-all duration-150"
+                                    className="group/link flex items-center justify-between py-2 px-3 -mx-3 rounded-xl text-[13px] font-medium text-gray-700 hover:text-black hover:bg-gray-50/90 transition-all duration-150"
                                   >
-                                    <span className="group-hover/link:translate-x-1 group-hover/link:text-primary transition-all duration-150 truncate font-medium">
+                                    <span className="group-hover/link:translate-x-1 group-hover/link:text-primary transition-all duration-150 whitespace-nowrap font-medium">
                                       {link.name}
                                     </span>
                                     {link.badge && (
                                       <span
-                                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ml-2 shadow-2xs ${getBadgeClass(
+                                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ml-3 shadow-2xs ${getBadgeClass(
                                           link.badge,
                                           cat.isSpecial
                                         )}`}
@@ -583,17 +583,17 @@ export default function Header() {
                       {cat.featured && (
                         <div className="col-span-5 flex flex-col">
                           <div
-                            className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-5 text-white flex flex-col justify-between shadow-md relative overflow-hidden group/card`}
+                            className={`h-full rounded-2xl bg-gradient-to-br ${cat.featured.bgGradient} p-6 text-white flex flex-col justify-between shadow-md relative overflow-hidden group/card`}
                           >
                             {/* Ambient luxury light glows */}
-                            <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-white/10 blur-xl pointer-events-none" />
-                            <div className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-black/20 blur-xl pointer-events-none" />
+                            <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
+                            <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-black/20 blur-xl pointer-events-none" />
 
-                            <div className="relative z-10 space-y-2.5">
-                              <span className="inline-block text-[10px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md border border-white/25 px-2.5 py-1 rounded-full text-white shadow-sm">
+                            <div className="relative z-10 space-y-3">
+                              <span className="inline-block text-[10px] font-extrabold tracking-widest uppercase bg-white/20 backdrop-blur-md border border-white/25 px-3 py-1 rounded-full text-white shadow-sm">
                                 {cat.featured.badge}
                               </span>
-                              <h5 className="text-[15px] font-black leading-snug tracking-tight text-white">
+                              <h5 className="text-base font-black leading-snug tracking-tight text-white">
                                 {cat.featured.title}
                               </h5>
                               <p className="text-xs text-white/85 line-clamp-3 leading-relaxed font-normal">
@@ -601,10 +601,10 @@ export default function Header() {
                               </p>
                             </div>
 
-                            <div className="relative z-10 pt-4">
+                            <div className="relative z-10 pt-5">
                               <Link
                                 to={cat.featured.href}
-                                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-950 bg-white hover:bg-white/95 px-4 py-2 rounded-full transition-all duration-200 shadow-md group-hover/card:gap-2 group-hover/card:shadow-lg"
+                                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-950 bg-white hover:bg-white/95 px-4.5 py-2.5 rounded-full transition-all duration-200 shadow-md group-hover/card:gap-2 group-hover/card:shadow-lg"
                               >
                                 <span>{cat.featured.cta}</span>
                                 <ArrowRight className="w-3.5 h-3.5" />
