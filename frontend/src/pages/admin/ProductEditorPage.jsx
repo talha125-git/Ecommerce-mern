@@ -26,14 +26,22 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const DEFAULT_CATEGORIES = [
-  "Running",
-  "Casual",
-  "Retro",
-  "Performance",
-  "Lifestyle",
-  "High Top",
-  "Training"
+  "New Arrivals",
+  "Men",
+  "Women",
+  "Kids",
+  "Accessories",
+  "School Shoes"
 ];
+
+const DEFAULT_SUBCATEGORIES = {
+  "New Arrivals": ["New Releases", "Trending Now", "Best Sellers", "Men's New In", "Women's New In", "Kids' New In"],
+  "Men": ["Running Shoes", "Casual Sneakers", "Formal Loafers", "Gym & Training", "Daily Walking", "Wide-Fit Shoes"],
+  "Women": ["Daily Sneakers", "Running Shoes", "Flats & Pumps", "Studio & Yoga", "Platform Soles", "Cloud Comfort"],
+  "Kids": ["Boys Sneakers", "Girls Sneakers", "Light-Up Soles", "Toddlers (22–27)", "Juniors (28–35)", "Velcro Straps"],
+  "Accessories": ["Foam Cleaner", "Water Shield", "Cleaning Brush", "Memory Insoles", "Cushioned Socks", "Shoe Laces"],
+  "School Shoes": ["Black Uniform", "Girls Strap Shoes", "White PT Shoes", "Velcro Strap", "Genuine Leather", "Non-Marking Soles"],
+};
 
 const STANDARD_SIZES = [6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5, 12, 13];
 
@@ -51,7 +59,8 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
   // Form State
   const [formData, setFormData] = useState({
     name: "",
-    category: "Running",
+    category: "Kids",
+    subcategory: "Boys Sneakers",
     price: "",
     originalPrice: "",
     description: "",
@@ -60,7 +69,8 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
     stock: "20",
     rating: "4.9",
     reviewsCount: "1",
-    badge: "NEW",
+    badge: "POPULAR",
+    tags: ["POPULAR"],
     isNew: true,
     isHot: false,
     sizes: [7, 8, 9, 10, 11, 12],
@@ -75,8 +85,11 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
   });
 
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  const [subcategoriesMap, setSubcategoriesMap] = useState(DEFAULT_SUBCATEGORIES);
   const [customCategoryInput, setCustomCategoryInput] = useState("");
   const [showCustomCatInput, setShowCustomCatInput] = useState(false);
+  const [customSubcategoryInput, setCustomSubcategoryInput] = useState("");
+  const [showCustomSubInput, setShowCustomSubInput] = useState(false);
 
   // Gallery inputs
   const [galleryUrlInput, setGalleryUrlInput] = useState("");
@@ -90,18 +103,24 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
   const [statusMsg, setStatusMsg] = useState({ type: "", text: "" });
   const [createdProduct, setCreatedProduct] = useState(null);
 
-  // Fetch available categories from server
+  // Fetch available categories and subcategories from server
   useEffect(() => {
     axios
       .get(`${API_URL}/api/categories`)
       .then((res) => {
         if (res.data && Array.isArray(res.data.categories)) {
-          const catNames = res.data.categories
-            .filter((c) => c.active && c.name.toLowerCase() !== "all")
-            .map((c) => c.name);
+          const activeCats = res.data.categories.filter((c) => c.active && c.name.toLowerCase() !== "all");
+          const catNames = activeCats.map((c) => c.name);
           if (catNames.length > 0) {
             setCategories(catNames);
           }
+          const newMap = { ...DEFAULT_SUBCATEGORIES };
+          activeCats.forEach((c) => {
+            if (Array.isArray(c.subcategories) && c.subcategories.length > 0) {
+              newMap[c.name] = c.subcategories;
+            }
+          });
+          setSubcategoriesMap(newMap);
         }
       })
       .catch((err) => {
@@ -123,9 +142,18 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
             ? prod.images
             : (prod.image ? [prod.image] : []);
 
+          const loadedCat = prod.category || "Kids";
+          const availableSubs = subcategoriesMap[loadedCat] || [];
+          const isCustomSub = prod.subcategory && !availableSubs.includes(prod.subcategory);
+          if (isCustomSub) {
+            setShowCustomSubInput(true);
+            setCustomSubcategoryInput(prod.subcategory);
+          }
+
           setFormData({
             name: prod.name || "",
-            category: prod.category || "Running",
+            category: loadedCat,
+            subcategory: prod.subcategory || (availableSubs[0] || ""),
             price: prod.price != null ? String(prod.price) : "",
             originalPrice: prod.originalPrice != null ? String(prod.originalPrice) : "",
             description: prod.description || "",
@@ -135,6 +163,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
             rating: prod.rating != null ? String(prod.rating) : "4.9",
             reviewsCount: prod.reviewsCount != null ? String(prod.reviewsCount) : "1",
             badge: prod.badge || "",
+            tags: Array.isArray(prod.tags) && prod.tags.length > 0 ? prod.tags : (prod.badge ? [prod.badge] : []),
             isNew: Boolean(prod.isNew),
             isHot: Boolean(prod.isHot),
             sizes: Array.isArray(prod.sizes) && prod.sizes.length > 0
@@ -356,9 +385,15 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
 
     const primaryImage = formData.image || (galleryImages.length > 0 ? galleryImages[0] : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800");
 
+    const finalSub = showCustomSubInput
+      ? customSubcategoryInput.trim()
+      : (formData.subcategory || "").trim();
+
     const payload = {
       name: formData.name.trim(),
       category: formData.category,
+      subcategory: finalSub,
+      tags: formData.tags || (formData.badge ? [formData.badge] : []),
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       description: formData.description.trim(),
@@ -632,8 +667,9 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
               />
             </div>
 
-            {/* Category Selection + Custom Option */}
+            {/* Category and Subcategory Selection */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Category */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-bold text-gray-700">Category *</label>
@@ -642,14 +678,23 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
                     onClick={() => setShowCustomCatInput(!showCustomCatInput)}
                     className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
                   >
-                    {showCustomCatInput ? "Pick from list" : "+ Custom category"}
+                    {showCustomCatInput ? "Pick from list" : "+ Custom"}
                   </button>
                 </div>
 
                 {!showCustomCatInput ? (
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => {
+                      const newCat = e.target.value;
+                      const subs = subcategoriesMap[newCat] || [];
+                      setFormData({
+                        ...formData,
+                        category: newCat,
+                        subcategory: subs[0] || "",
+                      });
+                      setShowCustomSubInput(false);
+                    }}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition cursor-pointer"
                   >
                     {categories.map((cat) => (
@@ -669,7 +714,12 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
                     />
                     <button
                       type="button"
-                      onClick={handleAddCustomCategory}
+                      onClick={() => {
+                        if (!customCategoryInput.trim()) return;
+                        setCategories((prev) => Array.from(new Set([customCategoryInput.trim(), ...prev])));
+                        setFormData({ ...formData, category: customCategoryInput.trim() });
+                        setShowCustomCatInput(false);
+                      }}
                       className="px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 shrink-0"
                     >
                       Set
@@ -678,32 +728,124 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
                 )}
               </div>
 
-              {/* Promotional Badge / Tag */}
+              {/* Subcategory */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700">
-                  Promotional Tag / Badge
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="e.g. HOT, NEW, SALE, LIMITED"
-                    value={formData.badge}
-                    onChange={(e) => setFormData({ ...formData, badge: e.target.value.toUpperCase() })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition uppercase"
-                  />
-                  <div className="flex items-center gap-1 shrink-0">
-                    {["HOT", "NEW", "SALE"].map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => setFormData({ ...formData, badge: tag })}
-                        className="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-[10px] font-black text-gray-700"
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-gray-700">Dropdown Subcategory</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomSubInput(!showCustomSubInput)}
+                    className="text-[11px] font-bold text-primary hover:underline cursor-pointer"
+                  >
+                    {showCustomSubInput ? "Pick from list" : "+ Custom"}
+                  </button>
                 </div>
+
+                {!showCustomSubInput ? (
+                  <select
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition cursor-pointer"
+                  >
+                    {(subcategoriesMap[formData.category] || []).map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="text"
+                      placeholder="Type custom subcategory..."
+                      value={customSubcategoryInput}
+                      onChange={(e) => setCustomSubcategoryInput(e.target.value)}
+                      className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Promotional Tags & Badges Selector */}
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <label className="block text-xs font-bold text-gray-700 flex items-center justify-between">
+                <span>Promotional Tags & Badges (Click to toggle)</span>
+                <span className="text-[10px] text-gray-400 font-normal">Popular, Hot, New, Cute, etc.</span>
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { tag: "POPULAR", icon: "⭐", activeClass: "bg-purple-50 text-purple-700 border-purple-300 ring-2 ring-purple-300" },
+                  { tag: "HOT", icon: "🔥", activeClass: "bg-rose-50 text-rose-700 border-rose-300 ring-2 ring-rose-300" },
+                  { tag: "NEW", icon: "✨", activeClass: "bg-blue-50 text-blue-700 border-blue-300 ring-2 ring-blue-300" },
+                  { tag: "SALE", icon: "🏷️", activeClass: "bg-amber-50 text-amber-700 border-amber-300 ring-2 ring-amber-300" },
+                  { tag: "BEST SELLER", icon: "🏆", activeClass: "bg-emerald-50 text-emerald-700 border-emerald-300 ring-2 ring-emerald-300" },
+                  { tag: "TRENDING", icon: "⚡", activeClass: "bg-indigo-50 text-indigo-700 border-indigo-300 ring-2 ring-indigo-300" },
+                  { tag: "TOP PICK", icon: "🎯", activeClass: "bg-orange-50 text-orange-700 border-orange-300 ring-2 ring-orange-300" },
+                  { tag: "MUST HAVE", icon: "💫", activeClass: "bg-cyan-50 text-cyan-700 border-cyan-300 ring-2 ring-cyan-300" },
+                  { tag: "CUTE", icon: "💖", activeClass: "bg-pink-50 text-pink-700 border-pink-300 ring-2 ring-pink-300" },
+                  { tag: "EASY WEAR", icon: "👟", activeClass: "bg-teal-50 text-teal-700 border-teal-300 ring-2 ring-teal-300" },
+                  { tag: "PREMIUM", icon: "👑", activeClass: "bg-slate-100 text-slate-800 border-slate-300 ring-2 ring-slate-400" },
+                ].map(({ tag, icon, activeClass }) => {
+                  const isSelected = formData.tags?.includes(tag) || formData.badge === tag;
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        const currentTags = Array.isArray(formData.tags) ? [...formData.tags] : [];
+                        let newTags = [];
+                        let newBadge = formData.badge;
+                        let newIsHot = formData.isHot;
+                        let newIsNew = formData.isNew;
+
+                        if (isSelected) {
+                          newTags = currentTags.filter((t) => t !== tag);
+                          if (newBadge === tag) newBadge = newTags[0] || "";
+                          if (tag === "HOT") newIsHot = false;
+                          if (tag === "NEW") newIsNew = false;
+                        } else {
+                          newTags = [...currentTags, tag];
+                          newBadge = tag;
+                          if (tag === "HOT") newIsHot = true;
+                          if (tag === "NEW") newIsNew = true;
+                        }
+
+                        setFormData({
+                          ...formData,
+                          tags: newTags,
+                          badge: newBadge,
+                          isHot: newIsHot,
+                          isNew: newIsNew,
+                        });
+                      }}
+                      className={cn(
+                        "px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer flex items-center gap-1",
+                        isSelected ? `${activeClass} shadow-xs font-black` : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                      )}
+                    >
+                      <span>{icon}</span>
+                      <span>{tag}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-1">
+                <input
+                  type="text"
+                  placeholder="Or enter custom promotional badge..."
+                  value={formData.badge}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase();
+                    setFormData({
+                      ...formData,
+                      badge: val,
+                      tags: val ? Array.from(new Set([...(formData.tags || []), val])) : formData.tags,
+                    });
+                  }}
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-900 placeholder:text-gray-400 uppercase"
+                />
               </div>
             </div>
 

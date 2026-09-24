@@ -20,16 +20,35 @@ import {
   Upload,
   Link as LinkIcon,
   Loader2,
-  X
+  X,
+  Star
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const DEFAULT_CATEGORIES = ["Men", "Women", "Kids", "School Shoes", "Accessories", "Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
+const DEFAULT_CATEGORIES = [
+  "New Arrivals",
+  "Men",
+  "Women",
+  "Kids",
+  "Accessories",
+  "School Shoes"
+];
+
+const DEFAULT_SUBCATEGORIES = {
+  "New Arrivals": ["New Releases", "Trending Now", "Best Sellers", "Men's New In", "Women's New In", "Kids' New In"],
+  "Men": ["Running Shoes", "Casual Sneakers", "Formal Loafers", "Gym & Training", "Daily Walking", "Wide-Fit Shoes"],
+  "Women": ["Daily Sneakers", "Running Shoes", "Flats & Pumps", "Studio & Yoga", "Platform Soles", "Cloud Comfort"],
+  "Kids": ["Boys Sneakers", "Girls Sneakers", "Light-Up Soles", "Toddlers (22–27)", "Juniors (28–35)", "Velcro Straps"],
+  "Accessories": ["Foam Cleaner", "Water Shield", "Cleaning Brush", "Memory Insoles", "Cushioned Socks", "Shoe Laces"],
+  "School Shoes": ["Black Uniform", "Girls Strap Shoes", "White PT Shoes", "Velcro Strap", "Genuine Leather", "Non-Marking Soles"],
+};
 
 export default function ProductsTab({ onAddNew, onEditProduct }) {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+  const [subcategoriesMap, setSubcategoriesMap] = useState(DEFAULT_SUBCATEGORIES);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -44,7 +63,10 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    category: "Running",
+    category: "Kids",
+    subcategory: "Boys Sneakers",
+    customSubcategory: "",
+    tags: ["POPULAR"],
     price: "",
     originalPrice: "",
     description: "",
@@ -55,7 +77,7 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
     reviewsCount: "88",
     isNew: false,
     isHot: false,
-    badge: "",
+    badge: "POPULAR",
   });
   const [galleryUrlInput, setGalleryUrlInput] = useState("");
   const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
@@ -229,12 +251,18 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
     try {
       const res = await axios.get(`${API_URL}/api/categories`);
       if (res.data && Array.isArray(res.data.categories)) {
-        const catNames = res.data.categories
-          .filter((c) => c.active && c.name.toLowerCase() !== "all")
-          .map((c) => c.name);
+        const activeCats = res.data.categories.filter((c) => c.active && c.name.toLowerCase() !== "all");
+        const catNames = activeCats.map((c) => c.name);
         if (catNames.length > 0) {
           setCategories(catNames);
         }
+        const newMap = { ...DEFAULT_SUBCATEGORIES };
+        activeCats.forEach((c) => {
+          if (Array.isArray(c.subcategories) && c.subcategories.length > 0) {
+            newMap[c.name] = c.subcategories;
+          }
+        });
+        setSubcategoriesMap(newMap);
       }
     } catch (err) {
       console.warn("Error fetching categories for dropdown:", err);
@@ -266,9 +294,14 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
   // Open Modal for Add
   const openAddModal = () => {
     setEditingProduct(null);
+    const initialCat = categories[0] || "Kids";
+    const availableSubs = subcategoriesMap[initialCat] || [];
     setFormData({
       name: "",
-      category: categories[0] || "Running",
+      category: initialCat,
+      subcategory: availableSubs[0] || "",
+      customSubcategory: "",
+      tags: [],
       price: "",
       originalPrice: "",
       description: "",
@@ -292,9 +325,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
       ? prod.images
       : (prod.image ? [prod.image] : []);
 
+    const cat = prod.category || categories[0] || "Kids";
+    const availableSubs = subcategoriesMap[cat] || [];
+    const isCustomSub = prod.subcategory && !availableSubs.includes(prod.subcategory);
+
     setFormData({
       name: prod.name || "",
-      category: prod.category || categories[0] || "Running",
+      category: cat,
+      subcategory: isCustomSub ? "custom" : (prod.subcategory || availableSubs[0] || ""),
+      customSubcategory: isCustomSub ? prod.subcategory : "",
+      tags: Array.isArray(prod.tags) && prod.tags.length > 0 ? prod.tags : (prod.badge ? [prod.badge] : []),
       price: prod.price ? String(prod.price) : "",
       originalPrice: prod.originalPrice ? String(prod.originalPrice) : "",
       description: prod.description || "",
@@ -338,10 +378,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
       : (formData.image ? [formData.image.trim()] : []);
     const primaryCover = formData.image.trim() || (galleryImages[0] || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600");
 
+    const finalSubcategory = formData.subcategory === "custom"
+      ? (formData.customSubcategory || "").trim()
+      : (formData.subcategory || "").trim();
+
     setSaving(true);
     const payload = {
       name: formData.name.trim(),
       category: formData.category,
+      subcategory: finalSubcategory,
+      tags: formData.tags || (formData.badge ? [formData.badge] : []),
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       description: formData.description.trim(),
@@ -350,9 +396,9 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
       stock: Number(formData.stock || 15),
       rating: Number(formData.rating || 4.8),
       reviewsCount: Number(formData.reviewsCount || 88),
-      isNew: formData.isNew,
-      isHot: formData.isHot,
-      badge: formData.badge || (formData.isNew ? "NEW" : formData.isHot ? "HOT" : ""),
+      isNew: Boolean(formData.isNew),
+      isHot: Boolean(formData.isHot),
+      badge: formData.badge || (formData.isNew ? "NEW" : formData.isHot ? "HOT" : (formData.tags?.[0] || "")),
     };
 
 
@@ -393,12 +439,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
     if (selectedCategory !== "All" && prod.category !== selectedCategory) {
       return false;
     }
-    if (
-      searchQuery &&
-      !prod.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      !prod.category.toLowerCase().includes(searchQuery.toLowerCase())
-    ) {
-      return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const nameMatch = prod.name?.toLowerCase().includes(q);
+      const catMatch = prod.category?.toLowerCase().includes(q);
+      const subMatch = prod.subcategory?.toLowerCase().includes(q);
+      const badgeMatch = prod.badge?.toLowerCase().includes(q);
+      const tagsMatch = Array.isArray(prod.tags) && prod.tags.some((t) => t.toLowerCase().includes(q));
+      if (!nameMatch && !catMatch && !subMatch && !badgeMatch && !tagsMatch) {
+        return false;
+      }
     }
     return true;
   });
@@ -556,9 +606,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                       <div className="flex-1 min-w-0">
                         {/* Category & Stock Status */}
                         <div className="flex items-center justify-between gap-1.5 mb-1.5 flex-wrap">
-                          <span className="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-md text-[10px] border border-purple-100 inline-flex items-center gap-1">
-                            <Tag className="w-2.5 h-2.5" /> {prod.category}
-                          </span>
+                          <div className="flex items-center gap-1 flex-wrap">
+                            <span className="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded-md text-[10px] border border-purple-100 inline-flex items-center gap-1">
+                              <Tag className="w-2.5 h-2.5" /> {prod.category}
+                            </span>
+                            {prod.subcategory && (
+                              <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md text-[9px] border border-blue-100">
+                                {prod.subcategory}
+                              </span>
+                            )}
+                          </div>
 
                           {/* Dynamic Stock Indicator */}
                           {stockVal === 0 ? (
@@ -672,9 +729,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 bg-purple-50 text-purple-700 font-bold rounded-lg text-[10px] border border-purple-100 inline-flex items-center gap-1">
-                            <Tag className="w-3 h-3" /> {prod.category}
-                          </span>
+                          <div className="flex flex-col gap-1 items-start">
+                            <span className="px-2.5 py-1 bg-purple-50 text-purple-700 font-bold rounded-lg text-[10px] border border-purple-100 inline-flex items-center gap-1">
+                              <Tag className="w-3 h-3" /> {prod.category}
+                            </span>
+                            {prod.subcategory && (
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-md text-[9px] border border-blue-100/80">
+                                {prod.subcategory}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="p-4">
                           <div className="font-extrabold text-gray-900">Rs. {prod.price}</div>
@@ -685,22 +749,49 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                           )}
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-1">
+                          <div className="flex flex-wrap items-center gap-1 max-w-[170px]">
                             {prod.isHot && (
-                              <span className="px-2 py-0.5 bg-amber-50 text-amber-600 rounded-md text-[9px] font-bold border border-amber-200">
+                              <span className="px-2 py-0.5 bg-rose-50 text-rose-600 rounded-md text-[9px] font-bold border border-rose-200 flex items-center gap-0.5">
                                 🔥 HOT
                               </span>
                             )}
                             {prod.isNew && (
-                              <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md text-[9px] font-bold border border-emerald-200">
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[9px] font-bold border border-blue-200 flex items-center gap-0.5">
                                 ✨ NEW
                               </span>
                             )}
-                            {prod.badge && !prod.isHot && !prod.isNew && (
-                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md text-[9px] font-bold border border-blue-200">
+                            {prod.badge && prod.badge !== "HOT" && prod.badge !== "NEW" && (
+                              <span
+                                className={cn(
+                                  "px-2 py-0.5 rounded-md text-[9px] font-bold border flex items-center gap-0.5",
+                                  prod.badge === "POPULAR"
+                                    ? "bg-purple-50 text-purple-700 border-purple-200"
+                                    : prod.badge === "CUTE"
+                                    ? "bg-pink-50 text-pink-700 border-pink-200"
+                                    : prod.badge === "TOP PICK" || prod.badge === "MUST HAVE"
+                                    ? "bg-orange-50 text-[#C84B31] border-orange-200"
+                                    : prod.badge === "BEST" || prod.badge === "BESTSELLER"
+                                    ? "bg-amber-50 text-amber-700 border-amber-200"
+                                    : prod.badge === "EASY WEAR" || prod.badge === "EASY"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                    : "bg-gray-100 text-gray-700 border-gray-200"
+                                )}
+                              >
+                                {prod.badge === "POPULAR" ? "⭐ " : ""}
                                 {prod.badge}
                               </span>
                             )}
+                            {Array.isArray(prod.tags) &&
+                              prod.tags
+                                .filter((t) => t !== prod.badge && t !== "HOT" && t !== "NEW")
+                                .map((t, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-1.5 py-0.5 bg-gray-100 text-gray-600 rounded text-[9px] font-medium border border-gray-200"
+                                  >
+                                    #{t}
+                                  </span>
+                                ))}
                           </div>
                         </td>
                         <td className="p-4 font-semibold text-gray-700">
@@ -780,7 +871,16 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                   <select
                     required
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => {
+                      const newCat = e.target.value;
+                      const subs = subcategoriesMap[newCat] || [];
+                      setFormData({
+                        ...formData,
+                        category: newCat,
+                        subcategory: subs[0] || "",
+                        customSubcategory: "",
+                      });
+                    }}
                     className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold text-gray-900 cursor-pointer"
                   >
                     {categories.map((cat) => (
@@ -789,6 +889,34 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                {/* Subcategory Dropdown (Dynamically paired with Category) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Dropdown Subcategory
+                  </label>
+                  <select
+                    value={formData.subcategory}
+                    onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                    className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-bold text-gray-900 cursor-pointer"
+                  >
+                    {(subcategoriesMap[formData.category] || []).map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                    <option value="custom">+ Custom Subcategory...</option>
+                  </select>
+                  {formData.subcategory === "custom" && (
+                    <input
+                      type="text"
+                      placeholder="Type custom subcategory..."
+                      value={formData.customSubcategory}
+                      onChange={(e) => setFormData({ ...formData, customSubcategory: e.target.value })}
+                      className="mt-1.5 w-full px-3 py-1.5 text-xs bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 font-medium"
+                    />
+                  )}
                 </div>
 
                 {/* Price */}
@@ -1030,13 +1158,111 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                   />
                 </div>
 
+                {/* Promotional Tags & Badges Selector */}
+                <div className="sm:col-span-2 space-y-2 pt-2 border-t border-gray-100">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                      <Star className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Promotional Tags & Badges (Click to toggle)</span>
+                    </label>
+                    <span className="text-[10px] text-gray-400">Popular, Hot, New, Sale, etc.</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { tag: "POPULAR", icon: "⭐", activeClass: "bg-purple-50 text-purple-700 border-purple-200 ring-2 ring-purple-300" },
+                      { tag: "HOT", icon: "🔥", activeClass: "bg-rose-50 text-rose-700 border-rose-200 ring-2 ring-rose-300" },
+                      { tag: "NEW", icon: "✨", activeClass: "bg-blue-50 text-blue-700 border-blue-200 ring-2 ring-blue-300" },
+                      { tag: "SALE", icon: "🏷️", activeClass: "bg-amber-50 text-amber-700 border-amber-200 ring-2 ring-amber-300" },
+                      { tag: "BEST SELLER", icon: "🏆", activeClass: "bg-emerald-50 text-emerald-700 border-emerald-200 ring-2 ring-emerald-300" },
+                      { tag: "TRENDING", icon: "⚡", activeClass: "bg-indigo-50 text-indigo-700 border-indigo-200 ring-2 ring-indigo-300" },
+                      { tag: "TOP PICK", icon: "🎯", activeClass: "bg-orange-50 text-orange-700 border-orange-200 ring-2 ring-orange-300" },
+                      { tag: "MUST HAVE", icon: "💫", activeClass: "bg-cyan-50 text-cyan-700 border-cyan-200 ring-2 ring-cyan-300" },
+                      { tag: "CUTE", icon: "💖", activeClass: "bg-pink-50 text-pink-700 border-pink-200 ring-2 ring-pink-300" },
+                      { tag: "EASY WEAR", icon: "👟", activeClass: "bg-teal-50 text-teal-700 border-teal-200 ring-2 ring-teal-300" },
+                      { tag: "PREMIUM", icon: "👑", activeClass: "bg-slate-100 text-slate-800 border-slate-300 ring-2 ring-slate-400" },
+                    ].map(({ tag, icon, activeClass }) => {
+                      const isSelected = formData.tags?.includes(tag) || formData.badge === tag;
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => {
+                            const currentTags = Array.isArray(formData.tags) ? [...formData.tags] : [];
+                            let newTags = [];
+                            let newBadge = formData.badge;
+                            let newIsHot = formData.isHot;
+                            let newIsNew = formData.isNew;
+
+                            if (isSelected) {
+                              newTags = currentTags.filter((t) => t !== tag);
+                              if (newBadge === tag) newBadge = newTags[0] || "";
+                              if (tag === "HOT") newIsHot = false;
+                              if (tag === "NEW") newIsNew = false;
+                            } else {
+                              newTags = [...currentTags, tag];
+                              newBadge = tag;
+                              if (tag === "HOT") newIsHot = true;
+                              if (tag === "NEW") newIsNew = true;
+                            }
+
+                            setFormData({
+                              ...formData,
+                              tags: newTags,
+                              badge: newBadge,
+                              isHot: newIsHot,
+                              isNew: newIsNew,
+                            });
+                          }}
+                          className={cn(
+                            "px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer flex items-center gap-1",
+                            isSelected
+                              ? `${activeClass} shadow-xs font-black`
+                              : "bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100"
+                          )}
+                        >
+                          <span>{icon}</span>
+                          <span>{tag}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      placeholder="Or type custom badge / tag..."
+                      value={formData.badge}
+                      onChange={(e) => {
+                        const val = e.target.value.toUpperCase();
+                        setFormData({
+                          ...formData,
+                          badge: val,
+                          tags: val ? Array.from(new Set([...(formData.tags || []), val])) : formData.tags,
+                        });
+                      }}
+                      className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-300 rounded-xl uppercase font-bold"
+                    />
+                  </div>
+                </div>
+
                 {/* Badges & Checkboxes */}
                 <div className="sm:col-span-2 flex flex-wrap items-center gap-6 pt-2 border-t border-gray-100">
                   <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-700">
                     <input
                       type="checkbox"
                       checked={formData.isHot}
-                      onChange={(e) => setFormData({ ...formData, isHot: e.target.checked })}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        const currentTags = Array.isArray(formData.tags) ? [...formData.tags] : [];
+                        const updatedTags = checked
+                          ? (currentTags.includes("HOT") ? currentTags : [...currentTags, "HOT"])
+                          : currentTags.filter((t) => t !== "HOT");
+                        setFormData({
+                          ...formData,
+                          isHot: checked,
+                          tags: updatedTags,
+                          badge: checked ? "HOT" : (formData.badge === "HOT" ? "" : formData.badge),
+                        });
+                      }}
                       className="rounded text-amber-600 focus:ring-amber-500 w-4 h-4"
                     />
                     <span>🔥 Mark as Hot Product</span>
@@ -1046,7 +1272,19 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
                     <input
                       type="checkbox"
                       checked={formData.isNew}
-                      onChange={(e) => setFormData({ ...formData, isNew: e.target.checked })}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        const currentTags = Array.isArray(formData.tags) ? [...formData.tags] : [];
+                        const updatedTags = checked
+                          ? (currentTags.includes("NEW") ? currentTags : [...currentTags, "NEW"])
+                          : currentTags.filter((t) => t !== "NEW");
+                        setFormData({
+                          ...formData,
+                          isNew: checked,
+                          tags: updatedTags,
+                          badge: checked ? "NEW" : (formData.badge === "NEW" ? "" : formData.badge),
+                        });
+                      }}
                       className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4"
                     />
                     <span>✨ Mark as New Arrival</span>

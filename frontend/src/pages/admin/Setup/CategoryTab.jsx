@@ -24,14 +24,118 @@ import {
 } from "lucide-react";
 
 const DEFAULT_CATEGORIES = [
-  { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
-  { id: "running", name: "Running", slug: "running", active: true, isDefault: true, icon: "Zap", description: "High performance running & athletic footwear" },
-  { id: "casual", name: "Casual", slug: "casual", active: true, isDefault: true, icon: "Smile", description: "Everyday comfort sneakers and shoes" },
-  { id: "retro", name: "Retro", slug: "retro", active: true, isDefault: true, icon: "Sparkles", description: "Iconic timeless classic models" },
-  { id: "performance", name: "Performance", slug: "performance", active: true, isDefault: true, icon: "Activity", description: "Pro-level sports performance footwear" },
-  { id: "lifestyle", name: "Lifestyle", slug: "lifestyle", active: true, isDefault: true, icon: "Compass", description: "Modern street style and fashion shoes" },
-  { id: "high-top", name: "High Top", slug: "high-top", active: true, isDefault: true, icon: "Shield", description: "Ankle support high top sneakers" },
-  { id: "training", name: "Training", slug: "training", active: true, isDefault: true, icon: "Dumbbell", description: "Gym and cross-training athletic shoes" },
+  {
+    id: "all",
+    name: "All",
+    slug: "all",
+    active: true,
+    isDefault: true,
+    icon: "Grid",
+    description: "All available products catalog",
+    subcategories: [],
+  },
+  {
+    id: "new-arrivals",
+    name: "New Arrivals",
+    slug: "new-arrivals",
+    active: true,
+    isDefault: true,
+    icon: "Sparkles",
+    description: "Fresh drops, new releases, trending styles, and best sellers",
+    subcategories: [
+      "New Releases",
+      "Trending Now",
+      "Best Sellers",
+      "Men's New In",
+      "Women's New In",
+      "Kids' New In",
+    ],
+  },
+  {
+    id: "men",
+    name: "Men",
+    slug: "men",
+    active: true,
+    isDefault: true,
+    icon: "Tag",
+    description: "Men's performance running, casual sneakers, formal loafers, and gym trainers",
+    subcategories: [
+      "Running Shoes",
+      "Casual Sneakers",
+      "Formal Loafers",
+      "Gym & Training",
+      "Daily Walking",
+      "Wide-Fit Shoes",
+    ],
+  },
+  {
+    id: "women",
+    name: "Women",
+    slug: "women",
+    active: true,
+    isDefault: true,
+    icon: "Sparkles",
+    description: "Women's daily sneakers, running shoes, flats, yoga studio, platform soles, and cloud comfort",
+    subcategories: [
+      "Daily Sneakers",
+      "Running Shoes",
+      "Flats & Pumps",
+      "Studio & Yoga",
+      "Platform Soles",
+      "Cloud Comfort",
+    ],
+  },
+  {
+    id: "kids",
+    name: "Kids",
+    slug: "kids",
+    active: true,
+    isDefault: true,
+    icon: "Smile",
+    description: "Kids' boys & girls sneakers, light-up LED soles, toddlers, juniors, and velcro straps",
+    subcategories: [
+      "Boys Sneakers",
+      "Girls Sneakers",
+      "Light-Up Soles",
+      "Toddlers (22–27)",
+      "Juniors (28–35)",
+      "Velcro Straps",
+    ],
+  },
+  {
+    id: "accessories",
+    name: "Accessories",
+    slug: "accessories",
+    active: true,
+    isDefault: true,
+    icon: "Compass",
+    description: "Shoe care foam cleaner, water shield spray, brush, memory insoles, socks, and laces",
+    subcategories: [
+      "Foam Cleaner",
+      "Water Shield",
+      "Cleaning Brush",
+      "Memory Insoles",
+      "Cushioned Socks",
+      "Shoe Laces",
+    ],
+  },
+  {
+    id: "school-shoes",
+    name: "School Shoes",
+    slug: "school-shoes",
+    active: true,
+    isDefault: true,
+    icon: "Shield",
+    description: "Uniform approved black leather, girls strap shoes, white PT shoes, velcro, and non-marking soles",
+    subcategories: [
+      "Black Uniform",
+      "Girls Strap Shoes",
+      "White PT Shoes",
+      "Velcro Strap",
+      "Genuine Leather",
+      "Non-Marking Soles",
+    ],
+  },
 ];
 
 const ICON_MAP = {
@@ -56,7 +160,7 @@ export default function CategoryTab() {
   // Modal / Form state for Add/Edit
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: "", description: "", icon: "Tag" });
+  const [formData, setFormData] = useState({ name: "", description: "", icon: "Tag", subcategoriesInput: "" });
 
   const API_URL = import.meta.env.VITE_API_URL || "";
 
@@ -127,14 +231,19 @@ export default function CategoryTab() {
   // Open Add Category Modal
   const openAddModal = () => {
     setEditingCategory(null);
-    setFormData({ name: "", description: "", icon: "Tag" });
+    setFormData({ name: "", description: "", icon: "Tag", subcategoriesInput: "" });
     setIsAddModalOpen(true);
   };
 
   // Open Edit Modal
   const openEditModal = (cat) => {
     setEditingCategory(cat);
-    setFormData({ name: cat.name, description: cat.description || "", icon: cat.icon || "Tag" });
+    setFormData({
+      name: cat.name,
+      description: cat.description || "",
+      icon: cat.icon || "Tag",
+      subcategoriesInput: Array.isArray(cat.subcategories) ? cat.subcategories.join(", ") : "",
+    });
     setIsAddModalOpen(true);
   };
 
@@ -142,6 +251,13 @@ export default function CategoryTab() {
   const handleModalSubmit = (e) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
+
+    const parsedSubcategories = formData.subcategoriesInput
+      ? formData.subcategoriesInput
+          .split(/[,;\n]+/)
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
 
     if (editingCategory) {
       // Edit existing
@@ -154,11 +270,12 @@ export default function CategoryTab() {
                 slug: formData.name.trim().toLowerCase().replace(/\s+/g, "-"),
                 description: formData.description,
                 icon: formData.icon,
+                subcategories: parsedSubcategories,
               }
             : cat
         )
       );
-      showStatus("success", `Category "${formData.name}" updated!`);
+      showStatus("success", `Category "${formData.name}" updated! Click "Save Changes" to persist.`);
     } else {
       // Create new category
       const newId = formData.name.trim().toLowerCase().replace(/\s+/g, "-") + "-" + Date.now().toString().slice(-4);
@@ -170,9 +287,10 @@ export default function CategoryTab() {
         isDefault: false,
         icon: formData.icon,
         description: formData.description,
+        subcategories: parsedSubcategories,
       };
       setCategories((prev) => [...prev, newCat]);
-      showStatus("success", `New category "${formData.name}" added to list!`);
+      showStatus("success", `New category "${formData.name}" added to list! Click "Save Changes" to persist.`);
     }
 
     setIsAddModalOpen(false);
@@ -380,6 +498,28 @@ export default function CategoryTab() {
                     <p className="text-[11px] text-gray-500 line-clamp-2 mt-0.5">
                       {cat.description || "No description provided."}
                     </p>
+
+                    {/* Subcategories Dropdown Pills */}
+                    {Array.isArray(cat.subcategories) && cat.subcategories.length > 0 && (
+                      <div className="pt-2 mt-2 border-t border-gray-100">
+                        <div className="text-[10px] font-bold text-gray-400 mb-1 flex items-center gap-1">
+                          <span>Dropdown Subcategories:</span>
+                          <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 rounded-md text-[9px]">
+                            {cat.subcategories.length}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {cat.subcategories.map((sub, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="px-2 py-0.5 bg-gray-50 text-gray-700 rounded-md text-[10px] font-semibold border border-gray-200"
+                            >
+                              {sub}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -452,6 +592,22 @@ export default function CategoryTab() {
                   placeholder="Short summary for this footwear collection..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-gray-700">
+                    Dropdown Subcategories
+                  </label>
+                  <span className="text-[10px] text-gray-400">Separate with commas</span>
+                </div>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Boys Sneakers, Girls Sneakers, Light-Up Soles, Toddlers (22–27), Juniors (28–35), Velcro Straps"
+                  value={formData.subcategoriesInput}
+                  onChange={(e) => setFormData({ ...formData, subcategoriesInput: e.target.value })}
                   className="w-full px-3 py-2 text-xs bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
                 />
               </div>

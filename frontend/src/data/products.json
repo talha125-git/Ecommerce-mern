@@ -16,7 +16,7 @@
     "reviewsCount": 104,
     "isNew": true,
     "isHot": true,
-    "badge": "COMFORT",
+    "badge": "HOT",
     "sizes": [
       5,
       6,
@@ -29,8 +29,14 @@
       "Blush Pink"
     ],
     "createdAt": "2026-09-12T12:59:41.120Z",
-    "updatedAt": "2026-09-12T12:59:41.120Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:26.181Z",
+    "__v": 0,
+    "subcategory": "Cloud Comfort",
+    "tags": [
+      "HOT",
+      "POPULAR",
+      "COMFORT"
+    ]
   },
   {
     "_id": "6aa54cbcd96761be3bbc8dc4",
@@ -49,7 +55,7 @@
     "reviewsCount": 88,
     "isNew": true,
     "isHot": false,
-    "badge": "COMFORT",
+    "badge": "POPULAR",
     "sizes": [
       7,
       8,
@@ -62,8 +68,13 @@
       "Midnight Black"
     ],
     "createdAt": "2026-09-12T12:59:40.485Z",
-    "updatedAt": "2026-09-12T12:59:40.485Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:24.650Z",
+    "__v": 0,
+    "subcategory": "Daily Walking",
+    "tags": [
+      "POPULAR",
+      "COMFORT"
+    ]
   },
   {
     "_id": "6aa54cbcd96761be3bbc8dc2",
@@ -82,7 +93,7 @@
     "reviewsCount": 154,
     "isNew": true,
     "isHot": false,
-    "badge": "ESSENTIAL",
+    "badge": "POPULAR",
     "sizes": [
       "120cm Pair"
     ],
@@ -92,24 +103,29 @@
       "Reflective White"
     ],
     "createdAt": "2026-09-12T12:59:40.275Z",
-    "updatedAt": "2026-09-12T12:59:40.275Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:27.518Z",
+    "__v": 0,
+    "subcategory": "Shoe Laces",
+    "tags": [
+      "POPULAR",
+      "ESSENTIAL"
+    ]
   },
   {
     "_id": "6aa54cbbd96761be3bbc8dbc",
     "id": "6aa54cbbd96761be3bbc8dbb",
     "name": "TinyToes Soft-Sole Toddler Sneaker (22-27)",
     "category": "Kids",
-    "price": 2299,
+    "price": 2199,
     "originalPrice": 2799,
-    "description": "Super lightweight flexible first-walkers with anti-skid bottom and wide toe box for toddler feet.",
+    "description": "Pediatrician-recommended first walker shoes with flexible zero-drop soles, wide toe box, and anti-slip rubber pods.",
     "image": "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=800&auto=format&fit=crop"
     ],
-    "stock": 25,
-    "rating": 4.8,
-    "reviewsCount": 42,
+    "stock": 30,
+    "rating": 4.9,
+    "reviewsCount": 120,
     "isNew": true,
     "isHot": false,
     "badge": "EASY",
@@ -122,32 +138,122 @@
       27
     ],
     "colors": [
-      "Cloud Cream",
-      "Sky Baby Blue"
+      "Butter Cream",
+      "Baby Sky Blue"
     ],
     "createdAt": "2026-09-12T12:59:39.560Z",
-    "updatedAt": "2026-09-12T12:59:39.560Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:22.585Z",
+    "__v": 0,
+    "subcategory": "Toddlers (22–27)",
+    "tags": [
+      "EASY",
+      "POPULAR",
+      "TODDLER"
+    ]
   },
   {
     "_id": "6aa54cbbd96761be3bbc8dba",
     "id": "6aa54cbbd96761be3bbc8db9",
     "name": "FlashLight Kids LED Star Runners",
     "category": "Kids",
-    "price": 3499,
-    "originalPrice": 4199,
-    "description": "Super bright multi-color LED motion-activated soles with stars pattern. Durable impact-resistant battery casing.",
+    "price": 3199,
+    "originalPrice": 3999,
+    "description": "Vibrant multi-color LED motion-activated soles that light up with every bounce and step. USB rechargeable battery.",
     "image": "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=800&auto=format&fit=crop"
     ],
-    "stock": 22,
-    "rating": 5,
-    "reviewsCount": 145,
+    "stock": 20,
+    "rating": 4.9,
+    "reviewsCount": 165,
     "isNew": true,
     "isHot": true,
-    "badge": "GLOW",
+    "badge": "HOT",
     "sizes": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "colors": [
+      "Cosmic Black Glow",
+      "Neon Cyan Glow"
+    ],
+    "createdAt": "2026-09-12T12:59:39.315Z",
+    "updatedAt": "2026-09-12T13:27:22.201Z",
+    "__v": 0,
+    "subcategory": "Light-Up Soles",
+    "tags": [
+      "HOT",
+      "GLOW",
+      "POPULAR"
+    ]
+  },
+  {
+    "_id": "6aa54cbbd96761be3bbc8db8",
+    "id": "6aa54cbbd96761be3bbc8db7",
+    "name": "RainbowBloom Girls Casual Sneakers",
+    "category": "Kids",
+    "price": 2699,
+    "originalPrice": 3299,
+    "description": "Sweet pastel colorway girls sneakers with glitter heel accents, padded memory footbeds, and lightweight flexible soles.",
+    "image": "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop"
+    ],
+    "stock": 25,
+    "rating": 4.9,
+    "reviewsCount": 88,
+    "isNew": true,
+    "isHot": false,
+    "badge": "CUTE",
+    "sizes": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "colors": [
+      "Pastel Lilac",
+      "Cotton Candy Pink"
+    ],
+    "createdAt": "2026-09-12T12:59:39.101Z",
+    "updatedAt": "2026-09-12T13:27:21.800Z",
+    "__v": 0,
+    "subcategory": "Girls Sneakers",
+    "tags": [
+      "CUTE",
+      "POPULAR",
+      "GIRLS"
+    ]
+  },
+  {
+    "_id": "6aa54cbad96761be3bbc8db4",
+    "id": "6aa54cbad96761be3bbc8db3",
+    "name": "EasyLock Kids Velcro Strap Runners",
+    "category": "Kids",
+    "price": 2599,
+    "originalPrice": 3299,
+    "description": "Double hook-and-loop self-fastening Velcro straps allow kids to put on and take off their shoes independently in seconds.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
+    ],
+    "stock": 35,
+    "rating": 4.9,
+    "reviewsCount": 140,
+    "isNew": true,
+    "isHot": true,
+    "badge": "HOT",
+    "sizes": [
+      24,
+      25,
       26,
       27,
       28,
@@ -156,28 +262,231 @@
       31
     ],
     "colors": [
-      "Cosmic Black",
-      "Galaxy Silver"
+      "Charcoal / Lime",
+      "Berry Pink"
     ],
-    "createdAt": "2026-09-12T12:59:39.315Z",
-    "updatedAt": "2026-09-12T12:59:39.315Z",
-    "__v": 0
+    "createdAt": "2026-09-12T12:59:38.663Z",
+    "updatedAt": "2026-09-12T13:27:23.441Z",
+    "__v": 0,
+    "subcategory": "Velcro Straps",
+    "tags": [
+      "HOT",
+      "EASY WEAR",
+      "POPULAR"
+    ]
   },
   {
-    "_id": "6aa54cbbd96761be3bbc8db8",
-    "id": "6aa54cbbd96761be3bbc8db7",
-    "name": "RainbowBloom Girls Casual Sneakers",
-    "category": "Kids",
+    "_id": "6aa54cbad96761be3bbc8db2",
+    "id": "6aa54cbad96761be3bbc8db1",
+    "name": "Academy Non-Marking Sole Uniform Shoes",
+    "category": "School Shoes",
+    "price": 2699,
+    "originalPrice": 3299,
+    "description": "Certified gym-floor friendly non-marking gum soles that leave zero scuff marks on school basketball and assembly courts.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
+    ],
+    "stock": 30,
+    "rating": 4.7,
+    "reviewsCount": 78,
+    "isNew": true,
+    "isHot": false,
+    "badge": "POPULAR",
+    "sizes": [
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36
+    ],
+    "colors": [
+      "Black / Gum Sole"
+    ],
+    "createdAt": "2026-09-12T12:59:38.452Z",
+    "updatedAt": "2026-09-12T13:27:28.802Z",
+    "__v": 0,
+    "subcategory": "Non-Marking Soles",
+    "tags": [
+      "POPULAR",
+      "NEW"
+    ]
+  },
+  {
+    "_id": "6aa533e7f83a25a674b0b6d1",
+    "id": "6aa533e7f83a25a674b0b6d0",
+    "name": "SturdyWalk Easy Velcro School Shoes",
+    "category": "School Shoes",
     "price": 2799,
     "originalPrice": 3399,
-    "description": "Charming pastel rainbow accents with soft breathable knit lining and padded ankle collar. Perfect for school and play.",
-    "image": "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop",
+    "description": "No laces needed: heavy-duty dual Velcro straps engineered for quick dressing during morning school rush.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
     ],
-    "stock": 26,
+    "stock": 35,
+    "rating": 4.8,
+    "reviewsCount": 95,
+    "isNew": true,
+    "isHot": false,
+    "badge": "EASY WEAR",
+    "sizes": [
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "colors": [
+      "School Black"
+    ],
+    "createdAt": "2026-09-12T11:13:43.737Z",
+    "updatedAt": "2026-09-12T13:27:28.394Z",
+    "__v": 0,
+    "subcategory": "Velcro Strap",
+    "tags": [
+      "EASY WEAR",
+      "POPULAR"
+    ]
+  },
+  {
+    "_id": "6aa533e7f83a25a674b0b6cf",
+    "id": "6aa533e7f83a25a674b0b6ce",
+    "name": "All-Star White PT & Sports Shoes",
+    "category": "School Shoes",
+    "price": 2499,
+    "originalPrice": 2999,
+    "description": "Mandatory school physical training white canvas shoes with breathable cotton lining and vulcanized white rubber sole.",
+    "image": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&auto=format&fit=crop"
+    ],
+    "stock": 60,
     "rating": 4.9,
-    "reviewsCount": 65,
+    "reviewsCount": 184,
+    "isNew": true,
+    "isHot": true,
+    "badge": "MUST HAVE",
+    "sizes": [
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "colors": [
+      "Crisp School White"
+    ],
+    "createdAt": "2026-09-12T11:13:43.497Z",
+    "updatedAt": "2026-09-12T13:27:28.188Z",
+    "__v": 0,
+    "subcategory": "White PT Shoes",
+    "tags": [
+      "MUST HAVE",
+      "HOT",
+      "POPULAR"
+    ]
+  },
+  {
+    "_id": "6aa533e6f83a25a674b0b6c7",
+    "id": "6aa533e6f83a25a674b0b6c6",
+    "name": "Orthopedic Memory Foam Cushion Insoles",
+    "category": "Accessories",
+    "price": 999,
+    "originalPrice": 1299,
+    "description": "Doctor-designed deep heel cup and anatomical arch support to alleviate plantar fasciitis and walking fatigue.",
+    "image": "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=800&auto=format&fit=crop"
+    ],
+    "stock": 75,
+    "rating": 4.9,
+    "reviewsCount": 168,
+    "isNew": true,
+    "isHot": false,
+    "badge": "POPULAR",
+    "sizes": [
+      "Cut-to-Fit (36-46)"
+    ],
+    "colors": [
+      "Blue Cloud Foam"
+    ],
+    "createdAt": "2026-09-12T11:13:42.637Z",
+    "updatedAt": "2026-09-12T13:27:27.024Z",
+    "__v": 0,
+    "subcategory": "Memory Insoles",
+    "tags": [
+      "POPULAR",
+      "COMFORT"
+    ]
+  },
+  {
+    "_id": "6aa533e5f83a25a674b0b6bb",
+    "id": "6aa533e5f83a25a674b0b6ba",
+    "name": "GlowFlex Light-Up Soles",
+    "category": "Kids",
+    "price": 3099,
+    "originalPrice": 3899,
+    "description": "Translucent high-rebound soles equipped with waterproof 7-color LED lights. Durable scuff-proof upper.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
+    ],
+    "stock": 18,
+    "rating": 4.8,
+    "reviewsCount": 94,
+    "isNew": true,
+    "isHot": true,
+    "badge": "HOT",
+    "sizes": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30
+    ],
+    "colors": [
+      "Sky Blue LED",
+      "Flash Purple LED"
+    ],
+    "createdAt": "2026-09-12T11:13:41.361Z",
+    "updatedAt": "2026-09-12T13:27:22.393Z",
+    "__v": 0,
+    "subcategory": "Light-Up Soles",
+    "tags": [
+      "HOT",
+      "GLOW"
+    ]
+  },
+  {
+    "_id": "6aa533e5f83a25a674b0b6b9",
+    "id": "6aa533e5f83a25a674b0b6b8",
+    "name": "Sparkle Step Girls Fashion Kicks",
+    "category": "Kids",
+    "price": 2899,
+    "originalPrice": 3599,
+    "description": "Shimmering glitter finish with ultra-soft interior mesh lining and cloud-step bounce foam for girls daily comfort.",
+    "image": "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=800&auto=format&fit=crop"
+    ],
+    "stock": 19,
+    "rating": 4.8,
+    "reviewsCount": 73,
     "isNew": true,
     "isHot": false,
     "badge": "CUTE",
@@ -191,259 +500,34 @@
       33
     ],
     "colors": [
-      "Pastel Rainbow",
-      "Candy Pink"
-    ],
-    "createdAt": "2026-09-12T12:59:39.101Z",
-    "updatedAt": "2026-09-12T12:59:39.101Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa54cbad96761be3bbc8db4",
-    "id": "6aa54cbad96761be3bbc8db3",
-    "name": "EasyLock Kids Velcro Strap Runners",
-    "category": "Kids",
-    "price": 2699,
-    "originalPrice": 3299,
-    "description": "Dual velcro strap fasteners designed for quick independent wear. Cushioned EVA footbed for non-stop playground comfort.",
-    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
-    ],
-    "stock": 40,
-    "rating": 4.9,
-    "reviewsCount": 118,
-    "isNew": true,
-    "isHot": true,
-    "badge": "EASY",
-    "sizes": [
-      26,
-      28,
-      30,
-      32,
-      34
-    ],
-    "colors": [
-      "Navy / Orange",
-      "Teal / Lime"
-    ],
-    "createdAt": "2026-09-12T12:59:38.663Z",
-    "updatedAt": "2026-09-12T12:59:38.663Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa54cbad96761be3bbc8db2",
-    "id": "6aa54cbad96761be3bbc8db1",
-    "name": "Academy Non-Marking Sole Uniform Shoes",
-    "category": "School Shoes",
-    "price": 2699,
-    "originalPrice": 3299,
-    "description": "Specialized non-marking composite rubber soles ideal for indoor school halls and sports courts. Polishable black upper.",
-    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
-    ],
-    "stock": 35,
-    "rating": 4.8,
-    "reviewsCount": 75,
-    "isNew": true,
-    "isHot": false,
-    "badge": "NON-MARKING",
-    "sizes": [
-      28,
-      30,
-      32,
-      34,
-      36,
-      38
-    ],
-    "colors": [
-      "Standard Black"
-    ],
-    "createdAt": "2026-09-12T12:59:38.452Z",
-    "updatedAt": "2026-09-12T12:59:38.452Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e7f83a25a674b0b6d1",
-    "id": "6aa533e7f83a25a674b0b6d0",
-    "name": "SturdyWalk Easy Velcro School Shoes",
-    "category": "School Shoes",
-    "price": 2599,
-    "originalPrice": 3199,
-    "description": "Dual hook-and-loop velcro straps for quick on/off. Reinforced toe bumper prevents scuffing during active play.",
-    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
-    ],
-    "stock": 35,
-    "rating": 4.8,
-    "reviewsCount": 110,
-    "isNew": true,
-    "isHot": false,
-    "badge": "EASY WEAR",
-    "sizes": [
-      28,
-      30,
-      32,
-      34,
-      36
-    ],
-    "colors": [
-      "Matte Black"
-    ],
-    "createdAt": "2026-09-12T11:13:43.737Z",
-    "updatedAt": "2026-09-12T12:59:38.007Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e7f83a25a674b0b6cf",
-    "id": "6aa533e7f83a25a674b0b6ce",
-    "name": "All-Star White PT & Sports Shoes",
-    "category": "School Shoes",
-    "price": 2499,
-    "originalPrice": 2999,
-    "description": "Pure white morning assembly and physical education shoes. Lightweight non-marking grip sole and breathable canvas.",
-    "image": "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=800&auto=format&fit=crop"
-    ],
-    "stock": 50,
-    "rating": 4.9,
-    "reviewsCount": 190,
-    "isNew": true,
-    "isHot": true,
-    "badge": "MUST HAVE",
-    "sizes": [
-      28,
-      30,
-      32,
-      34,
-      36,
-      38,
-      40
-    ],
-    "colors": [
-      "Pure White"
-    ],
-    "createdAt": "2026-09-12T11:13:43.497Z",
-    "updatedAt": "2026-09-12T12:59:37.801Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e6f83a25a674b0b6c7",
-    "id": "6aa533e6f83a25a674b0b6c6",
-    "name": "Orthopedic Memory Foam Cushion Insoles",
-    "category": "Accessories",
-    "price": 999,
-    "originalPrice": 1299,
-    "description": "Deep heel cup with arch support and shock-absorbing memory foam. Trimmable to fit sizes 36 to 45.",
-    "image": "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=800&auto=format&fit=crop"
-    ],
-    "stock": 70,
-    "rating": 4.8,
-    "reviewsCount": 160,
-    "isNew": true,
-    "isHot": false,
-    "badge": "TOP RATED",
-    "sizes": [
-      "One Size (Trimmable 36-45)"
-    ],
-    "colors": [
-      "Breathable Blue"
-    ],
-    "createdAt": "2026-09-12T11:13:42.637Z",
-    "updatedAt": "2026-09-12T12:59:36.836Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e5f83a25a674b0b6bb",
-    "id": "6aa533e5f83a25a674b0b6ba",
-    "name": "GlowFlex Light-Up Soles",
-    "category": "Kids",
-    "price": 3299,
-    "originalPrice": 3999,
-    "description": "Interactive impact-activated multi-color LED soles. Long battery life and water-resistant protective sole.",
-    "image": "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=800&auto=format&fit=crop"
-    ],
-    "stock": 30,
-    "rating": 4.9,
-    "reviewsCount": 130,
-    "isNew": true,
-    "isHot": true,
-    "badge": "GLOW",
-    "sizes": [
-      26,
-      27,
-      28,
-      29,
-      30,
-      31,
-      32
-    ],
-    "colors": [
-      "Neon Green",
-      "Electric Blue"
-    ],
-    "createdAt": "2026-09-12T11:13:41.361Z",
-    "updatedAt": "2026-09-12T12:59:35.547Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e5f83a25a674b0b6b9",
-    "id": "6aa533e5f83a25a674b0b6b8",
-    "name": "Sparkle Step Girls Fashion Kicks",
-    "category": "Kids",
-    "price": 2999,
-    "originalPrice": 3699,
-    "description": "Iridescent fashion sneakers for girls with cushioned collar and glitter accents. Lightweight and durable.",
-    "image": "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=800&auto=format&fit=crop"
-    ],
-    "stock": 28,
-    "rating": 4.8,
-    "reviewsCount": 74,
-    "isNew": true,
-    "isHot": false,
-    "badge": "CUTE",
-    "sizes": [
-      28,
-      29,
-      30,
-      31,
-      32,
-      33,
-      34
-    ],
-    "colors": [
-      "Shimmer Pink",
-      "Lilac Purple"
+      "Rose Gold Glitter",
+      "Silver Sparkle"
     ],
     "createdAt": "2026-09-12T11:13:41.151Z",
-    "updatedAt": "2026-09-12T12:59:35.329Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:22.001Z",
+    "__v": 0,
+    "subcategory": "Girls Sneakers",
+    "tags": [
+      "CUTE",
+      "NEW",
+      "GIRLS"
+    ]
   },
   {
     "_id": "6aa533e4f83a25a674b0b6b3",
     "id": "6aa533e4f83a25a674b0b6b2",
     "name": "Chunky Horizon Platform Sneakers",
     "category": "Women",
-    "price": 4699,
-    "originalPrice": 5899,
-    "description": "Statement 90s chunky platform sole sneaker. Premium suede overlays and high-traction rubber bottom.",
+    "price": 4299,
+    "originalPrice": 5199,
+    "description": "Trendy 90s chunky platform sneaker with lightweight hollowed EVA midsole that adds 2 inches of height in total comfort.",
     "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop"
     ],
-    "stock": 19,
-    "rating": 4.8,
-    "reviewsCount": 110,
+    "stock": 24,
+    "rating": 4.9,
+    "reviewsCount": 112,
     "isNew": true,
     "isHot": false,
     "badge": "NEW",
@@ -454,29 +538,34 @@
       9
     ],
     "colors": [
-      "Ivory / Sand",
-      "Pure White"
+      "Chalk White / Silver",
+      "Pastel Multi"
     ],
     "createdAt": "2026-09-12T11:13:40.518Z",
-    "updatedAt": "2026-09-12T12:59:34.690Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:25.928Z",
+    "__v": 0,
+    "subcategory": "Platform Soles",
+    "tags": [
+      "NEW",
+      "HOT",
+      "PLATFORM"
+    ]
   },
   {
     "_id": "6aa533e3f83a25a674b0b6ad",
     "id": "6aa533e3f83a25a674b0b6ac",
     "name": "Aura Cloud Daily Sneakers",
     "category": "Women",
-    "price": 3999,
-    "originalPrice": 4999,
-    "description": "Featherlight everyday sneakers in soft pastel aesthetics. Cushion-flex sole provides seamless cloud-like bounce.",
+    "price": 3699,
+    "originalPrice": 4499,
+    "description": "Featherlight slip-on walking sneakers engineered with breathable stretch knit and sculpted memory insole.",
     "image": "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&auto=format&fit=crop"
     ],
-    "stock": 30,
+    "stock": 32,
     "rating": 4.9,
-    "reviewsCount": 168,
+    "reviewsCount": 138,
     "isNew": true,
     "isHot": true,
     "badge": "HOT",
@@ -488,12 +577,18 @@
       9
     ],
     "colors": [
-      "Pastel Rose",
-      "Cloud White"
+      "Lavender Mist",
+      "Clean White"
     ],
     "createdAt": "2026-09-12T11:13:39.886Z",
-    "updatedAt": "2026-09-12T12:59:33.960Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:25.069Z",
+    "__v": 0,
+    "subcategory": "Daily Sneakers",
+    "tags": [
+      "HOT",
+      "POPULAR",
+      "NEW"
+    ]
   },
   {
     "_id": "6aa533e3f83a25a674b0b6a9",
@@ -505,8 +600,7 @@
     "description": "Flat stable-sole cross-trainer designed for heavy squats, deadlifts, and high-intensity agility workouts.",
     "image": "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=800&auto=format&fit=crop"
     ],
     "stock": 20,
     "rating": 4.8,
@@ -525,8 +619,13 @@
       "Shadow Black"
     ],
     "createdAt": "2026-09-12T11:13:39.440Z",
-    "updatedAt": "2026-09-12T12:59:33.537Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:24.452Z",
+    "__v": 0,
+    "subcategory": "Gym & Training",
+    "tags": [
+      "NEW",
+      "HOT"
+    ]
   },
   {
     "_id": "6aa533e2f83a25a674b0b6a3",
@@ -559,13 +658,19 @@
       "Core Black"
     ],
     "createdAt": "2026-09-12T11:13:38.814Z",
-    "updatedAt": "2026-09-12T12:59:32.365Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:23.848Z",
+    "__v": 0,
+    "subcategory": "Running Shoes",
+    "tags": [
+      "POPULAR",
+      "HOT",
+      "NEW"
+    ]
   },
   {
     "_id": "6aa25c91b83ae3f3db4e7958",
     "name": "lather boot",
-    "category": "Lifestyle",
+    "category": "Women",
     "price": 299,
     "originalPrice": 299,
     "description": "",
@@ -605,9 +710,13 @@
       "closure": "Traditional Lace-Up"
     },
     "createdAt": "2026-09-10T07:30:25.132Z",
-    "updatedAt": "2026-09-10T07:44:20.087Z",
+    "updatedAt": "2026-09-12T13:27:30.422Z",
     "__v": 0,
-    "id": "6aa25c91b83ae3f3db4e7958"
+    "id": "6aa25c91b83ae3f3db4e7958",
+    "subcategory": "Cloud Comfort",
+    "tags": [
+      "HOT"
+    ]
   },
   {
     "colors": [
@@ -615,7 +724,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6d0",
     "name": "Pulse React",
-    "category": "Training",
+    "category": "Men",
     "price": 99,
     "originalPrice": 119,
     "description": "Dynamic sneakers with responsive cushioning. Designed for training and everyday comfort.",
@@ -635,13 +744,17 @@
     ],
     "__v": 0,
     "createdAt": "2026-08-31T06:20:36.013Z",
-    "updatedAt": "2026-09-12T04:55:47.019Z",
+    "updatedAt": "2026-09-12T13:27:29.661Z",
     "id": "8",
     "images": [
       "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=764&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Gym & Training",
+    "tags": [
+      "NEW"
     ]
   },
   {
@@ -650,7 +763,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6d2",
     "name": "AeroFlex Lite",
-    "category": "Running",
+    "category": "Men",
     "price": 75,
     "originalPrice": 95,
     "description": "Ultra-light sneakers designed for everyday mobility. Breathable and flexible design.",
@@ -670,11 +783,15 @@
     ],
     "__v": 0,
     "createdAt": "2026-08-31T06:20:36.013Z",
-    "updatedAt": "2026-09-10T06:52:06.541Z",
+    "updatedAt": "2026-09-12T13:27:29.992Z",
     "id": "10",
     "images": [
       "https://images.unsplash.com/photo-1496202703211-aa28e9500c30?q=80&w=1170&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Running Shoes",
+    "tags": [
+      "NEW"
     ]
   },
   {
@@ -683,7 +800,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6cc",
     "name": "Volt Edge",
-    "category": "Performance",
+    "category": "Men",
     "price": 119,
     "originalPrice": 149,
     "description": "Performance sneakers with bold details. Responsive cushioning for all-day energy.",
@@ -703,12 +820,16 @@
     ],
     "__v": 0,
     "createdAt": "2026-08-31T06:20:36.011Z",
-    "updatedAt": "2026-09-10T06:52:06.791Z",
+    "updatedAt": "2026-09-12T13:27:29.352Z",
     "id": "4",
     "images": [
       "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=735&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Running Shoes",
+    "tags": [
+      "BESTSELLER"
     ]
   },
   {
@@ -717,7 +838,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6cd",
     "name": "Zenith Flow",
-    "category": "Lifestyle",
+    "category": "Women",
     "price": 129,
     "originalPrice": 159,
     "description": "Premium lifestyle sneakers blending high-quality knit material and futuristic design.",
@@ -737,12 +858,16 @@
     ],
     "__v": 0,
     "createdAt": "2026-08-31T06:20:36.011Z",
-    "updatedAt": "2026-09-10T06:52:06.680Z",
+    "updatedAt": "2026-09-12T13:27:29.224Z",
     "id": "5",
     "images": [
       "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1074&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Cloud Comfort",
+    "tags": [
+      "NEW"
     ]
   },
   {
@@ -751,7 +876,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6ca",
     "name": "Urban Street Pro",
-    "category": "Casual",
+    "category": "Men",
     "price": 99,
     "originalPrice": 129,
     "description": "Minimalist sneakers for everyday wear. Premium leather with a modern urban look.",
@@ -771,13 +896,17 @@
     ],
     "__v": 0,
     "createdAt": "2026-08-31T06:20:36.005Z",
-    "updatedAt": "2026-09-10T06:52:06.906Z",
+    "updatedAt": "2026-09-12T13:27:29.462Z",
     "id": "2",
     "images": [
       "https://images.unsplash.com/photo-1608667508764-33cf0726b13a?q=80&w=880&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "NEW"
     ]
   },
   {
@@ -786,7 +915,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6ce",
     "name": "Street Vibe Low",
-    "category": "Casual",
+    "category": "Men",
     "price": 69,
     "originalPrice": 89,
     "description": "Casual low-top sneakers with a timeless silhouette. Built for versatility and comfort.",
@@ -805,11 +934,15 @@
       11
     ],
     "__v": 0,
-    "updatedAt": "2026-09-10T06:52:07.504Z",
+    "updatedAt": "2026-09-12T13:27:30.200Z",
     "id": "6",
     "images": [
       "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=1170&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "SALE"
     ]
   },
   {
@@ -841,8 +974,13 @@
       "Classic Brown",
       "Midnight Black"
     ],
-    "updatedAt": "2026-09-12T12:59:32.589Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:24.261Z",
+    "__v": 0,
+    "subcategory": "Formal Loafers",
+    "tags": [
+      "PREMIUM",
+      "POPULAR"
+    ]
   },
   {
     "colors": [
@@ -850,7 +988,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6cf",
     "name": "Nova Horizon",
-    "category": "High Top",
+    "category": "Men",
     "price": 109,
     "originalPrice": 139,
     "description": "High-top sneakers crafted with suede and mesh. Perfect mix of streetwear and performance.",
@@ -869,11 +1007,15 @@
       11
     ],
     "__v": 0,
-    "updatedAt": "2026-09-10T06:52:07.014Z",
+    "updatedAt": "2026-09-12T13:27:29.563Z",
     "id": "7",
     "images": [
       "https://images.unsplash.com/photo-1516767254874-281bffac9e9a?q=80&w=1170&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "HOT"
     ]
   },
   {
@@ -882,15 +1024,15 @@
     "name": "PlayTime Dual Velcro Kids Everyday Shoes",
     "category": "Kids",
     "price": 2499,
-    "originalPrice": 2999,
-    "description": "All-day playground shoes with double velcro strap security. Machine washable breathable upper and bounce cushioning.",
+    "originalPrice": 3199,
+    "description": "Rugged reinforced rubber toe cap and double Velcro straps withstand playground abrasion and active wear.",
     "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
     ],
-    "stock": 36,
-    "rating": 4.9,
-    "reviewsCount": 80,
+    "stock": 28,
+    "rating": 4.8,
+    "reviewsCount": 78,
     "isNew": false,
     "isHot": false,
     "badge": "EASY WEAR",
@@ -905,27 +1047,32 @@
       32
     ],
     "colors": [
-      "Denim Blue",
-      "Charcoal Lime"
+      "Royal Blue",
+      "Burgundy"
     ],
-    "updatedAt": "2026-09-12T12:59:40.042Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:23.632Z",
+    "__v": 0,
+    "subcategory": "Velcro Straps",
+    "tags": [
+      "EASY WEAR",
+      "POPULAR"
+    ]
   },
   {
     "_id": "6aa54cbbd96761be3bbc8dbe",
     "id": "6aa54cbbd96761be3bbc8dbd",
     "name": "Junior Speedster High-Top Sneakers (28-35)",
     "category": "Kids",
-    "price": 3199,
-    "originalPrice": 3899,
-    "description": "Ankle-support high-top court shoes for active juniors. Padded collar, impact dampening, and grippy herringbone rubber.",
+    "price": 3299,
+    "originalPrice": 4199,
+    "description": "Retro street basketball inspired high-top junior trainers with ankle stabilization and non-skid herringbone grip.",
     "image": "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&auto=format&fit=crop"
     ],
     "stock": 20,
-    "rating": 4.7,
-    "reviewsCount": 53,
+    "rating": 4.8,
+    "reviewsCount": 105,
     "isNew": false,
     "isHot": false,
     "badge": "BEST",
@@ -940,11 +1087,17 @@
       35
     ],
     "colors": [
-      "Fire Red / Black",
-      "Ice White / Teal"
+      "Classic Red / Black",
+      "Triple White"
     ],
-    "updatedAt": "2026-09-12T12:59:39.814Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:23.003Z",
+    "__v": 0,
+    "subcategory": "Juniors (28–35)",
+    "tags": [
+      "BEST",
+      "HOT",
+      "JUNIOR"
+    ]
   },
   {
     "_id": "6aa533e3f83a25a674b0b6a7",
@@ -976,8 +1129,13 @@
       "Off-White",
       "Slate Grey"
     ],
-    "updatedAt": "2026-09-12T12:59:32.997Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:24.050Z",
+    "__v": 0,
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "HOT",
+      "POPULAR"
+    ]
   },
   {
     "colors": [
@@ -985,7 +1143,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6c9",
     "name": "AirFlex Runner",
-    "category": "Running",
+    "category": "Men",
     "price": 89,
     "originalPrice": 119,
     "description": "Lightweight running sneakers designed for speed and comfort. Breathable mesh and durable sole.",
@@ -1004,13 +1162,17 @@
       11
     ],
     "__v": 0,
-    "updatedAt": "2026-09-10T06:52:07.146Z",
+    "updatedAt": "2026-09-12T13:27:29.774Z",
     "id": "1",
     "images": [
       "https://images.unsplash.com/photo-1579338559194-a162d19bf842?q=80&w=687&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Running Shoes",
+    "tags": [
+      "HOT"
     ]
   },
   {
@@ -1019,7 +1181,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6d1",
     "name": "Core Street Retro",
-    "category": "Retro",
+    "category": "Men",
     "price": 85,
     "originalPrice": 105,
     "description": "Old-school sneakers inspired by 80s basketball. Durable construction with vintage vibes.",
@@ -1038,11 +1200,15 @@
       11
     ],
     "__v": 0,
-    "updatedAt": "2026-09-10T06:52:07.268Z",
+    "updatedAt": "2026-09-12T13:27:29.882Z",
     "id": "9",
     "images": [
       "https://images.unsplash.com/photo-1621315271772-28b1f3a5df87?q=80&w=687&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "HOT"
     ]
   },
   {
@@ -1050,51 +1216,61 @@
     "id": "6aa54cbad96761be3bbc8db5",
     "name": "StreetRacer Boys Cushioned Runners",
     "category": "Kids",
-    "price": 2899,
-    "originalPrice": 3599,
-    "description": "High-traction boys road and turf runners with responsive foam bounce and reinforced anti-scuff rubber toe.",
-    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop",
+    "price": 2799,
+    "originalPrice": 3499,
+    "description": "Breathable engineered mesh boys running shoes with anti-scuff toe guards and shock-absorbing soles for active boys.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?w=800&auto=format&fit=crop"
     ],
-    "stock": 32,
+    "stock": 28,
     "rating": 4.8,
-    "reviewsCount": 88,
+    "reviewsCount": 92,
     "isNew": false,
     "isHot": true,
     "badge": "POPULAR",
     "sizes": [
       28,
+      29,
       30,
+      31,
       32,
+      33,
       34,
       35
     ],
     "colors": [
-      "Black / Crimson",
-      "Electric Royal"
+      "Racer Blue / Orange",
+      "Jet Black / Neon"
     ],
-    "updatedAt": "2026-09-12T12:59:38.888Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:21.376Z",
+    "__v": 0,
+    "subcategory": "Boys Sneakers",
+    "tags": [
+      "POPULAR",
+      "HOT",
+      "BOYS"
+    ]
   },
   {
     "_id": "6aa533e3f83a25a674b0b6ab",
     "id": "6aa533e3f83a25a674b0b6aa",
     "name": "CloudGrip Wide-Fit Walkers",
     "category": "Men",
-    "price": 3499,
-    "originalPrice": 4299,
-    "description": "Extra-wide toe box walking shoes engineered for daily office commute and long hours on your feet.",
-    "image": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop",
+    "price": 3999,
+    "originalPrice": 4899,
+    "description": "Specially engineered extra-wide toe box (EE width) preventing bunion pressure with plush shock absorbing soles.",
+    "image": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=800&auto=format&fit=crop"
     ],
-    "stock": 28,
-    "rating": 4.7,
-    "reviewsCount": 64,
+    "stock": 15,
+    "rating": 4.9,
+    "reviewsCount": 62,
     "isNew": false,
     "isHot": false,
-    "badge": "COMFORT",
+    "badge": "POPULAR",
     "sizes": [
       8,
       9,
@@ -1103,11 +1279,16 @@
       12
     ],
     "colors": [
-      "Deep Charcoal",
+      "Charcoal Grey",
       "Navy Blue"
     ],
-    "updatedAt": "2026-09-12T12:59:33.762Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:24.846Z",
+    "__v": 0,
+    "subcategory": "Wide-Fit Shoes",
+    "tags": [
+      "POPULAR",
+      "COMFORT"
+    ]
   },
   {
     "colors": [
@@ -1115,7 +1296,7 @@
     ],
     "_id": "6a951d33c0c1bc71fc44b6cb",
     "name": "Classic Court 90s",
-    "category": "Retro",
+    "category": "Men",
     "price": 79,
     "originalPrice": 99,
     "description": "Retro-inspired sneakers with a tennis court vibe. Perfect balance between comfort and style.",
@@ -1134,12 +1315,16 @@
       11
     ],
     "__v": 0,
-    "updatedAt": "2026-09-10T06:52:07.379Z",
+    "updatedAt": "2026-09-12T13:27:30.091Z",
     "id": "3",
     "images": [
       "https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=1176&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1512374382149-233c42b6a83b?q=80&w=800&auto=format&fit=crop"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "HOT"
     ]
   },
   {
@@ -1147,67 +1332,79 @@
     "id": "6aa533e7f83a25a674b0b6d2",
     "name": "ToughGrip Genuine Leather Oxford School Shoes",
     "category": "School Shoes",
-    "price": 3199,
-    "originalPrice": 3999,
-    "description": "Classic lace-up formal school dress shoes crafted from heavy-gauge polishable black cowhide leather.",
+    "price": 3499,
+    "originalPrice": 4299,
+    "description": "100% genuine full-grain cowhide leather school shoes built tough to withstand an entire academic year of daily wear.",
     "image": "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&auto=format&fit=crop"
     ],
-    "stock": 30,
+    "stock": 25,
     "rating": 4.9,
-    "reviewsCount": 98,
+    "reviewsCount": 110,
     "isNew": false,
     "isHot": false,
-    "badge": "DURABLE",
+    "badge": "POPULAR",
     "sizes": [
       32,
+      33,
       34,
+      35,
       36,
+      37,
       38,
-      40,
-      42
+      39
     ],
     "colors": [
-      "Formal Black"
+      "Waxed Black Cowhide"
     ],
-    "updatedAt": "2026-09-12T12:59:38.232Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:28.581Z",
+    "__v": 0,
+    "subcategory": "Genuine Leather",
+    "tags": [
+      "POPULAR",
+      "PREMIUM"
+    ]
   },
   {
     "_id": "6aa533e4f83a25a674b0b6b7",
     "id": "6aa533e4f83a25a674b0b6b6",
     "name": "TurboDash Boys Active Sneakers",
     "category": "Kids",
-    "price": 2799,
-    "originalPrice": 3499,
-    "description": "High-energy playground sneakers with anti-scuff toe reinforcement and easy hook-and-loop velcro strap.",
-    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
+    "price": 2999,
+    "originalPrice": 3699,
+    "description": "Durable high-grip athletic sneakers engineered for school playground sprints, sports, and outdoor activities.",
+    "image": "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop",
     "images": [
+      "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
     ],
-    "stock": 35,
+    "stock": 22,
     "rating": 4.9,
-    "reviewsCount": 92,
-    "isNew": false,
+    "reviewsCount": 114,
+    "isNew": true,
     "isHot": true,
     "badge": "POPULAR",
     "sizes": [
-      28,
       29,
       30,
       31,
       32,
       33,
-      34,
-      35
+      34
     ],
     "colors": [
-      "Royal Blue",
-      "Racer Red"
+      "Electric Red",
+      "Stealth Grey"
     ],
-    "updatedAt": "2026-09-12T12:59:35.120Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:21.601Z",
+    "__v": 0,
+    "subcategory": "Boys Sneakers",
+    "tags": [
+      "POPULAR",
+      "HOT",
+      "NEW"
+    ]
   },
   {
     "colors": [
@@ -1215,7 +1412,7 @@
     ],
     "_id": "6a951e06c0c1bc71fc44b719",
     "name": "Talha",
-    "category": "summer",
+    "category": "Men",
     "price": 69.9,
     "originalPrice": 169,
     "description": "summer arival",
@@ -1233,11 +1430,15 @@
       10,
       11
     ],
-    "updatedAt": "2026-09-10T06:52:07.627Z",
+    "updatedAt": "2026-09-12T13:27:30.321Z",
     "__v": 0,
     "id": "6a951e06c0c1bc71fc44b719",
     "images": [
       "data:image/webp;base64,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"
+    ],
+    "subcategory": "Casual Sneakers",
+    "tags": [
+      "HOT"
     ]
   },
   {
@@ -1245,222 +1446,268 @@
     "id": "6aa533e7f83a25a674b0b6cc",
     "name": "Grace Girls Mary Jane Black Strap Shoes",
     "category": "School Shoes",
-    "price": 2699,
-    "originalPrice": 3299,
-    "description": "Formal uniform black strap shoes with easy quick-fasten velcro buckle and breathable anti-odor sockliner.",
+    "price": 2899,
+    "originalPrice": 3599,
+    "description": "Classic Mary Jane silhouette with quick Velcro strap fastener, cushioned arch, and scuff-resistant black finish.",
     "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop"
     ],
     "stock": 40,
     "rating": 4.8,
-    "reviewsCount": 140,
+    "reviewsCount": 132,
     "isNew": false,
     "isHot": true,
-    "badge": "APPROVED",
+    "badge": "POPULAR",
     "sizes": [
+      26,
+      27,
       28,
+      29,
       30,
+      31,
       32,
-      34,
-      36,
-      38
+      33,
+      34
     ],
     "colors": [
-      "Polished Black"
+      "Formal Black"
     ],
-    "updatedAt": "2026-09-12T12:59:37.572Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:27.953Z",
+    "__v": 0,
+    "subcategory": "Girls Strap Shoes",
+    "tags": [
+      "POPULAR",
+      "HOT",
+      "GIRLS"
+    ]
   },
   {
     "_id": "6aa533e7f83a25a674b0b6cb",
     "id": "6aa533e7f83a25a674b0b6ca",
     "name": "Premier Boys Black Uniform Shoes",
     "category": "School Shoes",
-    "price": 2799,
-    "originalPrice": 3499,
-    "description": "100% genuine scuff-resistant black action leather school shoes. Padded collar and high-durability rubber sole.",
+    "price": 2999,
+    "originalPrice": 3699,
+    "description": "High-shine action leather school uniform shoes with padded collar, reinforced toe, and durable non-skid rubber.",
     "image": "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&auto=format&fit=crop"
     ],
     "stock": 45,
     "rating": 4.9,
-    "reviewsCount": 175,
+    "reviewsCount": 156,
     "isNew": false,
     "isHot": true,
     "badge": "TOP PICK",
     "sizes": [
       28,
+      29,
       30,
+      31,
       32,
+      33,
       34,
+      35,
       36,
-      38,
-      40
+      37,
+      38
     ],
     "colors": [
-      "Deep Black"
+      "Polishable Black"
     ],
-    "updatedAt": "2026-09-12T12:59:37.333Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:27.739Z",
+    "__v": 0,
+    "subcategory": "Black Uniform",
+    "tags": [
+      "TOP PICK",
+      "HOT",
+      "POPULAR"
+    ]
   },
   {
     "_id": "6aa533e6f83a25a674b0b6c9",
     "id": "6aa533e6f83a25a674b0b6c8",
     "name": "Athletic Cushion Crew Socks (3-Pack)",
     "category": "Accessories",
-    "price": 899,
-    "originalPrice": 1199,
-    "description": "Moisture-wicking combed cotton crew socks with reinforced heel and toe cushioning. Anti-odor silver ions.",
+    "price": 799,
+    "originalPrice": 999,
+    "description": "Combed Egyptian cotton with anti-blister terry-cushioned soles and silver-ion odor protection. 3 pairs per pack.",
     "image": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&auto=format&fit=crop"
     ],
-    "stock": 80,
-    "rating": 4.7,
-    "reviewsCount": 120,
+    "stock": 120,
+    "rating": 4.8,
+    "reviewsCount": 130,
     "isNew": false,
     "isHot": false,
-    "badge": "PACK OF 3",
+    "badge": "POPULAR",
     "sizes": [
-      "Medium (38-42)",
-      "Large (43-46)"
+      "One Size (38-44)"
     ],
     "colors": [
-      "Black / White / Grey Trio"
+      "Triple White",
+      "Triple Black",
+      "Grey Heather"
     ],
-    "updatedAt": "2026-09-12T12:59:37.060Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:27.224Z",
+    "__v": 0,
+    "subcategory": "Cushioned Socks",
+    "tags": [
+      "POPULAR",
+      "ESSENTIAL"
+    ]
   },
   {
     "_id": "6aa533e4f83a25a674b0b6af",
     "id": "6aa533e4f83a25a674b0b6ae",
     "name": "Zenith Velocity Women's Runner",
     "category": "Women",
-    "price": 4299,
+    "price": 4399,
     "originalPrice": 5299,
-    "description": "Aerodynamic running shoes tailored specifically for women's foot biomechanics with superior arch stability.",
+    "description": "Tailored female-specific ergonomic arch support, tuned rebound foam, and durable carbon-rubber outsole.",
     "image": "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=800&auto=format&fit=crop"
     ],
-    "stock": 22,
+    "stock": 21,
     "rating": 4.8,
-    "reviewsCount": 95,
+    "reviewsCount": 97,
     "isNew": false,
     "isHot": true,
     "badge": "POPULAR",
     "sizes": [
-      5,
       6,
       7,
-      8
+      8,
+      9
     ],
     "colors": [
-      "Sky Blue",
-      "Lavender"
+      "Coral Blush",
+      "Arctic Blue"
     ],
-    "updatedAt": "2026-09-12T12:59:34.263Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:25.296Z",
+    "__v": 0,
+    "subcategory": "Running Shoes",
+    "tags": [
+      "POPULAR",
+      "HOT"
+    ]
   },
   {
     "_id": "6aa533e6f83a25a674b0b6c5",
     "id": "6aa533e6f83a25a674b0b6c4",
     "name": "Dual-Bristle Deep Clean Shoe Brush",
     "category": "Accessories",
-    "price": 699,
-    "originalPrice": 899,
-    "description": "Premium natural hog-hair soft bristles for delicate mesh/suede, plus stiff synthetic bristles for dirty soles.",
+    "price": 599,
+    "originalPrice": 799,
+    "description": "Natural soft hog hair on one side for delicate knit & suede, stiff brass/nylon on the other for soles & mud.",
     "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&auto=format&fit=crop"
     ],
-    "stock": 60,
+    "stock": 80,
     "rating": 4.8,
-    "reviewsCount": 95,
+    "reviewsCount": 94,
     "isNew": false,
     "isHot": false,
-    "badge": "ESSENTIAL",
+    "badge": "POPULAR",
     "sizes": [
       "Standard Brush"
     ],
     "colors": [
-      "Natural Wood"
+      "Natural Beech Wood"
     ],
-    "updatedAt": "2026-09-12T12:59:36.612Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:26.810Z",
+    "__v": 0,
+    "subcategory": "Cleaning Brush",
+    "tags": [
+      "POPULAR",
+      "ESSENTIAL"
+    ]
   },
   {
     "_id": "6aa533e6f83a25a674b0b6c3",
     "id": "6aa533e6f83a25a674b0b6c2",
     "name": "Nano-Tech Hydrophobic Water Shield Spray",
     "category": "Accessories",
-    "price": 1499,
-    "originalPrice": 1899,
-    "description": "Advanced breathable waterproofing spray forming an invisible barrier against rain, spills, and grease.",
+    "price": 1099,
+    "originalPrice": 1399,
+    "description": "Nano-coating spray creating an invisible waterproof barrier against rain, slush, coffee stains, and mud splashes.",
     "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&auto=format&fit=crop"
     ],
-    "stock": 45,
+    "stock": 50,
     "rating": 4.9,
-    "reviewsCount": 184,
+    "reviewsCount": 180,
     "isNew": false,
     "isHot": true,
-    "badge": "BESTSELLER",
+    "badge": "POPULAR",
     "sizes": [
-      "250ml Aerosol"
+      "250ml Can"
     ],
     "colors": [
-      "Clear Spray"
+      "Clear Matte"
     ],
-    "updatedAt": "2026-09-12T12:59:36.391Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:26.600Z",
+    "__v": 0,
+    "subcategory": "Water Shield",
+    "tags": [
+      "POPULAR",
+      "HOT",
+      "MUST HAVE"
+    ]
   },
   {
     "_id": "6aa533e6f83a25a674b0b6c1",
     "id": "6aa533e6f83a25a674b0b6c0",
     "name": "Pro Sneaker Foam Cleaner (200ml)",
     "category": "Accessories",
-    "price": 1199,
-    "originalPrice": 1499,
-    "description": "Fast-acting ready-to-use foaming formula that lifts dirt, mud, and stains without soaking the shoe.",
+    "price": 899,
+    "originalPrice": 1199,
+    "description": "Instant pump foam that breaks down dirt and oil on leather, mesh, canvas, and rubber without soaking or discoloring.",
     "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop"
     ],
-    "stock": 50,
+    "stock": 65,
     "rating": 4.9,
     "reviewsCount": 215,
     "isNew": false,
     "isHot": true,
     "badge": "HOT",
     "sizes": [
-      "200ml Can"
+      "200ml Bottle"
     ],
     "colors": [
-      "Original Formula"
+      "Standard Foam"
     ],
-    "updatedAt": "2026-09-12T12:59:36.180Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:26.391Z",
+    "__v": 0,
+    "subcategory": "Foam Cleaner",
+    "tags": [
+      "HOT",
+      "POPULAR",
+      "BESTSELLER"
+    ]
   },
   {
     "_id": "6aa533e5f83a25a674b0b6bf",
     "id": "6aa533e5f83a25a674b0b6be",
     "name": "SwiftStride Junior Court Shoes (28-35)",
     "category": "Kids",
-    "price": 2899,
-    "originalPrice": 3499,
-    "description": "Durable synthetic leather and mesh court shoes engineered for school games, badminton, and running.",
-    "image": "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&auto=format&fit=crop",
+    "price": 3199,
+    "originalPrice": 3999,
+    "description": "Indoor court and outdoor multi-sport training shoes for junior school athletics and active play.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
     ],
-    "stock": 26,
+    "stock": 16,
     "rating": 4.7,
-    "reviewsCount": 68,
+    "reviewsCount": 65,
     "isNew": false,
     "isHot": false,
     "badge": "BEST",
@@ -1475,27 +1722,33 @@
       35
     ],
     "colors": [
-      "White / Navy",
-      "White / Red"
+      "Navy / Volt",
+      "All White"
     ],
-    "updatedAt": "2026-09-12T12:59:35.968Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:23.232Z",
+    "__v": 0,
+    "subcategory": "Juniors (28–35)",
+    "tags": [
+      "BEST",
+      "POPULAR",
+      "JUNIOR"
+    ]
   },
   {
     "_id": "6aa533e5f83a25a674b0b6bd",
     "id": "6aa533e5f83a25a674b0b6bc",
     "name": "FirstSteps Toddler Walker Shoes (22-27)",
     "category": "Kids",
-    "price": 2199,
-    "originalPrice": 2699,
-    "description": "Ultra-soft flexible soles promoting healthy foot development for early walkers. Wide easy-entry opening.",
-    "image": "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=800&auto=format&fit=crop",
+    "price": 2299,
+    "originalPrice": 2899,
+    "description": "Ultra-plush featherlight toddler walkers with single Velcro quick-strap and soft ankle cushioning.",
+    "image": "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop",
     "images": [
-      "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=800&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=800&auto=format&fit=crop"
     ],
     "stock": 24,
     "rating": 4.8,
-    "reviewsCount": 56,
+    "reviewsCount": 82,
     "isNew": false,
     "isHot": false,
     "badge": "EASY",
@@ -1508,62 +1761,36 @@
       27
     ],
     "colors": [
-      "Butter Yellow",
-      "Soft Grey"
+      "Mint Green",
+      "Sunny Yellow"
     ],
-    "updatedAt": "2026-09-12T12:59:35.749Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:22.803Z",
+    "__v": 0,
+    "subcategory": "Toddlers (22–27)",
+    "tags": [
+      "EASY",
+      "COMFORT",
+      "TODDLER"
+    ]
   },
   {
     "_id": "6aa533e4f83a25a674b0b6b1",
     "id": "6aa533e4f83a25a674b0b6b0",
     "name": "Elegance Leather Ballerina Flats",
     "category": "Women",
-    "price": 2899,
-    "originalPrice": 3499,
-    "description": "Soft Napa leather ballet flats with memory-foam cushion heel pad. Chic everyday versatility from work to dinner.",
+    "price": 3499,
+    "originalPrice": 4299,
+    "description": "Buttery soft lambskin leather ballerina flats featuring 5mm cushioned memory foam insole and flexible skid-safe rubber.",
     "image": "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop",
     "images": [
       "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&auto=format&fit=crop"
     ],
-    "stock": 25,
-    "rating": 4.7,
-    "reviewsCount": 82,
-    "isNew": false,
-    "isHot": false,
-    "badge": "ELEGANT",
-    "sizes": [
-      5,
-      6,
-      7,
-      8,
-      9
-    ],
-    "colors": [
-      "Nude Beige",
-      "Jet Black"
-    ],
-    "updatedAt": "2026-09-12T12:59:34.483Z",
-    "__v": 0
-  },
-  {
-    "_id": "6aa533e4f83a25a674b0b6b5",
-    "id": "6aa533e4f83a25a674b0b6b4",
-    "name": "Harmony Flex Studio & Yoga Shoes",
-    "category": "Women",
-    "price": 3199,
-    "originalPrice": 3999,
-    "description": "Slip-on barefoot-feel stretch knit trainers designed for studio fitness, pilates, and light cardio workouts.",
-    "image": "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=800&auto=format&fit=crop",
-    "images": [
-      "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=800&auto=format&fit=crop"
-    ],
     "stock": 20,
-    "rating": 4.6,
-    "reviewsCount": 48,
+    "rating": 4.7,
+    "reviewsCount": 54,
     "isNew": false,
     "isHot": false,
-    "badge": "FLEX",
+    "badge": "POPULAR",
     "sizes": [
       5,
       6,
@@ -1571,10 +1798,50 @@
       8
     ],
     "colors": [
-      "Dusty Pink",
-      "Cool Grey"
+      "Nude Beige",
+      "Jet Black"
     ],
-    "updatedAt": "2026-09-12T12:59:34.905Z",
-    "__v": 0
+    "updatedAt": "2026-09-12T13:27:25.499Z",
+    "__v": 0,
+    "subcategory": "Flats & Pumps",
+    "tags": [
+      "POPULAR",
+      "PREMIUM"
+    ]
+  },
+  {
+    "_id": "6aa533e4f83a25a674b0b6b5",
+    "id": "6aa533e4f83a25a674b0b6b4",
+    "name": "Harmony Flex Studio & Yoga Shoes",
+    "category": "Women",
+    "price": 2999,
+    "originalPrice": 3699,
+    "description": "Ultra-thin barefoot-feel studio footwear with split-sole flexibility for yoga, Pilates, and barre workouts.",
+    "image": "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=800&auto=format&fit=crop",
+    "images": [
+      "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=800&auto=format&fit=crop"
+    ],
+    "stock": 18,
+    "rating": 4.8,
+    "reviewsCount": 42,
+    "isNew": false,
+    "isHot": false,
+    "badge": "POPULAR",
+    "sizes": [
+      6,
+      7,
+      8
+    ],
+    "colors": [
+      "Dusty Rose",
+      "Onyx Black"
+    ],
+    "updatedAt": "2026-09-12T13:27:25.721Z",
+    "__v": 0,
+    "subcategory": "Studio & Yoga",
+    "tags": [
+      "POPULAR",
+      "YOGA"
+    ]
   }
 ]

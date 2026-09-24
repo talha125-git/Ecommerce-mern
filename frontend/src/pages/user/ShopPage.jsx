@@ -140,27 +140,33 @@ export default function ShopPage() {
       const nameLower = normalize(p.name);
       const descLower = normalize(p.description);
       const catLower = normalize(p.category || p.categoryName);
+      const subLower = normalize(p.subcategory || "");
+      const tagsLower = Array.isArray(p.tags) ? p.tags.join(" ").toLowerCase() : "";
       const badgeLower = normalize(p.badge);
-      const combinedText = `${nameLower} ${descLower} ${catLower} ${badgeLower}`;
+      const combinedText = `${nameLower} ${descLower} ${catLower} ${subLower} ${tagsLower} ${badgeLower}`;
 
       // 1. Search Query Match
       const matchSearch =
         !search ||
         nameLower.includes(normalize(search)) ||
-        descLower.includes(normalize(search));
+        descLower.includes(normalize(search)) ||
+        subLower.includes(normalize(search)) ||
+        tagsLower.includes(normalize(search));
 
       // 2. Category Match (normalize hyphens e.g. "school-shoes" -> "school shoes")
       const selectedCatLower = normalize(selectedCategory);
       let matchCategory = true;
       if (selectedCatLower && selectedCatLower !== "all") {
-        if (selectedCatLower === "new") {
-          matchCategory = p.isNew || badgeLower.includes("new");
+        if (selectedCatLower === "new" || selectedCatLower === "new arrivals") {
+          matchCategory = p.isNew || badgeLower.includes("new") || catLower.includes("new") || tagsLower.includes("new");
         } else if (selectedCatLower === "trending" || selectedCatLower === "bestseller") {
           matchCategory =
             p.isHot ||
             badgeLower.includes("hot") ||
             badgeLower.includes("popular") ||
-            badgeLower.includes("bestseller");
+            badgeLower.includes("bestseller") ||
+            tagsLower.includes("hot") ||
+            tagsLower.includes("popular");
         } else {
           matchCategory =
             catLower === selectedCatLower ||
@@ -177,7 +183,7 @@ export default function ShopPage() {
         const keywords =
           SUB_KEYWORD_MAP[normalizedSub] ||
           normalizedSub.split(/\s+/).filter(Boolean);
-        matchSub = keywords.some((kw) => combinedText.includes(kw));
+        matchSub = subLower.includes(normalizedSub) || keywords.some((kw) => combinedText.includes(kw));
       }
 
       return matchSearch && matchCategory && matchSub;

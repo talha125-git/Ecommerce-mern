@@ -54,19 +54,118 @@ const DEFAULT_ABOUT_SECTION = {
 };
 
 const DEFAULT_CATEGORIES = [
-    { id: "all", name: "All", slug: "all", active: true, isDefault: true, icon: "Grid", description: "All available products catalog" },
-    { id: "men", name: "Men", slug: "men", active: true, isDefault: true, icon: "User", description: "Men's footwear, running, casual and formal shoes" },
-    { id: "women", name: "Women", slug: "women", active: true, isDefault: true, icon: "Heart", description: "Women's sneakers, flats, platforms and fitness shoes" },
-    { id: "kids", name: "Kids", slug: "kids", active: true, isDefault: true, icon: "Smile", description: "Kids' boys, girls, toddlers and velcro shoes" },
-    { id: "accessories", name: "Accessories", slug: "accessories", active: true, isDefault: true, icon: "Sparkles", description: "Shoe care kits, insoles, socks and laces" },
-    { id: "school-shoes", name: "School Shoes", slug: "school-shoes", active: true, isDefault: true, icon: "Shield", description: "Uniform approved black leather, velcro and white PT shoes" },
-    { id: "running", name: "Running", slug: "running", active: true, isDefault: true, icon: "Zap", description: "High performance running & athletic footwear" },
-    { id: "casual", name: "Casual", slug: "casual", active: true, isDefault: true, icon: "Smile", description: "Everyday comfort sneakers and shoes" },
-    { id: "retro", name: "Retro", slug: "retro", active: true, isDefault: true, icon: "Sparkles", description: "Iconic timeless classic models" },
-    { id: "performance", name: "Performance", slug: "performance", active: true, isDefault: true, icon: "Activity", description: "Pro-level sports performance footwear" },
-    { id: "lifestyle", name: "Lifestyle", slug: "lifestyle", active: true, isDefault: true, icon: "Compass", description: "Modern street style and fashion shoes" },
-    { id: "high-top", name: "High Top", slug: "high-top", active: true, isDefault: true, icon: "Shield", description: "Ankle support high top sneakers" },
-    { id: "training", name: "Training", slug: "training", active: true, isDefault: true, icon: "Dumbbell", description: "Gym and cross-training athletic shoes" },
+    {
+        id: "all",
+        name: "All",
+        slug: "all",
+        active: true,
+        isDefault: true,
+        icon: "Grid",
+        description: "All available products catalog",
+        subcategories: []
+    },
+    {
+        id: "new-arrivals",
+        name: "New Arrivals",
+        slug: "new-arrivals",
+        active: true,
+        isDefault: true,
+        icon: "Sparkles",
+        description: "Fresh drops, new releases, trending styles, and best sellers",
+        subcategories: [
+            "New Releases",
+            "Trending Now",
+            "Best Sellers",
+            "Men's New In",
+            "Women's New In",
+            "Kids' New In"
+        ]
+    },
+    {
+        id: "men",
+        name: "Men",
+        slug: "men",
+        active: true,
+        isDefault: true,
+        icon: "User",
+        description: "Men's performance running, casual streetwear, formal loafers, and gym trainers",
+        subcategories: [
+            "Running Shoes",
+            "Casual Sneakers",
+            "Formal Loafers",
+            "Gym & Training",
+            "Daily Walking",
+            "Wide-Fit Shoes"
+        ]
+    },
+    {
+        id: "women",
+        name: "Women",
+        slug: "women",
+        active: true,
+        isDefault: true,
+        icon: "Heart",
+        description: "Women's daily sneakers, running shoes, flats, yoga studio, platform soles, and cloud comfort",
+        subcategories: [
+            "Daily Sneakers",
+            "Running Shoes",
+            "Flats & Pumps",
+            "Studio & Yoga",
+            "Platform Soles",
+            "Cloud Comfort"
+        ]
+    },
+    {
+        id: "kids",
+        name: "Kids",
+        slug: "kids",
+        active: true,
+        isDefault: true,
+        icon: "Smile",
+        description: "Kids' boys & girls sneakers, light-up LED soles, toddlers, juniors, and velcro straps",
+        subcategories: [
+            "Boys Sneakers",
+            "Girls Sneakers",
+            "Light-Up Soles",
+            "Toddlers (22–27)",
+            "Juniors (28–35)",
+            "Velcro Straps"
+        ]
+    },
+    {
+        id: "accessories",
+        name: "Accessories",
+        slug: "accessories",
+        active: true,
+        isDefault: true,
+        icon: "Package",
+        description: "Shoe care foam cleaner, water shield spray, brush, memory insoles, socks, and laces",
+        subcategories: [
+            "Foam Cleaner",
+            "Water Shield",
+            "Cleaning Brush",
+            "Memory Insoles",
+            "Cushioned Socks",
+            "Shoe Laces"
+        ]
+    },
+    {
+        id: "school-shoes",
+        name: "School Shoes",
+        slug: "school-shoes",
+        active: true,
+        isDefault: true,
+        icon: "Shield",
+        description: "Uniform approved black leather, girls strap shoes, white PT shoes, velcro, and non-marking soles",
+        subcategories: [
+            "Black Uniform",
+            "Girls Strap Shoes",
+            "White PT Shoes",
+            "Velcro Strap",
+            "Genuine Leather",
+            "Non-Marking Soles"
+        ]
+    }
 ];
 
 const DEFAULT_PRODUCTS = [
@@ -721,6 +820,8 @@ app.post("/api/products", async (req, res) => {
         const {
             name,
             category,
+            subcategory,
+            tags,
             price,
             originalPrice,
             description,
@@ -745,9 +846,13 @@ app.post("/api/products", async (req, res) => {
             : (image ? [image] : []);
         const primaryImage = image || (galleryImages.length > 0 ? galleryImages[0] : "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600");
 
+        const productTags = Array.isArray(tags) ? tags : (badge ? [badge] : []);
+
         const newProduct = await ProductModel.create({
             name,
             category,
+            subcategory: subcategory || "",
+            tags: productTags,
             price: Number(price),
             originalPrice: originalPrice ? Number(originalPrice) : undefined,
             description: description || "",
@@ -758,7 +863,7 @@ app.post("/api/products", async (req, res) => {
             reviewsCount: 1,
             isNew: Boolean(isNew),
             isHot: Boolean(isHot),
-            badge: badge || (isNew ? "NEW" : isHot ? "HOT" : ""),
+            badge: badge || (isNew ? "NEW" : isHot ? "HOT" : (productTags[0] || "")),
             colors: Array.isArray(colors) && colors.length > 0 ? colors : ["Standard"],
             sizes: Array.isArray(sizes) && sizes.length > 0 ? sizes : [7, 8, 9, 10, 11],
             details: details || {}
