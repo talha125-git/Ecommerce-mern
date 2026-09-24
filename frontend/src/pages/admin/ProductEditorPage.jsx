@@ -75,13 +75,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
     isHot: false,
     sizes: [7, 8, 9, 10, 11, 12],
     colors: ["Standard"],
-    details: {
-      material: "Engineered Breathable Mesh & Leather Overlays",
-      sole: "Dynamic Cloud EVA Foam & High-Traction Rubber",
-      fit: "True to size (Standard D width)",
-      care: "Spot clean with damp cloth",
-      closure: "Traditional Lace-Up"
-    }
+    details: {}
   });
 
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
@@ -406,13 +400,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
       isHot: Boolean(formData.isHot),
       sizes: Array.isArray(formData.sizes) && formData.sizes.length > 0 ? formData.sizes : [7, 8, 9, 10, 11, 12],
       colors: Array.isArray(formData.colors) && formData.colors.length > 0 ? formData.colors : ["Standard"],
-      details: {
-        material: formData.details?.material || "Engineered Breathable Mesh & Leather Overlays",
-        sole: formData.details?.sole || "Dynamic Cloud EVA Foam & High-Traction Rubber",
-        fit: formData.details?.fit || "True to size (Standard D width)",
-        care: formData.details?.care || "Spot clean with damp cloth",
-        closure: formData.details?.closure || "Traditional Lace-Up"
-      }
+      details: formData.details || {}
     };
 
     setSaving(true);
@@ -606,13 +594,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
                   isHot: false,
                   sizes: [7, 8, 9, 10, 11, 12],
                   colors: ["Standard"],
-                  details: {
-                    material: "Engineered Breathable Mesh & Leather Overlays",
-                    sole: "Dynamic Cloud EVA Foam & High-Traction Rubber",
-                    fit: "True to size (Standard D width)",
-                    care: "Spot clean with damp cloth",
-                    closure: "Traditional Lace-Up"
-                  }
+                  details: {}
                 });
               }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 rounded-xl text-xs font-bold transition"

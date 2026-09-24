@@ -127,23 +127,19 @@ export default function ProductDetailsPage() {
       });
   }, [id]);
 
-  // Compute all available images, ensuring at least 3-4 complementary angles exist for any product
+  // Compute all available images directly from the product
   const allImages = useMemo(() => {
     if (!product) return [];
-    let list = Array.isArray(product.images) && product.images.length > 0
-      ? product.images
-      : [product.image].filter(Boolean);
-
-    // If only 1 image is in the dataset, provide curated alternate angles so the user can interact
-    if (list.length === 1 && list[0]) {
-      list = [
-        list[0],
-        "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1514989940723-e8e51635b782?q=80&w=800&auto=format&fit=crop"
-      ];
+    let list = [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      list = [...product.images];
+      if (product.image && !list.includes(product.image)) {
+        list.unshift(product.image);
+      }
+    } else if (product.image) {
+      list = [product.image];
     }
-    return list;
+    return Array.from(new Set(list.filter(Boolean)));
   }, [product]);
 
   // Sync activeImage if current one is not in the list
@@ -499,9 +495,11 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* Description Snippet */}
-          <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-            {product.description || "Crafted with lightweight materials and responsive athletic cushioning for ultimate all-day comfort and trendsetting aesthetics."}
-          </p>
+          {product.description && (
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+              {product.description}
+            </p>
+          )}
 
           {/* Size Selector */}
           <div className="space-y-3 pt-2">
@@ -658,52 +656,33 @@ export default function ProductDetailsPage() {
             </div>
 
             {/* Product Description */}
-            <div className="space-y-3 pt-2">
-              <h3 className="text-sm sm:text-base font-extrabold text-foreground italic">
-                Product Description
-              </h3>
-              <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
-                {(() => {
-                  // Build description bullet points from product details
-                  const bullets = [];
-                  const desc = product.description || "";
-                  
-                  // If description has bullet points (• or -), split and render them
-                  if (desc.includes("•") || desc.includes("- ")) {
-                    const parts = desc.split(/[•\-]/).map(s => s.trim()).filter(Boolean);
-                    parts.forEach(p => bullets.push(p));
-                  } else if (desc) {
-                    // If it's a plain description, show it as a paragraph
-                    bullets.push(desc);
-                  }
+            {product.description && product.description.trim() && (
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm sm:text-base font-extrabold text-foreground italic">
+                  Product Description
+                </h3>
+                <div className="text-sm text-muted-foreground leading-relaxed space-y-2">
+                  {(() => {
+                    const desc = product.description.trim();
+                    let bullets = [];
+                    if (desc.includes("•") || desc.includes("- ")) {
+                      bullets = desc.split(/[•\-]/).map((s) => s.trim()).filter(Boolean);
+                    } else if (desc.includes("\n")) {
+                      bullets = desc.split("\n").map((s) => s.trim()).filter(Boolean);
+                    } else {
+                      bullets = [desc];
+                    }
 
-                  // Add detail fields as additional feature bullets
-                  const details = product.details || {};
-                  if (details.material) bullets.push(`Featuring ${details.material.toLowerCase().startsWith("a") || details.material.toLowerCase().startsWith("e") ? "an" : "a"} durable ${details.material} upper that gives a neat look with easy-care and long-lasting use`);
-                  if (details.sole) bullets.push(`Equipped with ${details.sole} for flexibility, grip, and all-day comfort`);
-                  if (details.fit) bullets.push(`Fit profile: ${details.fit}`);
-                  if (details.care) bullets.push(`Care: ${details.care}`);
-                  if (details.closure) bullets.push(`Closure style: ${details.closure}`);
-
-                  // Fallback if nothing at all
-                  if (bullets.length === 0) {
-                    bullets.push(
-                      "Designed for everyday ease, this product provides comfort, durability, and lightweight performance for daily wear",
-                      "Built with a smooth inner lining to enhance comfort and reduce fatigue",
-                      "Constructed with premium technology to ensure a strong and reliable build quality",
-                      "Equipped with a lightweight sole and cushioned footbed for flexibility, grip, and all-day comfort"
-                    );
-                  }
-
-                  return bullets.map((point, idx) => (
-                    <p key={idx} className="flex items-start gap-2">
-                      <span className="text-foreground mt-0.5 shrink-0">•</span>
-                      <span>{point}</span>
-                    </p>
-                  ));
-                })()}
+                    return bullets.map((point, idx) => (
+                      <p key={idx} className="flex items-start gap-2">
+                        <span className="text-foreground mt-0.5 shrink-0">•</span>
+                        <span>{point}</span>
+                      </p>
+                    ));
+                  })()}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
