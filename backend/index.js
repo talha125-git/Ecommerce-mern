@@ -12,7 +12,11 @@ const SettingsModel = require("./models/Settings");
 // Real Gmail SMTP & Newsletter Subscriptions initialized
 const SubscriberModel = require("./models/Subscriber");
 const crypto = require("crypto");
-const { sendNewsletterVerificationEmail } = require("./utils/emailService");
+const {
+    sendNewsletterVerificationEmail,
+    sendNewProductToSubscribers,
+    sendCampaignEmail
+} = require("./utils/emailService");
 
 const DEFAULT_ABOUT_SECTION = {
     key: "about_us_section",
@@ -838,7 +842,8 @@ app.post("/api/products", async (req, res) => {
             badge,
             colors,
             sizes,
-            details
+            details,
+            notifySubscribers
         } = req.body;
 
         if (!name || !category || !price) {
@@ -879,6 +884,14 @@ app.post("/api/products", async (req, res) => {
         }
 
         console.log(`✅ Product "${newProduct.name}" created successfully with ${newProduct.images.length} gallery images`);
+
+        // If admin checked "Notify Subscribers", send new product announcement in background
+        if (notifySubscribers) {
+            sendNewProductToSubscribers(newProduct)
+                .then((res) => console.log(`📢 Dispatched new product alert to ${res.count} subscribers`))
+                .catch((err) => console.error("❌ Failed to notify subscribers of new product:", err.message));
+        }
+
         return res.json({ message: "Product created successfully", product: newProduct });
     } catch (err) {
         console.error("❌ Error creating product:", err);
@@ -1586,5 +1599,39 @@ app.patch("/api/admin/subscribers/:id/toggle-status", async (req, res) => {
     }
 });
 
+// POST /api/admin/send-email: Send custom broadcast / announcement to subscribers
+app.post("/api/admin/send-email", async (req, res) => {
+    try {
+        const { subject, heading, message, buttonText, buttonLink, targetEmails } = req.body;
+
+        if (!subject || !message) {
+            return res.status(400).json({ message: "Subject and message body are required." });
+        }
+
+        const result = await sendCampaignEmail({
+            subject,
+            heading,
+            message,
+            buttonText,
+            buttonLink,
+            targetEmails
+        });
+
+        if (!result.success) {
+            return res.status(500).json({ message: result.error || "Failed to send email broadcast." });
+        }
+
+        return res.json({
+            success: true,
+            message: `Email broadcast sent successfully to ${result.sentCount} subscriber${result.sentCount === 1 ? '' : 's'}!`,
+            sentCount: result.sentCount
+        });
+    } catch (err) {
+        console.error("❌ Error sending campaign email:", err);
+        return res.status(500).json({ message: "Failed to send campaign email", error: err.message });
+    }
+});
+
 module.exports = app;
+
 

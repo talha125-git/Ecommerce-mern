@@ -20,7 +20,9 @@ import {
   X,
   Loader2,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Mail,
+  Send
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -96,6 +98,7 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
   const [saving, setSaving] = useState(false);
   const [statusMsg, setStatusMsg] = useState({ type: "", text: "" });
   const [createdProduct, setCreatedProduct] = useState(null);
+  const [notifySubscribers, setNotifySubscribers] = useState(!isEditing);
 
   // Fetch available categories and subcategories from server
   useEffect(() => {
@@ -400,7 +403,8 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
       isHot: Boolean(formData.isHot),
       sizes: Array.isArray(formData.sizes) && formData.sizes.length > 0 ? formData.sizes : [7, 8, 9, 10, 11, 12],
       colors: Array.isArray(formData.colors) && formData.colors.length > 0 ? formData.colors : ["Standard"],
-      details: formData.details || {}
+      details: formData.details || {},
+      notifySubscribers: !isEditing && notifySubscribers
     };
 
     setSaving(true);
@@ -414,7 +418,12 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
 
       const saved = res.data?.product;
       setCreatedProduct(saved || payload);
-      showStatus("success", isEditing ? "Product updated successfully!" : "Product published to store successfully!");
+      const successMessage = isEditing
+        ? "Product updated successfully!"
+        : notifySubscribers
+        ? "Product published and drop alert emailed to subscribers!"
+        : "Product published to store successfully!";
+      showStatus("success", successMessage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error("Failed to save product:", err);
@@ -1351,6 +1360,29 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
                 </span>
               </div>
             </div>
+
+            {/* NOTIFY SUBSCRIBERS VIA EMAIL CHECKBOX */}
+            {!isEditing && (
+              <div className="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl transition hover:border-amber-300">
+                <label className="flex items-start gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notifySubscribers}
+                    onChange={(e) => setNotifySubscribers(e.target.checked)}
+                    className="mt-0.5 rounded border-amber-300 text-slate-900 focus:ring-slate-900 w-4 h-4 cursor-pointer shrink-0"
+                  />
+                  <div>
+                    <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <Mail className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      Email All Subscribers
+                    </span>
+                    <p className="text-[11px] text-gray-500 leading-tight mt-0.5">
+                      Automatically send a "New Arrival" drop alert with product photo, price & direct shop link to all verified subscribers.
+                    </p>
+                  </div>
+                </label>
+              </div>
+            )}
 
             <div className="pt-3 border-t border-gray-100 space-y-2">
               <Button

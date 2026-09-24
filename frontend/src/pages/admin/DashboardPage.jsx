@@ -9,6 +9,7 @@ import ProductsTab from './ProductsTab';
 import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
 import SubscribersTab from './SubscribersTab';
+import SendEmailTab from './SendEmailTab';
 import SettingsTab from './SettingsTab';
 import ShippingTab from './ShippingTab';
 import SliderTab from './Setup/SliderTab';
@@ -454,6 +455,8 @@ const DashboardPage = () => {
         return <CustomersTab />;
       case 'subscribers':
         return <SubscribersTab />;
+      case 'send-email':
+        return <SendEmailTab />;
       case 'shipping':
         return <ShippingTab />;
       case 'settings':
