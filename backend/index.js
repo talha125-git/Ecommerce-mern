@@ -9,6 +9,10 @@ const ProductModel = require("./models/Product");
 const OrderModel = require("./models/Order");
 const AboutModel = require("./models/About");
 const SettingsModel = require("./models/Settings");
+// Real Gmail SMTP & Newsletter Subscriptions initialized
+const SubscriberModel = require("./models/Subscriber");
+const crypto = require("crypto");
+const { sendNewsletterVerificationEmail } = require("./utils/emailService");
 
 const DEFAULT_ABOUT_SECTION = {
     key: "about_us_section",
@@ -1382,4 +1386,205 @@ app.post("/api/admin/change-password", async (req, res) => {
     }
 });
 
+// ══════════════════════════════════════════════════════
+// NEWSLETTER SUBSCRIBERS ROUTES
+// ══════════════════════════════════════════════════════
+
+// POST /api/newsletter/subscribe: Subscribe an email & send verification link
+app.post("/api/newsletter/subscribe", async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email || typeof email !== "string") {
+            return res.status(400).json({ message: "A valid email address is required." });
+        }
+
+        const trimmedEmail = email.trim().toLowerCase();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(trimmedEmail)) {
+            return res.status(400).json({ message: "Please provide a valid email format." });
+        }
+
+        let subscriber = await SubscriberModel.findOne({ email: trimmedEmail });
+
+        if (subscriber && subscriber.isVerified && subscriber.status === "subscribed") {
+            return res.status(200).json({
+                alreadySubscribed: true,
+                message: "You're already subscribed! Look out for exclusive deals in your inbox."
+            });
+        }
+
+        const token = crypto.randomBytes(32).toString("hex");
+        const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+        if (subscriber) {
+            subscriber.verificationToken = token;
+            subscriber.verificationExpires = tokenExpires;
+            subscriber.status = "pending";
+            subscriber.isVerified = false;
+            await subscriber.save();
+        } else {
+            subscriber = await SubscriberModel.create({
+                email: trimmedEmail,
+                isVerified: false,
+                verificationToken: token,
+                verificationExpires: tokenExpires,
+                status: "pending"
+            });
+        }
+
+        const mailResult = await sendNewsletterVerificationEmail(trimmedEmail, token);
+
+        if (!mailResult.success && mailResult.isRealGmail) {
+            return res.status(500).json({
+                success: false,
+                message: `Failed to send email through Gmail: ${mailResult.error || "Please verify EMAIL_USER and EMAIL_PASS in backend/.env."}`
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: mailResult.isRealGmail
+                ? `Verification email sent directly to ${trimmedEmail}! Please check your inbox (and spam folder) to complete your subscription.`
+                : "Verification email sent! Please check your inbox and verify your email to complete your subscription.",
+            previewUrl: mailResult.previewUrl || null,
+            verificationUrl: mailResult.verificationUrl || null
+        });
+    } catch (err) {
+        console.error("❌ Error during newsletter subscription:", err);
+        return res.status(500).json({ message: "Failed to process newsletter subscription", error: err.message });
+    }
+});
+
+// GET /api/newsletter/verify: Verify newsletter subscriber email via token
+app.get(["/api/newsletter/verify", "/api/newsletter/verify/:token"], async (req, res) => {
+    try {
+        const token = req.query.token || req.params.token;
+        if (!token) {
+            return res.status(400).json({ success: false, message: "Verification token is required." });
+        }
+
+        const subscriber = await SubscriberModel.findOne({
+            verificationToken: token,
+            verificationExpires: { $gt: new Date() }
+        });
+
+        if (!subscriber) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired verification token. Please request a new subscription."
+            });
+        }
+
+        subscriber.isVerified = true;
+        subscriber.status = "subscribed";
+        subscriber.subscribedAt = new Date();
+        subscriber.verificationToken = null;
+        subscriber.verificationExpires = null;
+        await subscriber.save();
+
+        console.log(`✅ Newsletter subscription verified for: ${subscriber.email}`);
+        return res.json({
+            success: true,
+            message: "Congratulations! Your email has been successfully verified. You are now subscribed to our newsletter.",
+            email: subscriber.email
+        });
+    } catch (err) {
+        console.error("❌ Error during newsletter verification:", err);
+        return res.status(500).json({ success: false, message: "Server error during verification", error: err.message });
+    }
+});
+
+// GET /api/admin/subscribers: Get all subscribers for Admin Dashboard
+app.get("/api/admin/subscribers", async (req, res) => {
+    try {
+        const subscribers = await SubscriberModel.find().sort({ createdAt: -1 });
+        const total = subscribers.length;
+        const verified = subscribers.filter(s => s.isVerified && s.status === "subscribed").length;
+        const pending = subscribers.filter(s => !s.isVerified || s.status === "pending").length;
+
+        return res.json({
+            subscribers,
+            stats: {
+                total,
+                verified,
+                pending
+            }
+        });
+    } catch (err) {
+        console.error("❌ Error fetching subscribers:", err);
+        return res.status(500).json({ message: "Failed to fetch subscribers", error: err.message });
+    }
+});
+
+// DELETE /api/admin/subscribers/:id: Remove a subscriber
+app.delete("/api/admin/subscribers/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const subscriber = await SubscriberModel.findByIdAndDelete(id);
+        if (!subscriber) {
+            return res.status(404).json({ message: "Subscriber not found." });
+        }
+        console.log(`🗑️ Subscriber removed: ${subscriber.email}`);
+        return res.json({ message: `Subscriber ${subscriber.email} removed successfully.` });
+    } catch (err) {
+        console.error("❌ Error deleting subscriber:", err);
+        return res.status(500).json({ message: "Failed to delete subscriber", error: err.message });
+    }
+});
+
+// POST /api/admin/subscribers/resend/:id: Resend verification email from Admin Dashboard
+app.post("/api/admin/subscribers/resend/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const subscriber = await SubscriberModel.findById(id);
+        if (!subscriber) {
+            return res.status(404).json({ message: "Subscriber not found." });
+        }
+
+        const token = crypto.randomBytes(32).toString("hex");
+        subscriber.verificationToken = token;
+        subscriber.verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        subscriber.isVerified = false;
+        subscriber.status = "pending";
+        await subscriber.save();
+
+        const mailResult = await sendNewsletterVerificationEmail(subscriber.email, token);
+
+        return res.json({
+            message: `Verification email resent to ${subscriber.email}`,
+            previewUrl: mailResult.previewUrl || null,
+            verificationUrl: mailResult.verificationUrl || null
+        });
+    } catch (err) {
+        console.error("❌ Error resending verification email:", err);
+        return res.status(500).json({ message: "Failed to resend verification email", error: err.message });
+    }
+});
+
+// PATCH /api/admin/subscribers/:id/toggle-status: Toggle status between subscribed/unsubscribed
+app.patch("/api/admin/subscribers/:id/toggle-status", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const subscriber = await SubscriberModel.findById(id);
+        if (!subscriber) {
+            return res.status(404).json({ message: "Subscriber not found." });
+        }
+
+        if (subscriber.status === "subscribed") {
+            subscriber.status = "unsubscribed";
+        } else {
+            subscriber.status = "subscribed";
+            subscriber.isVerified = true;
+            if (!subscriber.subscribedAt) subscriber.subscribedAt = new Date();
+        }
+        await subscriber.save();
+
+        return res.json({ message: `Subscriber status updated to ${subscriber.status}`, subscriber });
+    } catch (err) {
+        console.error("❌ Error toggling subscriber status:", err);
+        return res.status(500).json({ message: "Failed to update subscriber status", error: err.message });
+    }
+});
+
 module.exports = app;
+

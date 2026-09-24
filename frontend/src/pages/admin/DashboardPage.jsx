@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon, Tag, RefreshCw, ArrowUpRight, ArrowRight, Info } from 'lucide-react';
+import { Search, Menu, DollarSign, ShoppingBag, Users, Package, Sliders, Globe, ChevronDown, Sparkles, Image as ImageIcon, Tag, RefreshCw, ArrowUpRight, ArrowRight, Info, MailCheck } from 'lucide-react';
 
 // Separate Component Imports
 import Sidebar from './Sidebar';
 import ProductsTab from './ProductsTab';
 import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
+import SubscribersTab from './SubscribersTab';
 import SettingsTab from './SettingsTab';
 import ShippingTab from './ShippingTab';
 import SliderTab from './Setup/SliderTab';
@@ -34,6 +35,8 @@ const DashboardPage = () => {
     pendingOrdersCount: 0,
     deliveredOrdersCount: 0,
     customersCount: 0,
+    subscribersCount: 0,
+    verifiedSubscribersCount: 0,
     productsCount: 0,
     inStockCount: 0,
     recentOrders: [],
@@ -47,15 +50,20 @@ const DashboardPage = () => {
     setStatsLoading(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL || '';
-      const [ordersRes, productsRes, customersRes] = await Promise.allSettled([
+      const [ordersRes, productsRes, customersRes, subscribersRes] = await Promise.allSettled([
         axios.get(`${API_URL}/api/orders`),
         axios.get(`${API_URL}/api/products`),
         axios.get(`${API_URL}/api/customers`),
+        axios.get(`${API_URL}/api/admin/subscribers`),
       ]);
 
       const orders = ordersRes.status === 'fulfilled' && ordersRes.value.data?.orders ? ordersRes.value.data.orders : [];
       const products = productsRes.status === 'fulfilled' && productsRes.value.data?.products ? productsRes.value.data.products : [];
       const customers = customersRes.status === 'fulfilled' && customersRes.value.data?.customers ? customersRes.value.data.customers : [];
+      const subscribersData = subscribersRes.status === 'fulfilled' && subscribersRes.value.data ? subscribersRes.value.data : { subscribers: [], stats: {} };
+      const subscribers = subscribersData.subscribers || [];
+      const subscribersCount = subscribers.length;
+      const verifiedSubscribersCount = subscribers.filter(s => s.isVerified && s.status === 'subscribed').length;
 
       const totalRevenue = orders.reduce((sum, ord) => {
         if (ord.status !== 'Cancelled') {
@@ -74,12 +82,15 @@ const DashboardPage = () => {
         pendingOrdersCount,
         deliveredOrdersCount,
         customersCount: customers.length,
+        subscribersCount,
+        verifiedSubscribersCount,
         productsCount: products.length,
         inStockCount,
         recentOrders: orders.slice(0, 5),
         rawOrders: orders,
         rawProducts: products,
         rawCustomers: customers,
+        rawSubscribers: subscribers,
       });
     } catch (err) {
       console.error("Error fetching dashboard stats:", err);
@@ -216,7 +227,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Metric Cards with Real Values */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {/* Revenue Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-gray-500">
@@ -261,7 +272,10 @@ const DashboardPage = () => {
         </div>
 
         {/* Customers Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2">
+        <div
+          onClick={() => handleTabChange('customers')}
+          className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 transition"
+        >
           <div className="flex items-center justify-between text-gray-500">
             <span className="text-xs font-bold uppercase tracking-wider">Customers</span>
             <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
@@ -276,6 +290,29 @@ const DashboardPage = () => {
             )}
           </div>
           <p className="text-[11px] text-gray-500 font-medium">Registered customer accounts</p>
+        </div>
+
+        {/* Newsletter Subscribers Card */}
+        <div
+          onClick={() => handleTabChange('subscribers')}
+          className="bg-white border border-gray-200 rounded-2xl p-5 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 transition"
+        >
+          <div className="flex items-center justify-between text-gray-500">
+            <span className="text-xs font-bold uppercase tracking-wider">Subscribers</span>
+            <div className="p-2 bg-slate-100 text-slate-800 rounded-xl">
+              <MailCheck className="w-4 h-4 text-emerald-600" />
+            </div>
+          </div>
+          <div className="text-2xl font-black text-gray-900">
+            {statsLoading ? (
+              <div className="h-8 w-16 bg-gray-100 animate-pulse rounded-lg" />
+            ) : (
+              stats.verifiedSubscribersCount
+            )}
+          </div>
+          <p className="text-[11px] text-emerald-600 font-medium">
+            {stats.subscribersCount} total ({stats.verifiedSubscribersCount} verified)
+          </p>
         </div>
 
         {/* Products Card */}
@@ -415,6 +452,8 @@ const DashboardPage = () => {
         return <OrdersTab />;
       case 'customers':
         return <CustomersTab />;
+      case 'subscribers':
+        return <SubscribersTab />;
       case 'shipping':
         return <ShippingTab />;
       case 'settings':

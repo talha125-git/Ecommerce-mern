@@ -1,3 +1,3 @@
 git add .
-git commit -m "feat: add product editor and product details pages"
+git commit -m "feat: add newsletter verification with real Gmail and admin subscribers tab"
 git push origin main

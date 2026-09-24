@@ -4,9 +4,14 @@ import {
   Mail,
   MapPin,
   Phone,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  ExternalLink,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
@@ -41,13 +46,45 @@ const WhatsAppIcon = ({ className = "h-4 w-4" }) => (
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState(null); // { type: 'success'|'info'|'error', text: '', previewUrl: '' }
   const { settings: storeSettings } = useSettings();
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
-      console.log("Newsletter subscription:", email);
-      setEmail("");
+    if (!email) return;
+
+    setSubmitting(true);
+    setStatus(null);
+
+    try {
+      const API_URL = import.meta.env.VITE_API_URL || "";
+      const res = await axios.post(`${API_URL}/api/newsletter/subscribe`, { email });
+
+      if (res.data.alreadySubscribed) {
+        setStatus({
+          type: "info",
+          text: res.data.message || "You're already subscribed to our newsletter!",
+        });
+      } else {
+        setStatus({
+          type: "success",
+          text: res.data.message || "Verification email sent! Please check your inbox to confirm your subscription.",
+          previewUrl: res.data.previewUrl,
+        });
+        setEmail("");
+      }
+    } catch (err) {
+      console.error("Newsletter subscription error:", err);
+      const errorMsg =
+        err.response?.data?.message ||
+        "Failed to send verification email. Please try again.";
+      setStatus({
+        type: "error",
+        text: errorMsg,
+      });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -113,15 +150,55 @@ export default function Footer() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1"
                 required
+                disabled={submitting}
               />
               <Button
                 type="submit"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={submitting}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 min-w-[44px]"
               >
-                <ArrowRight className="h-4 w-4" />
+                {submitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <ArrowRight className="h-4 w-4" />
+                )}
                 <span className="sr-only">Subscribe</span>
               </Button>
             </form>
+
+            {/* Newsletter Subscription Status Feedback */}
+            {status && (
+              <div
+                className={`mt-4 p-3.5 rounded-xl text-xs font-medium max-w-md mx-auto flex items-start gap-2.5 text-left border transition-all ${
+                  status.type === "success"
+                    ? "bg-emerald-50 text-emerald-900 border-emerald-200"
+                    : status.type === "info"
+                    ? "bg-blue-50 text-blue-900 border-blue-200"
+                    : "bg-rose-50 text-rose-900 border-rose-200"
+                }`}
+              >
+                {status.type === "success" ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                ) : status.type === "info" ? (
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                )}
+                <div className="flex-1">
+                  <p>{status.text}</p>
+                  {status.previewUrl && (
+                    <a
+                      href={status.previewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-1.5 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 underline underline-offset-2"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View verification email (Test Inbox)
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

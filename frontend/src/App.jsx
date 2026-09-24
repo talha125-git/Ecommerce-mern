@@ -17,6 +17,7 @@ import PrivacyPolicyPage from './pages/user/PrivacyPolicyPage'
 import TermsPage from './pages/user/TermsPage'
 import CookiePolicyPage from './pages/user/CookiePolicyPage'
 import UserDashboardPage from './pages/user/user_dashboard/UserDashboardPage'
+import VerifyNewsletterPage from './pages/user/VerifyNewsletterPage'
 
 // ── Admin Pages ──
 import DashboardPage from './pages/admin/DashboardPage'
@@ -85,6 +86,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product/:id" element={<ProductDetailsPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/newsletter/verify" element={<VerifyNewsletterPage />} />
           </Route>
 
           {/* ═══════════════════════════════════
