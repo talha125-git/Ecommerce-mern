@@ -5,42 +5,88 @@ import productsData from "@/data/products.json";
 import ProductCard from "./ProductCard";
 import { Flame, Sparkles, SlidersHorizontal, Search, Tag, Grid } from "lucide-react";
 
-const DEFAULT_CAT_NAMES = ["All", "Running", "Casual", "Retro", "Performance", "Lifestyle", "High Top", "Training"];
+// Default store categories fallback (if server is booting up)
+const DEFAULT_CAT_NAMES = ["All", "New Arrivals", "Men", "Women", "Kids", "Accessories", "School Shoes"];
 
 export default function ProductList() {
   const [activeTab, setActiveTab] = useState("all"); // "all", "hot", "new", "sale"
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("featured");
-  const [dynamicCategories, setDynamicCategories] = useState(DEFAULT_CAT_NAMES);
+
+  // Dynamic Categories initialized from localStorage cache if available
+  const [dynamicCategories, setDynamicCategories] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const names = parsed
+            .filter((c) => c.active !== false && c.slug !== "all" && c.id !== "all")
+            .map((c) => c.name);
+          return ["All", ...names];
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_CAT_NAMES;
+  });
+
   const [productsList, setProductsList] = useState(productsData);
   const location = useLocation();
 
   const API_URL = import.meta.env.VITE_API_URL || "";
 
-  // Fetch dynamic categories from backend
+  // Synchronize categories dynamically from Backend & Admin Dashboard events
   useEffect(() => {
+    const syncCategories = (rawCats) => {
+      if (Array.isArray(rawCats) && rawCats.length > 0) {
+        const activeCatNames = rawCats
+          .filter((cat) => cat.active !== false && cat.slug !== "all" && cat.id !== "all")
+          .map((cat) => cat.name);
+        const finalCats = ["All", ...activeCatNames.filter((c) => c !== "All")];
+        setDynamicCategories(finalCats);
+
+        // Reset selectedCategory to "All" if the active one was deleted by Admin
+        setSelectedCategory((curr) => (finalCats.includes(curr) ? curr : "All"));
+      }
+    };
+
+    // 1. Fetch categories from backend API
     axios
       .get(`${API_URL}/api/categories`)
       .then((res) => {
-        if (res.data && Array.isArray(res.data.categories)) {
-          const activeCatNames = res.data.categories
-            .filter((cat) => cat.active)
-            .map((cat) => cat.name);
-          if (activeCatNames.length > 0) {
-            // Ensure "All" is always first
-            const hasAll = activeCatNames.includes("All");
-            const finalCats = hasAll
-              ? ["All", ...activeCatNames.filter((c) => c !== "All")]
-              : ["All", ...activeCatNames];
-            setDynamicCategories(finalCats);
-          }
+        const cats = res.data?.categories || (Array.isArray(res.data) ? res.data : null);
+        if (cats && Array.isArray(cats) && cats.length > 0) {
+          syncCategories(cats);
         }
       })
       .catch((err) => {
         console.log("Could not fetch categories from server, fallback to default:", err);
       });
-  }, []);
+
+    // 2. Real-time event listener when Admin adds, edits, or deletes a category
+    const handleCategoriesUpdated = (event) => {
+      if (event.detail && Array.isArray(event.detail)) {
+        syncCategories(event.detail);
+      }
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === "cached_categories" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          syncCategories(parsed);
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("categories-updated", handleCategoriesUpdated);
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("categories-updated", handleCategoriesUpdated);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [API_URL]);
 
   // Fetch dynamic products from backend
   useEffect(() => {
@@ -70,7 +116,7 @@ export default function ProductList() {
     };
     fetchProducts();
     return () => clearTimeout(timer);
-  }, []);
+  }, [API_URL]);
 
   // Listen to hash changes in URL (e.g. #hot-products or #new-arrivals)
   useEffect(() => {
@@ -83,7 +129,7 @@ export default function ProductList() {
 
   const categories = dynamicCategories;
 
-  // Filter & Sort Logic
+  // Filter & Sort Logic with dynamic category and subcategory matching
   const filteredProducts = useMemo(() => {
     return productsList
       .filter((product) => {
@@ -92,8 +138,31 @@ export default function ProductList() {
         if (activeTab === "new" && !product.isNew && product.badge !== "NEW") return false;
         if (activeTab === "sale" && product.badge !== "SALE" && !product.originalPrice) return false;
 
-        // Category Filter
-        if (selectedCategory !== "All" && product.category !== selectedCategory) return false;
+        // Dynamic Category / Subcategory Matching
+        if (selectedCategory !== "All") {
+          const normSel = selectedCategory.toLowerCase().trim();
+          const pCat = (product.category || "").toLowerCase().trim();
+          const pSub = (product.subcategory || "").toLowerCase().trim();
+          const pBadge = (product.badge || "").toLowerCase().trim();
+          const pTags = Array.isArray(product.tags) ? product.tags.map((t) => (t || "").toLowerCase()) : [];
+
+          // Special "New Arrivals" handling
+          if (normSel === "new arrivals" || normSel === "new") {
+            const isMatch =
+              Boolean(product.isNew) ||
+              pCat === "new" ||
+              pCat === "new arrivals" ||
+              pBadge === "new" ||
+              pTags.includes("new");
+            if (!isMatch) return false;
+          } else {
+            // Check if matches category, subcategory, or tags
+            const matchesCat = pCat === normSel || pCat.includes(normSel) || normSel.includes(pCat);
+            const matchesSub = pSub === normSel || pSub.includes(normSel) || normSel.includes(pSub);
+            const matchesTags = pTags.some((t) => t.includes(normSel) || normSel.includes(t));
+            if (!matchesCat && !matchesSub && !matchesTags) return false;
+          }
+        }
 
         // Search Query
         if (

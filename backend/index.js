@@ -81,12 +81,12 @@ const DEFAULT_CATEGORIES = [
         icon: "Sparkles",
         description: "Fresh drops, new releases, trending styles, and best sellers",
         subcategories: [
-            "New Releases",
-            "Trending Now",
-            "Best Sellers",
-            "Men's New In",
-            "Women's New In",
-            "Kids' New In"
+            { name: "New Releases", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop", subtitle: "Fresh 2026 Drops", badge: "NEW" },
+            { name: "Trending Now", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", subtitle: "Most Wanted Styles", badge: "HOT" },
+            { name: "Best Sellers", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop", subtitle: "Top Rated Favorites", badge: "POPULAR" },
+            { name: "Men's New In", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop", subtitle: "Performance & Comfort", badge: "" },
+            { name: "Women's New In", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop", subtitle: "Chic & Cloud Comfort", badge: "" },
+            { name: "Kids' New In", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Durable & Play-Ready", badge: "" }
         ]
     },
     {
@@ -98,12 +98,12 @@ const DEFAULT_CATEGORIES = [
         icon: "User",
         description: "Men's performance running, casual streetwear, formal loafers, and gym trainers",
         subcategories: [
-            "Running Shoes",
-            "Casual Sneakers",
-            "Formal Loafers",
-            "Gym & Training",
-            "Daily Walking",
-            "Wide-Fit Shoes"
+            { name: "Running Shoes", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop", subtitle: "High-Mileage Cushion", badge: "POPULAR" },
+            { name: "Casual Sneakers", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", subtitle: "Everyday Streetwear", badge: "" },
+            { name: "Formal Loafers", image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop", subtitle: "Handcrafted Cowhide", badge: "" },
+            { name: "Gym & Training", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop", subtitle: "Stability & Agility", badge: "" },
+            { name: "Daily Walking", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop", subtitle: "Office & Commute", badge: "" },
+            { name: "Wide-Fit Shoes", image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&auto=format&fit=crop", subtitle: "Pressure-Free Room", badge: "" }
         ]
     },
     {
@@ -115,12 +115,12 @@ const DEFAULT_CATEGORIES = [
         icon: "Heart",
         description: "Women's daily sneakers, running shoes, flats, yoga studio, platform soles, and cloud comfort",
         subcategories: [
-            "Daily Sneakers",
-            "Running Shoes",
-            "Flats & Pumps",
-            "Studio & Yoga",
-            "Platform Soles",
-            "Cloud Comfort"
+            { name: "Daily Sneakers", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop", subtitle: "Featherlight Ease", badge: "HOT" },
+            { name: "Running Shoes", image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop", subtitle: "Arch Support & Energy", badge: "" },
+            { name: "Flats & Pumps", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop", subtitle: "Memory-Foam Insole", badge: "" },
+            { name: "Studio & Yoga", image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=300&auto=format&fit=crop", subtitle: "Barefoot Flexibility", badge: "" },
+            { name: "Platform Soles", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop", subtitle: "Chunky 90s Platform", badge: "NEW" },
+            { name: "Cloud Comfort", image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=300&auto=format&fit=crop", subtitle: "All-Day Plush Relief", badge: "" }
         ]
     },
     {
@@ -132,12 +132,12 @@ const DEFAULT_CATEGORIES = [
         icon: "Smile",
         description: "Kids' boys & girls sneakers, light-up LED soles, toddlers, juniors, and velcro straps",
         subcategories: [
-            "Boys Sneakers",
-            "Girls Sneakers",
-            "Light-Up Soles",
-            "Toddlers (22–27)",
-            "Juniors (28–35)",
-            "Velcro Straps"
+            { name: "Boys Sneakers", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Active & Anti-Scuff", badge: "POPULAR" },
+            { name: "Girls Sneakers", image: "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=300&auto=format&fit=crop", subtitle: "Glitter & Cushioned", badge: "CUTE" },
+            { name: "Light-Up Soles", image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop", subtitle: "Flashing LED Action", badge: "HOT" },
+            { name: "Toddlers (22–27)", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Soft Rubber Soles", badge: "EASY WEAR" },
+            { name: "Juniors (28–35)", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", subtitle: "School & Play Durability", badge: "" },
+            { name: "Velcro Straps", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop", subtitle: "Dual Secure Fastening", badge: "EASY" }
         ]
     },
     {
@@ -149,12 +149,12 @@ const DEFAULT_CATEGORIES = [
         icon: "Package",
         description: "Shoe care foam cleaner, water shield spray, brush, memory insoles, socks, and laces",
         subcategories: [
-            "Foam Cleaner",
-            "Water Shield",
-            "Cleaning Brush",
-            "Memory Insoles",
-            "Cushioned Socks",
-            "Shoe Laces"
+            { name: "Foam Cleaner", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop", subtitle: "Instant Stain Remover", badge: "BEST" },
+            { name: "Water Shield", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", subtitle: "Rain & Stain Repellent", badge: "TOP PICK" },
+            { name: "Cleaning Brush", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop", subtitle: "Premium Horsehair Bristles", badge: "" },
+            { name: "Memory Insoles", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop", subtitle: "Gel Cushioning Arch Support", badge: "POPULAR" },
+            { name: "Cushioned Socks", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop", subtitle: "Breathable Combed Cotton 3-Pack", badge: "" },
+            { name: "Shoe Laces", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Waxed Flat Replacement Laces", badge: "" }
         ]
     },
     {
@@ -166,12 +166,12 @@ const DEFAULT_CATEGORIES = [
         icon: "Shield",
         description: "Uniform approved black leather, girls strap shoes, white PT shoes, velcro, and non-marking soles",
         subcategories: [
-            "Black Uniform",
-            "Girls Strap Shoes",
-            "White PT Shoes",
-            "Velcro Strap",
-            "Genuine Leather",
-            "Non-Marking Soles"
+            { name: "Black Uniform", image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=300&auto=format&fit=crop", subtitle: "Polishable Action Leather", badge: "TOP PICK" },
+            { name: "Girls Strap Shoes", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop", subtitle: "Mary Jane Velcro Strap", badge: "APPROVED" },
+            { name: "White PT Shoes", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", subtitle: "Morning Assembly Shoes", badge: "MUST HAVE" },
+            { name: "Velcro Strap", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Quick On/Off Security", badge: "EASY WEAR" },
+            { name: "Genuine Leather", image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop", subtitle: "Durable Oxford Cowhide", badge: "" },
+            { name: "Non-Marking Soles", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", subtitle: "Indoor Court Safe Rubber", badge: "" }
         ]
     }
 ];
@@ -728,6 +728,168 @@ app.post("/api/categories/reset", async (req, res) => {
     } catch (err) {
         console.error("❌ Error resetting categories:", err);
         return res.status(500).json({ message: "Failed to reset categories", error: err.message });
+    }
+});
+
+// POST /api/categories/add: Add or update a single category
+app.post("/api/categories/add", async (req, res) => {
+    try {
+        const { category } = req.body;
+        if (!category || !category.name) {
+            return res.status(400).json({ message: "Category name is required" });
+        }
+
+        let doc = await CategoryModel.findOne({ key: "store_categories" });
+        if (!doc) {
+            doc = await CategoryModel.create({ key: "store_categories", categories: DEFAULT_CATEGORIES });
+        }
+
+        const computedSlug = category.slug || category.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const categoryId = category.id || computedSlug + "-" + Date.now().toString().slice(-4);
+
+        const newCat = {
+            id: categoryId,
+            name: category.name.trim(),
+            slug: computedSlug,
+            active: category.active !== false,
+            isDefault: category.isDefault || false,
+            icon: category.icon || "Tag",
+            description: category.description || "",
+            subcategories: Array.isArray(category.subcategories) ? category.subcategories : [],
+        };
+
+        const existingIndex = doc.categories.findIndex(c => c.id === newCat.id || c.slug === newCat.slug);
+        if (existingIndex >= 0) {
+            doc.categories[existingIndex] = { ...doc.categories[existingIndex].toObject(), ...newCat };
+        } else {
+            doc.categories.push(newCat);
+        }
+
+        doc.markModified("categories");
+        await doc.save();
+        return res.json({ message: "Category saved successfully", categories: doc.categories, category: newCat });
+    } catch (err) {
+        console.error("❌ Error adding category:", err);
+        return res.status(500).json({ message: "Failed to add category", error: err.message });
+    }
+});
+
+// POST /api/categories/:id/subcategory: Add or update a subcategory with image, subtitle, and badge
+app.post("/api/categories/:id/subcategory", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { subcategory, name, image, subtitle, badge } = req.body;
+
+        const subName = (typeof subcategory === "string" ? subcategory : (name || subcategory?.name || "")).trim();
+        if (!subName) {
+            return res.status(400).json({ message: "Subcategory name is required" });
+        }
+
+        const subImg = (typeof subcategory === "object" ? subcategory.image : image) || "";
+        const subSubtitle = (typeof subcategory === "object" ? subcategory.subtitle : subtitle) || "";
+        const subBadge = (typeof subcategory === "object" ? subcategory.badge : badge) || "";
+
+        let doc = await CategoryModel.findOne({ key: "store_categories" });
+        if (!doc) {
+            doc = await CategoryModel.create({ key: "store_categories", categories: DEFAULT_CATEGORIES });
+        }
+
+        const cat = doc.categories.find(c => c.id === id || c.slug === id);
+        if (!cat) {
+            return res.status(404).json({ message: "Category not found" });
+        }
+
+        if (!Array.isArray(cat.subcategories)) {
+            cat.subcategories = [];
+        }
+
+        const subData = {
+            name: subName,
+            image: subImg,
+            subtitle: subSubtitle,
+            badge: subBadge,
+        };
+
+        const existingIdx = cat.subcategories.findIndex(s => {
+            const n = typeof s === "string" ? s : s?.name || "";
+            return n.toLowerCase() === subName.toLowerCase();
+        });
+
+        if (existingIdx >= 0) {
+            // Update existing subcategory with new image/details
+            cat.subcategories[existingIdx] = subData;
+        } else {
+            cat.subcategories.push(subData);
+        }
+
+        doc.markModified("categories");
+        await doc.save();
+
+        return res.json({
+            message: "Subcategory saved successfully",
+            categories: doc.categories,
+            subcategories: cat.subcategories,
+            subcategory: subData,
+        });
+    } catch (err) {
+        console.error("❌ Error adding subcategory:", err);
+        return res.status(500).json({ message: "Failed to add subcategory", error: err.message });
+    }
+});
+
+// DELETE /api/categories/:id/subcategory/:subName: Remove subcategory from category
+app.delete("/api/categories/:id/subcategory/:subName", async (req, res) => {
+    try {
+        const { id, subName } = req.params;
+        const decodedSub = decodeURIComponent(subName).trim();
+
+        let doc = await CategoryModel.findOne({ key: "store_categories" });
+        if (!doc) {
+            return res.status(404).json({ message: "Categories not found" });
+        }
+
+        const cat = doc.categories.find(c => c.id === id || c.slug === id);
+        if (!cat) {
+            return res.status(404).json({ message: "Category not found" });
+        }
+
+        if (Array.isArray(cat.subcategories)) {
+            cat.subcategories = cat.subcategories.filter(s => {
+                const n = typeof s === "string" ? s : s?.name || "";
+                return n.toLowerCase() !== decodedSub.toLowerCase();
+            });
+            doc.markModified("categories");
+            await doc.save();
+        }
+
+        return res.json({ message: "Subcategory removed successfully", categories: doc.categories, subcategories: cat.subcategories });
+    } catch (err) {
+        console.error("❌ Error removing subcategory:", err);
+        return res.status(500).json({ message: "Failed to remove subcategory", error: err.message });
+    }
+});
+
+// DELETE /api/categories/:id: Delete a category
+app.delete("/api/categories/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (id === "all") {
+            return res.status(400).json({ message: "Cannot delete the default 'all' category" });
+        }
+
+        let doc = await CategoryModel.findOne({ key: "store_categories" });
+        if (!doc) {
+            return res.status(404).json({ message: "Categories not found" });
+        }
+
+        doc.categories = doc.categories.filter(c => c.id !== id && c.slug !== id);
+        doc.markModified("categories");
+        await doc.save();
+
+        return res.json({ message: "Category deleted successfully", categories: doc.categories });
+    } catch (err) {
+        console.error("❌ Error deleting category:", err);
+        return res.status(500).json({ message: "Failed to delete category", error: err.message });
     }
 });
 

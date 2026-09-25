@@ -19,6 +19,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import axios from "axios";
 
 // ── Badge Style Helper for Luxury Aesthetics ──
 const getBadgeClass = (badge, isSpecial) => {
@@ -46,64 +47,39 @@ const getBadgeClass = (badge, isSpecial) => {
   return "bg-gray-100 text-gray-700 border border-gray-200/80";
 };
 
-// ── Navigation Categories Matching Reference Image ──
-const NAV_CATEGORIES = [
-  {
-    id: "new-arrivals",
+// ═════════════════════════════════════════════════════════════════════════
+// DYNAMIC NAVIGATION CATEGORIES & SUBCATEGORIES SYSTEM
+// ═════════════════════════════════════════════════════════════════════════
+// 1. DYNAMIC REMOVAL & ADDITION:
+//    - When you delete a category or subcategory in the Admin Dashboard (Setup -> CategoryTab),
+//      it is removed here in real time without refreshing the page!
+//    - When you add a new category or subcategory in Admin, it appears automatically!
+// 2. CURATED VISUAL PRESETS:
+//    - Built-in categories and known subcategories retain ultra-luxury visuals,
+//      custom subtitles, badges, and spotlight cards.
+//    - Any custom category created by the Admin gets dynamically formatted with high-res
+//      product imagery, custom columns, and direct shop links.
+// ═════════════════════════════════════════════════════════════════════════
+
+const normalizeKey = (s) => (s || "").toLowerCase().replace(/[-_\s]+/g, "");
+
+// High-resolution footwear fallback images for dynamically created categories
+const FALLBACK_CATEGORY_IMAGES = [
+  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop"
+];
+
+// Curated visual presets for known categories & subcategories
+const CATEGORY_VISUAL_PRESETS = {
+  "newarrivals": {
     label: "NEW ARRIVALS",
-    href: "/shop?category=new",
     isSpecial: false,
-    columns: [
-      {
-        title: "WHAT'S NEW",
-        links: [
-          {
-            name: "New Releases",
-            subtitle: "Fresh 2026 Drops",
-            href: "/shop?category=new&sub=release",
-            image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop",
-            badge: "NEW",
-          },
-          {
-            name: "Trending Now",
-            subtitle: "Most Wanted Styles",
-            href: "/shop?category=trending&sub=trending",
-            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
-            badge: "HOT",
-          },
-          {
-            name: "Best Sellers",
-            subtitle: "Top Rated Favorites",
-            href: "/shop?category=bestseller&sub=bestseller",
-            image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop",
-            badge: "POPULAR",
-          },
-        ],
-      },
-      {
-        title: "SHOP BY GENDER",
-        links: [
-          {
-            name: "Men's New In",
-            subtitle: "Performance & Comfort",
-            href: "/shop?category=men&sub=running",
-            image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Women's New In",
-            subtitle: "Chic & Cloud Comfort",
-            href: "/shop?category=women&sub=daily",
-            image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Kids' New In",
-            subtitle: "Durable & Play-Ready",
-            href: "/shop?category=kids&sub=boys",
-            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "SEASON 2026",
       title: "Spring / Summer Drops",
@@ -112,61 +88,21 @@ const NAV_CATEGORIES = [
       href: "/shop?category=new",
       bgGradient: "from-blue-700 via-indigo-800 to-slate-900",
     },
+    subVisuals: {
+      "new releases": { subtitle: "Fresh 2026 Drops", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop", badge: "NEW" },
+      "trending now": { subtitle: "Most Wanted Styles", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", badge: "HOT" },
+      "best sellers": { subtitle: "Top Rated Favorites", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop", badge: "POPULAR" },
+      "men's new in": { subtitle: "Performance & Comfort", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop" },
+      "mens new in": { subtitle: "Performance & Comfort", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop" },
+      "women's new in": { subtitle: "Chic & Cloud Comfort", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop" },
+      "womens new in": { subtitle: "Chic & Cloud Comfort", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop" },
+      "kids' new in": { subtitle: "Durable & Play-Ready", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop" },
+      "kids new in": { subtitle: "Durable & Play-Ready", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop" },
+    }
   },
-  {
-    id: "men",
+  "men": {
     label: "MEN",
-    href: "/shop?category=men",
     isSpecial: false,
-    columns: [
-      {
-        title: "FOOTWEAR STYLES",
-        links: [
-          {
-            name: "Running Shoes",
-            subtitle: "High-Mileage Cushion",
-            href: "/shop?category=men&sub=running",
-            image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop",
-            badge: "POPULAR",
-          },
-          {
-            name: "Casual Sneakers",
-            subtitle: "Everyday Streetwear",
-            href: "/shop?category=men&sub=casual",
-            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Formal Loafers",
-            subtitle: "Handcrafted Cowhide",
-            href: "/shop?category=men&sub=loafers",
-            image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-      {
-        title: "BY ACTIVITY & FIT",
-        links: [
-          {
-            name: "Gym & Training",
-            subtitle: "Stability & Agility",
-            href: "/shop?category=men&sub=training",
-            image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Daily Walking",
-            subtitle: "Office & Commute",
-            href: "/shop?category=men&sub=walking",
-            image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Wide-Fit Shoes",
-            subtitle: "Pressure-Free Room",
-            href: "/shop?category=men&sub=wide",
-            image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "MEN'S BESTSELLER",
       title: "AirStride Pro Running",
@@ -175,62 +111,20 @@ const NAV_CATEGORIES = [
       href: "/shop?category=men",
       bgGradient: "from-zinc-800 via-slate-900 to-neutral-950",
     },
+    subVisuals: {
+      "running shoes": { subtitle: "High-Mileage Cushion", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&auto=format&fit=crop", badge: "POPULAR" },
+      "casual sneakers": { subtitle: "Everyday Streetwear", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop" },
+      "formal loafers": { subtitle: "Handcrafted Cowhide", image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop" },
+      "gym & training": { subtitle: "Stability & Agility", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop" },
+      "gym training": { subtitle: "Stability & Agility", image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=300&auto=format&fit=crop" },
+      "daily walking": { subtitle: "Office & Commute", image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=300&auto=format&fit=crop" },
+      "wide-fit shoes": { subtitle: "Pressure-Free Room", image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&auto=format&fit=crop" },
+      "wide fit shoes": { subtitle: "Pressure-Free Room", image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=300&auto=format&fit=crop" },
+    }
   },
-  {
-    id: "women",
+  "women": {
     label: "WOMEN",
-    href: "/shop?category=women",
     isSpecial: false,
-    columns: [
-      {
-        title: "POPULAR STYLES",
-        links: [
-          {
-            name: "Daily Sneakers",
-            subtitle: "Featherlight Ease",
-            href: "/shop?category=women&sub=daily",
-            image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop",
-            badge: "HOT",
-          },
-          {
-            name: "Running Shoes",
-            subtitle: "Arch Support & Energy",
-            href: "/shop?category=women&sub=running",
-            image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Flats & Pumps",
-            subtitle: "Memory-Foam Insole",
-            href: "/shop?category=women&sub=flats",
-            image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-      {
-        title: "LIFESTYLE & COMFORT",
-        links: [
-          {
-            name: "Studio & Yoga",
-            subtitle: "Barefoot Flexibility",
-            href: "/shop?category=women&sub=yoga",
-            image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Platform Soles",
-            subtitle: "Chunky 90s Platform",
-            href: "/shop?category=women&sub=platform",
-            image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop",
-            badge: "NEW",
-          },
-          {
-            name: "Cloud Comfort",
-            subtitle: "All-Day Plush Relief",
-            href: "/shop?category=women&sub=comfort",
-            image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "WOMEN'S FAVORITE",
       title: "Zenith Flow Comfort",
@@ -239,64 +133,20 @@ const NAV_CATEGORIES = [
       href: "/shop?category=women",
       bgGradient: "from-rose-700 via-pink-800 to-purple-950",
     },
+    subVisuals: {
+      "daily sneakers": { subtitle: "Featherlight Ease", image: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=300&auto=format&fit=crop", badge: "HOT" },
+      "running shoes": { subtitle: "Arch Support & Energy", image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?w=300&auto=format&fit=crop" },
+      "flats & pumps": { subtitle: "Memory-Foam Insole", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop" },
+      "flats pumps": { subtitle: "Memory-Foam Insole", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop" },
+      "studio & yoga": { subtitle: "Barefoot Flexibility", image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=300&auto=format&fit=crop" },
+      "studio yoga": { subtitle: "Barefoot Flexibility", image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?w=300&auto=format&fit=crop" },
+      "platform soles": { subtitle: "Chunky 90s Platform", image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&auto=format&fit=crop", badge: "NEW" },
+      "cloud comfort": { subtitle: "All-Day Plush Relief", image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=300&auto=format&fit=crop" },
+    }
   },
-  {
-    id: "kids",
+  "kids": {
     label: "KIDS",
-    href: "/shop?category=kids",
     isSpecial: false,
-    columns: [
-      {
-        title: "BOYS & GIRLS",
-        links: [
-          {
-            name: "Boys Sneakers",
-            subtitle: "Active & Anti-Scuff",
-            href: "/shop?category=kids&sub=boys",
-            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
-            badge: "POPULAR",
-          },
-          {
-            name: "Girls Sneakers",
-            subtitle: "Glitter & Cushioned",
-            href: "/shop?category=kids&sub=girls",
-            image: "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=300&auto=format&fit=crop",
-            badge: "CUTE",
-          },
-          {
-            name: "Light-Up Soles",
-            subtitle: "Multi-Color LED Soles",
-            href: "/shop?category=kids&sub=light",
-            image: "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=300&auto=format&fit=crop",
-            badge: "GLOW",
-          },
-        ],
-      },
-      {
-        title: "AGE & FASTENERS",
-        links: [
-          {
-            name: "Toddlers (22–27)",
-            subtitle: "First Steps Soft Soles",
-            href: "/shop?category=kids&sub=toddler",
-            image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Juniors (28–35)",
-            subtitle: "Court & School Sports",
-            href: "/shop?category=kids&sub=junior",
-            image: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Velcro Straps",
-            subtitle: "Easy Self-Fasten Wear",
-            href: "/shop?category=kids&sub=velcro",
-            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
-            badge: "EASY",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "PLAYTIME PROOF",
       title: "Built For Active Kids",
@@ -305,62 +155,23 @@ const NAV_CATEGORIES = [
       href: "/shop?category=kids",
       bgGradient: "from-emerald-700 via-teal-800 to-cyan-950",
     },
+    subVisuals: {
+      "boys sneakers": { subtitle: "Active & Anti-Scuff", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", badge: "POPULAR" },
+      "girls sneakers": { subtitle: "Glitter & Cushioned", image: "https://images.unsplash.com/photo-1507464098880-e367bc5d2c08?w=300&auto=format&fit=crop", badge: "CUTE" },
+      "light-up soles": { subtitle: "Multi-Color LED Soles", image: "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=300&auto=format&fit=crop", badge: "GLOW" },
+      "light up soles": { subtitle: "Multi-Color LED Soles", image: "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=300&auto=format&fit=crop", badge: "GLOW" },
+      "toddlers (22–27)": { subtitle: "First Steps Soft Soles", image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&auto=format&fit=crop" },
+      "toddlers 22-27": { subtitle: "First Steps Soft Soles", image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&auto=format&fit=crop" },
+      "toddlers": { subtitle: "First Steps Soft Soles", image: "https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&auto=format&fit=crop" },
+      "juniors (28–35)": { subtitle: "Court & School Sports", image: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=300&auto=format&fit=crop" },
+      "juniors 28-35": { subtitle: "Court & School Sports", image: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=300&auto=format&fit=crop" },
+      "juniors": { subtitle: "Court & School Sports", image: "https://images.unsplash.com/photo-1516478177764-9fe5bd7e9717?w=300&auto=format&fit=crop" },
+      "velcro straps": { subtitle: "Easy Self-Fasten Wear", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", badge: "EASY" },
+    }
   },
-  {
-    id: "accessories",
+  "accessories": {
     label: "ACCESSORIES",
-    href: "/shop?category=accessories",
     isSpecial: false,
-    columns: [
-      {
-        title: "SHOE CARE",
-        links: [
-          {
-            name: "Foam Cleaner",
-            subtitle: "Instant Ready Foam 200ml",
-            href: "/shop?category=accessories&sub=foam",
-            image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&auto=format&fit=crop",
-            badge: "HOT",
-          },
-          {
-            name: "Water Shield",
-            subtitle: "Nano Hydrophobic Barrier",
-            href: "/shop?category=accessories&sub=water",
-            image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Cleaning Brush",
-            subtitle: "Dual Hog-Hair Bristle",
-            href: "/shop?category=accessories&sub=brush",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-      {
-        title: "ESSENTIALS",
-        links: [
-          {
-            name: "Memory Insoles",
-            subtitle: "Arch Support Cushion",
-            href: "/shop?category=accessories&sub=insoles",
-            image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop",
-            badge: "BEST",
-          },
-          {
-            name: "Cushioned Socks",
-            subtitle: "Anti-Odor Cotton 3-Pack",
-            href: "/shop?category=accessories&sub=socks",
-            image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Shoe Laces",
-            subtitle: "3M Reflective Braided",
-            href: "/shop?category=accessories&sub=laces",
-            image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "PRO CARE",
       title: "Complete Care Kit",
@@ -369,64 +180,18 @@ const NAV_CATEGORIES = [
       href: "/shop?category=accessories",
       bgGradient: "from-slate-700 via-zinc-800 to-gray-950",
     },
+    subVisuals: {
+      "foam cleaner": { subtitle: "Instant Ready Foam 200ml", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&auto=format&fit=crop", badge: "HOT" },
+      "water shield": { subtitle: "Nano Hydrophobic Barrier", image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&auto=format&fit=crop" },
+      "cleaning brush": { subtitle: "Dual Hog-Hair Bristle", image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&auto=format&fit=crop" },
+      "memory insoles": { subtitle: "Arch Support Cushion", image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop", badge: "BEST" },
+      "cushioned socks": { subtitle: "Anti-Odor Cotton 3-Pack", image: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300&auto=format&fit=crop" },
+      "shoe laces": { subtitle: "3M Reflective Braided", image: "https://images.unsplash.com/photo-1582588678413-dbf45f4823e9?w=300&auto=format&fit=crop" },
+    }
   },
-  {
-    id: "school-shoes",
+  "schoolshoes": {
     label: "SCHOOL SHOES",
-    href: "/shop?category=school-shoes",
     isSpecial: true,
-    columns: [
-      {
-        title: "UNIFORM FOOTWEAR",
-        links: [
-          {
-            name: "Black Uniform",
-            subtitle: "Polishable Action Leather",
-            href: "/shop?category=school-shoes&sub=black",
-            image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=300&auto=format&fit=crop",
-            badge: "TOP PICK",
-          },
-          {
-            name: "Girls Strap Shoes",
-            subtitle: "Mary Jane Velcro Strap",
-            href: "/shop?category=school-shoes&sub=strap",
-            image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop",
-            badge: "APPROVED",
-          },
-          {
-            name: "White PT Shoes",
-            subtitle: "Morning Assembly Shoes",
-            href: "/shop?category=school-shoes&sub=white",
-            image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop",
-            badge: "MUST HAVE",
-          },
-        ],
-      },
-      {
-        title: "COMFORT & FIT",
-        links: [
-          {
-            name: "Velcro Strap",
-            subtitle: "Quick On/Off Security",
-            href: "/shop?category=school-shoes&sub=velcro",
-            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
-            badge: "EASY WEAR",
-          },
-          {
-            name: "Genuine Leather",
-            subtitle: "Durable Oxford Cowhide",
-            href: "/shop?category=school-shoes&sub=leather",
-            image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop",
-          },
-          {
-            name: "Non-Marking Soles",
-            subtitle: "Indoor Court Safe Rubber",
-            href: "/shop?category=school-shoes&sub=soles",
-            image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop",
-          },
-        ],
-      },
-    ],
     featured: {
       badge: "BACK TO SCHOOL 2026",
       title: "Uniform Approved Shoes",
@@ -435,8 +200,250 @@ const NAV_CATEGORIES = [
       href: "/shop?category=school-shoes",
       bgGradient: "from-[#C84B31] via-[#A83820] to-[#701E0E]",
     },
+    subVisuals: {
+      "black uniform": { subtitle: "Polishable Action Leather", image: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=300&auto=format&fit=crop", badge: "TOP PICK" },
+      "girls strap shoes": { subtitle: "Mary Jane Velcro Strap", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&auto=format&fit=crop", badge: "APPROVED" },
+      "white pt shoes": { subtitle: "Morning Assembly Shoes", image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=300&auto=format&fit=crop", badge: "MUST HAVE" },
+      "velcro strap": { subtitle: "Quick On/Off Security", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop", badge: "EASY WEAR" },
+      "genuine leather": { subtitle: "Durable Oxford Cowhide", image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=300&auto=format&fit=crop" },
+      "non-marking soles": { subtitle: "Indoor Court Safe Rubber", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop" },
+      "non marking soles": { subtitle: "Indoor Court Safe Rubber", image: "https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=300&auto=format&fit=crop" },
+    }
   },
+};
+
+// Fallback categories if database is not reachable yet
+const DEFAULT_CATEGORIES = [
+  {
+    id: "new-arrivals",
+    name: "New Arrivals",
+    slug: "new-arrivals",
+    active: true,
+    subcategories: ["New Releases", "Trending Now", "Best Sellers", "Men's New In", "Women's New In", "Kids' New In"]
+  },
+  {
+    id: "men",
+    name: "Men",
+    slug: "men",
+    active: true,
+    subcategories: ["Running Shoes", "Casual Sneakers", "Formal Loafers", "Gym & Training", "Daily Walking", "Wide-Fit Shoes"]
+  },
+  {
+    id: "women",
+    name: "Women",
+    slug: "women",
+    active: true,
+    subcategories: ["Daily Sneakers", "Running Shoes", "Flats & Pumps", "Studio & Yoga", "Platform Soles", "Cloud Comfort"]
+  },
+  {
+    id: "kids",
+    name: "Kids",
+    slug: "kids",
+    active: true,
+    subcategories: ["Boys Sneakers", "Girls Sneakers", "Light-Up Soles", "Toddlers (22–27)", "Juniors (28–35)", "Velcro Straps"]
+  },
+  {
+    id: "accessories",
+    name: "Accessories",
+    slug: "accessories",
+    active: true,
+    subcategories: ["Foam Cleaner", "Water Shield", "Cleaning Brush", "Memory Insoles", "Cushioned Socks", "Shoe Laces"]
+  },
+  {
+    id: "school-shoes",
+    name: "School Shoes",
+    slug: "school-shoes",
+    active: true,
+    subcategories: ["Black Uniform", "Girls Strap Shoes", "White PT Shoes", "Velcro Strap", "Genuine Leather", "Non-Marking Soles"]
+  }
 ];
+
+// ── Primary Store Navigation Tabs (Matches Reference Image) ──
+const PRIMARY_NAV_ITEMS = [
+  { id: "new-arrivals", slug: "new-arrivals", name: "New Arrivals", label: "NEW ARRIVALS", href: "/shop?category=new", isSpecial: false },
+  { id: "men", slug: "men", name: "Men", label: "MEN", href: "/shop?category=men", isSpecial: false },
+  { id: "women", slug: "women", name: "Women", label: "WOMEN", href: "/shop?category=women", isSpecial: false },
+  { id: "kids", slug: "kids", name: "Kids", label: "KIDS", href: "/shop?category=kids", isSpecial: false },
+  { id: "accessories", slug: "accessories", name: "Accessories", label: "ACCESSORIES", href: "/shop?category=accessories", isSpecial: false },
+  { id: "school-shoes", slug: "school-shoes", name: "School Shoes", label: "SCHOOL SHOES", href: "/shop?category=school-shoes", isSpecial: true },
+];
+
+// ── Dynamic Navigation Builder ──
+// Keeps the pristine primary navigation tabs while making all subcategories 100% dynamic
+// with custom pictures, subtitles, and badges added in Admin Dashboard
+const buildDynamicNavCategories = (rawCats) => {
+  const catsArray = Array.isArray(rawCats) ? rawCats : DEFAULT_CATEGORIES;
+
+  // 1. Build primary 6 categories with their dynamic subcategories
+  const navList = PRIMARY_NAV_ITEMS.map((tab, tabIdx) => {
+    // Find matching category in admin data
+    const matchedCat = catsArray.find((c) => {
+      if (!c) return false;
+      const cId = normalizeKey(c.id || "");
+      const cSlug = normalizeKey(c.slug || "");
+      const cName = normalizeKey(c.name || "");
+      const target = normalizeKey(tab.id);
+      return cId === target || cSlug === target || cName === target;
+    });
+
+    const rawKey = normalizeKey(tab.id);
+    const preset = CATEGORY_VISUAL_PRESETS[rawKey] || null;
+
+    // Dynamically pull subcategories from DB / Admin category
+    const rawSubs = Array.isArray(matchedCat?.subcategories) && matchedCat.subcategories.length > 0
+      ? matchedCat.subcategories
+      : (DEFAULT_CATEGORIES.find((d) => normalizeKey(d.id) === rawKey)?.subcategories || []);
+
+    const links = rawSubs.map((subItem, subIdx) => {
+      const subName = typeof subItem === "string" ? subItem : (subItem?.name || "");
+      const customImg = typeof subItem === "object" ? subItem?.image : "";
+      const customSubtitle = typeof subItem === "object" ? subItem?.subtitle : "";
+      const customBadge = typeof subItem === "object" ? subItem?.badge : "";
+
+      const subKey = normalizeKey(subName);
+      const subPreset = preset?.subVisuals?.[subKey] || preset?.subVisuals?.[subName.toLowerCase()];
+
+      // Priority: Custom Image from Admin > Curated Preset Image > Fallback Stock Image
+      const image =
+        customImg ||
+        subPreset?.image ||
+        FALLBACK_CATEGORY_IMAGES[(tabIdx * 3 + subIdx) % FALLBACK_CATEGORY_IMAGES.length];
+      const subtitle = customSubtitle || subPreset?.subtitle || `${tab.name} Style`;
+      const badge = customBadge || subPreset?.badge || null;
+
+      return {
+        name: subName,
+        subtitle,
+        href: `/shop?category=${encodeURIComponent(tab.slug)}&sub=${encodeURIComponent(subName)}`,
+        image,
+        badge,
+      };
+    });
+
+    // Structure subcategory columns
+    let columns = [];
+    if (links.length === 0) {
+      columns = [
+        {
+          title: "COLLECTION",
+          links: [
+            {
+              name: `All ${tab.name}`,
+              subtitle: `Browse all items in ${tab.name}`,
+              href: tab.href,
+              image: FALLBACK_CATEGORY_IMAGES[tabIdx % FALLBACK_CATEGORY_IMAGES.length],
+            },
+          ],
+        },
+      ];
+    } else if (links.length <= 3) {
+      columns = [
+        {
+          title:
+            rawKey === "newarrivals"
+              ? "WHAT'S NEW"
+              : rawKey === "schoolshoes"
+              ? "UNIFORM FOOTWEAR"
+              : "POPULAR STYLES",
+          links,
+        },
+      ];
+    } else {
+      const mid = Math.ceil(links.length / 2);
+      columns = [
+        {
+          title:
+            rawKey === "newarrivals"
+              ? "WHAT'S NEW"
+              : rawKey === "schoolshoes"
+              ? "UNIFORM FOOTWEAR"
+              : "POPULAR STYLES",
+          links: links.slice(0, mid),
+        },
+        {
+          title:
+            rawKey === "newarrivals"
+              ? "SHOP BY GENDER"
+              : rawKey === "schoolshoes"
+              ? "COMFORT & FIT"
+              : "BY ACTIVITY & FIT",
+          links: links.slice(mid),
+        },
+      ];
+    }
+
+    return {
+      id: tab.id,
+      label: tab.label,
+      href: tab.href,
+      isSpecial: tab.isSpecial,
+      columns,
+      featured: preset?.featured || {
+        badge: `${tab.name.toUpperCase()} 2026`,
+        title: `${tab.name} Collection`,
+        desc: `Handpicked selection of premium ${tab.name} footwear crafted for comfort and style.`,
+        cta: `Shop ${tab.name}`,
+        href: tab.href,
+        bgGradient: "from-zinc-800 via-slate-900 to-neutral-950",
+      },
+    };
+  });
+
+  // 2. Also append any extra custom categories created in Admin Dashboard (if any)
+  const primaryKeys = new Set(PRIMARY_NAV_ITEMS.map((p) => normalizeKey(p.id)));
+  catsArray.forEach((c, cIdx) => {
+    if (!c || c.active === false) return;
+    const k = normalizeKey(c.id || c.slug || c.name || "");
+    if (k === "all" || primaryKeys.has(k)) return;
+
+    const catSlug = c.slug || c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const rawSubs = Array.isArray(c.subcategories) ? c.subcategories : [];
+    const links = rawSubs.map((subItem, sIdx) => {
+      const subName = typeof subItem === "string" ? subItem : (subItem?.name || "");
+      const customImg = typeof subItem === "object" ? subItem?.image : "";
+      const customSub = typeof subItem === "object" ? subItem?.subtitle : "";
+      const customBadge = typeof subItem === "object" ? subItem?.badge : "";
+
+      return {
+        name: subName,
+        subtitle: customSub || `${c.name} Style`,
+        href: `/shop?category=${encodeURIComponent(catSlug)}&sub=${encodeURIComponent(subName)}`,
+        image: customImg || FALLBACK_CATEGORY_IMAGES[(cIdx + sIdx) % FALLBACK_CATEGORY_IMAGES.length],
+        badge: customBadge || null,
+      };
+    });
+
+    navList.push({
+      id: c.id || catSlug,
+      label: c.name.toUpperCase(),
+      href: `/shop?category=${encodeURIComponent(catSlug)}`,
+      isSpecial: false,
+      columns: [
+        {
+          title: `${c.name.toUpperCase()} STYLES`,
+          links: links.length > 0 ? links : [
+            {
+              name: `All ${c.name}`,
+              subtitle: `Explore ${c.name}`,
+              href: `/shop?category=${encodeURIComponent(catSlug)}`,
+              image: FALLBACK_CATEGORY_IMAGES[cIdx % FALLBACK_CATEGORY_IMAGES.length],
+            }
+          ],
+        }
+      ],
+      featured: {
+        badge: `${c.name.toUpperCase()} 2026`,
+        title: `${c.name} Collection`,
+        desc: c.description || `Explore our handpicked ${c.name} footwear collection.`,
+        cta: `Shop ${c.name}`,
+        href: `/shop?category=${encodeURIComponent(catSlug)}`,
+        bgGradient: "from-zinc-800 via-slate-900 to-neutral-950",
+      },
+    });
+  });
+
+  return navList;
+};
 
 export default function Header() {
   const { cart } = useCart();
@@ -453,6 +460,70 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const location = useLocation();
   const { pathname } = location;
+
+  const API_URL = import.meta.env.VITE_API_URL || "";
+
+  // Dynamic Navigation Categories state - synced with MongoDB and Admin Dashboard
+  const [navCategories, setNavCategories] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return buildDynamicNavCategories(parsed);
+        }
+      }
+    } catch (e) {}
+    return buildDynamicNavCategories(DEFAULT_CATEGORIES);
+  });
+
+  // Fetch latest categories from backend API and listen for dynamic Admin changes
+  useEffect(() => {
+    const syncCategories = (rawCats) => {
+      if (Array.isArray(rawCats) && rawCats.length > 0) {
+        setNavCategories(buildDynamicNavCategories(rawCats));
+      }
+    };
+
+    // 1. Fetch latest from backend MongoDB
+    axios
+      .get(`${API_URL}/api/categories`)
+      .then((res) => {
+        const cats = res.data?.categories || (Array.isArray(res.data) ? res.data : null);
+        if (cats && Array.isArray(cats) && cats.length > 0) {
+          syncCategories(cats);
+          try {
+            localStorage.setItem("cached_categories", JSON.stringify(cats));
+          } catch (e) {}
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch categories in header:", err);
+      });
+
+    // 2. Real-time updates when an Admin adds, modifies, or deletes a category/subcategory
+    const handleCategoriesUpdated = (event) => {
+      if (event.detail && Array.isArray(event.detail)) {
+        syncCategories(event.detail);
+      }
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === "cached_categories" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          syncCategories(parsed);
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("categories-updated", handleCategoriesUpdated);
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("categories-updated", handleCategoriesUpdated);
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [API_URL]);
 
   const userRole = localStorage.getItem("userRole");
   const isLoggedIn = !!localStorage.getItem("userLoggedIn") || !!localStorage.getItem("token");
@@ -497,11 +568,11 @@ export default function Header() {
     setMobileExpandedCat((prev) => (prev === catId ? null : catId));
   };
 
-  // Determine dropdown alignment to prevent viewport overflow
-  const getDropdownAlignment = (id) => {
-    if (id === "new-arrivals") return "left-0";
-    if (id === "school-shoes") return "right-0";
-    if (id === "accessories") return "right-0 lg:left-1/2 lg:-translate-x-1/2";
+  // Determine dynamic dropdown alignment to prevent viewport overflow based on index
+  const getDropdownAlignment = (id, index = 0, total = 1) => {
+    if (index === 0) return "left-0";
+    if (index === total - 1) return "right-0";
+    if (index >= total - 2) return "right-0 lg:left-1/2 lg:-translate-x-1/2";
     return "left-1/2 -translate-x-1/2";
   };
 
@@ -708,7 +779,7 @@ export default function Header() {
             role="navigation"
             aria-label="Main Store Navigation"
           >
-            {NAV_CATEGORIES.map((cat) => {
+            {navCategories.map((cat, catIdx) => {
               const isOpen = activeDropdown === cat.id;
 
               return (
@@ -747,7 +818,9 @@ export default function Header() {
                   {/* ── SMOOTH ON-HOVER DROPDOWN MEGA MENU (Disappears instantly on click like Hush Puppies) ── */}
                   <div
                     className={`absolute top-full ${getDropdownAlignment(
-                      cat.id
+                      cat.id,
+                      catIdx,
+                      navCategories.length
                     )} pt-3.5 z-50 transition-all duration-200 ease-out ${
                       isOpen
                         ? "opacity-100 visible pointer-events-auto translate-y-0"
@@ -874,7 +947,7 @@ export default function Header() {
               Browse Categories
             </p>
 
-            {NAV_CATEGORIES.map((cat) => {
+            {navCategories.map((cat) => {
               const isExpanded = mobileExpandedCat === cat.id;
 
               return (

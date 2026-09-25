@@ -47,8 +47,42 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [subcategoriesMap, setSubcategoriesMap] = useState(DEFAULT_SUBCATEGORIES);
+  const [categories, setCategories] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const names = parsed
+            .filter((c) => c.active !== false && c.slug !== "all" && c.id !== "all")
+            .map((c) => c.name);
+          if (names.length > 0) return names;
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_CATEGORIES;
+  });
+
+  const [subcategoriesMap, setSubcategoriesMap] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const newMap = {};
+          parsed.forEach((c) => {
+            if (c.active !== false && c.slug !== "all") {
+              newMap[c.name] = (Array.isArray(c.subcategories) ? c.subcategories : []).map(
+                (s) => (typeof s === "string" ? s : s?.name || "")
+              ).filter(Boolean);
+            }
+          });
+          if (Object.keys(newMap).length > 0) return newMap;
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_SUBCATEGORIES;
+  });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -229,7 +263,46 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+
+    // Listen for real-time category updates from CategoryTab
+    const handleCategoriesUpdated = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        syncCats(e.detail);
+      }
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === "cached_categories" && e.newValue) {
+        try {
+          syncCats(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("categories-updated", handleCategoriesUpdated);
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("categories-updated", handleCategoriesUpdated);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
+
+  const syncCats = (catList) => {
+    if (Array.isArray(catList) && catList.length > 0) {
+      const activeCats = catList.filter((c) => c.active !== false && (c.slug || c.name).toLowerCase() !== "all");
+      const catNames = activeCats.map((c) => c.name);
+      if (catNames.length > 0) {
+        setCategories(catNames);
+      }
+      const newMap = {};
+      activeCats.forEach((c) => {
+        newMap[c.name] = (Array.isArray(c.subcategories) ? c.subcategories : []).map(
+          (s) => (typeof s === "string" ? s : s?.name || "")
+        ).filter(Boolean);
+      });
+      setSubcategoriesMap(newMap);
+    }
+  };
 
   // Fetch Products from Backend API
   const fetchProducts = async () => {
@@ -250,19 +323,9 @@ export default function ProductsTab({ onAddNew, onEditProduct }) {
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/categories`);
-      if (res.data && Array.isArray(res.data.categories)) {
-        const activeCats = res.data.categories.filter((c) => c.active && c.name.toLowerCase() !== "all");
-        const catNames = activeCats.map((c) => c.name);
-        if (catNames.length > 0) {
-          setCategories(catNames);
-        }
-        const newMap = { ...DEFAULT_SUBCATEGORIES };
-        activeCats.forEach((c) => {
-          if (Array.isArray(c.subcategories) && c.subcategories.length > 0) {
-            newMap[c.name] = c.subcategories;
-          }
-        });
-        setSubcategoriesMap(newMap);
+      const cats = res.data?.categories || (Array.isArray(res.data) ? res.data : null);
+      if (cats) {
+        syncCats(cats);
       }
     } catch (err) {
       console.warn("Error fetching categories for dropdown:", err);

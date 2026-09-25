@@ -16,7 +16,7 @@ const CategorySchema = new mongoose.Schema(
         isDefault: { type: Boolean, default: false },
         icon: { type: String, default: "Tag" },
         description: { type: String, default: "" },
-        subcategories: { type: [String], default: [] },
+        subcategories: { type: [mongoose.Schema.Types.Mixed], default: [] },
       },
     ],
   },

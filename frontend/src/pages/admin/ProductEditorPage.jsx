@@ -80,8 +80,43 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
     details: {}
   });
 
-  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
-  const [subcategoriesMap, setSubcategoriesMap] = useState(DEFAULT_SUBCATEGORIES);
+  // Initialize categories dynamically from local cache if present
+  const [categories, setCategories] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const names = parsed
+            .filter((c) => c.active !== false && c.slug !== "all" && c.id !== "all")
+            .map((c) => c.name);
+          if (names.length > 0) return names;
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_CATEGORIES;
+  });
+
+  const [subcategoriesMap, setSubcategoriesMap] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cached_categories");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const newMap = {};
+          parsed.forEach((c) => {
+            if (c.active !== false && c.slug !== "all") {
+              newMap[c.name] = (Array.isArray(c.subcategories) ? c.subcategories : []).map(
+                (s) => (typeof s === "string" ? s : s?.name || "")
+              ).filter(Boolean);
+            }
+          });
+          if (Object.keys(newMap).length > 0) return newMap;
+        }
+      }
+    } catch (e) {}
+    return DEFAULT_SUBCATEGORIES;
+  });
   const [customCategoryInput, setCustomCategoryInput] = useState("");
   const [showCustomCatInput, setShowCustomCatInput] = useState(false);
   const [customSubcategoryInput, setCustomSubcategoryInput] = useState("");
@@ -100,29 +135,54 @@ export default function ProductEditorPage({ productId: propId, onBack }) {
   const [createdProduct, setCreatedProduct] = useState(null);
   const [notifySubscribers, setNotifySubscribers] = useState(!isEditing);
 
-  // Fetch available categories and subcategories from server
+  // Fetch available categories and subcategories from server & synchronize dynamically
   useEffect(() => {
+    const syncCats = (catList) => {
+      if (Array.isArray(catList) && catList.length > 0) {
+        const activeCats = catList.filter((c) => c.active !== false && (c.slug || c.name).toLowerCase() !== "all");
+        const catNames = activeCats.map((c) => c.name);
+        if (catNames.length > 0) {
+          setCategories(catNames);
+        }
+        const newMap = {};
+        activeCats.forEach((c) => {
+          newMap[c.name] = (Array.isArray(c.subcategories) ? c.subcategories : []).map(
+          (s) => (typeof s === "string" ? s : s?.name || "")
+        ).filter(Boolean);
+        });
+        setSubcategoriesMap(newMap);
+      }
+    };
+
     axios
       .get(`${API_URL}/api/categories`)
       .then((res) => {
-        if (res.data && Array.isArray(res.data.categories)) {
-          const activeCats = res.data.categories.filter((c) => c.active && c.name.toLowerCase() !== "all");
-          const catNames = activeCats.map((c) => c.name);
-          if (catNames.length > 0) {
-            setCategories(catNames);
-          }
-          const newMap = { ...DEFAULT_SUBCATEGORIES };
-          activeCats.forEach((c) => {
-            if (Array.isArray(c.subcategories) && c.subcategories.length > 0) {
-              newMap[c.name] = c.subcategories;
-            }
-          });
-          setSubcategoriesMap(newMap);
-        }
+        const cats = res.data?.categories || (Array.isArray(res.data) ? res.data : null);
+        if (cats) syncCats(cats);
       })
       .catch((err) => {
         console.warn("Could not fetch categories from server:", err);
       });
+
+    // Real-time synchronization when categories are updated in CategoryTab
+    const handleCategoriesUpdated = (e) => {
+      if (e.detail) syncCats(e.detail);
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === "cached_categories" && e.newValue) {
+        try {
+          syncCats(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("categories-updated", handleCategoriesUpdated);
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("categories-updated", handleCategoriesUpdated);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, [API_URL]);
 
   // Fetch existing product data if editing
