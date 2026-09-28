@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare, MessageCircle } from "lucide-react";
+import axios from "axios";
+import { Mail, Phone, MapPin, Send, MessageSquare, MessageCircle, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSettings } from "@/context/SettingsContext";
@@ -12,14 +13,37 @@ export default function ContactPage() {
     subject: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
-  const handleSubmit = (e) => {
+  const API_URL = import.meta.env.VITE_API_URL || "";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Contact form:", formData);
-    setSubmitted(true);
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setSubmitted(false), 4000);
+    setIsSubmitting(true);
+    setErrorMsg("");
+    setSubmitted(false);
+
+    try {
+      const res = await axios.post(`${API_URL}/api/contact`, formData);
+      if (res.data?.success) {
+        setSubmitted(true);
+        setSuccessMsg(res.data.message || "Message sent successfully! We will get back to you shortly.");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setErrorMsg(res.data?.message || "Failed to send message. Please try again.");
+      }
+    } catch (err) {
+      console.error("Contact form submission error:", err);
+      setErrorMsg(
+        err.response?.data?.message ||
+        "Failed to send your message. Please check your internet connection or reach out on WhatsApp."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const cleanWhatsapp = (settings.socialWhatsapp || "").replace(/[^0-9]/g, "");
@@ -90,11 +114,29 @@ export default function ContactPage() {
 
         {/* Contact Form */}
         <div className="max-w-2xl mx-auto bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm space-y-6">
-          <h2 className="text-xl font-bold text-foreground">Send Us a Message</h2>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">Send Us a Message</h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Your inquiry will be sent directly to our support team at <strong className="text-foreground">malikabutalharaheem@gmail.com</strong>.
+            </p>
+          </div>
 
           {submitted && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-3 rounded-xl text-sm font-semibold">
-              ✅ Message sent successfully! We'll get back to you shortly.
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 px-4 py-3.5 rounded-xl text-sm font-semibold flex items-start gap-3 animate-in fade-in duration-300">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div>
+                <p>{successMsg}</p>
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 font-normal mt-0.5">
+                  An email notification has been dispatched to <strong>malikabutalharaheem@gmail.com</strong> and an acknowledgement copy was sent to your inbox.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 px-4 py-3.5 rounded-xl text-sm font-semibold flex items-start gap-3 animate-in fade-in duration-300">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+              <p>{errorMsg}</p>
             </div>
           )}
 
@@ -106,6 +148,7 @@ export default function ContactPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Your full name"
+                  disabled={isSubmitting}
                   required
                 />
               </div>
@@ -116,6 +159,7 @@ export default function ContactPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="you@example.com"
+                  disabled={isSubmitting}
                   required
                 />
               </div>
@@ -127,6 +171,7 @@ export default function ContactPage() {
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="How can we help?"
+                disabled={isSubmitting}
                 required
               />
             </div>
@@ -138,17 +183,28 @@ export default function ContactPage() {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Write your message here..."
+                disabled={isSubmitting}
                 required
-                className="w-full px-3.5 py-2.5 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                className="w-full px-3.5 py-2.5 text-sm bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary resize-none disabled:opacity-60"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground font-bold py-5 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer"
+              disabled={isSubmitting}
+              className="w-full bg-primary text-primary-foreground font-bold py-5 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <Send className="w-4 h-4 mr-2" />
-              Send Message
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Sending Message...</span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  <Send className="w-4 h-4 mr-1" />
+                  <span>Send Message</span>
+                </div>
+              )}
             </Button>
           </form>
         </div>

@@ -375,8 +375,176 @@ async function sendCampaignEmail({ subject, heading, message, buttonText, button
   }
 }
 
+/**
+ * Sends a contact form notification email to admin (malikabutalharaheem@gmail.com)
+ * and an acknowledgement confirmation email to the user.
+ * @param {object} params - { name, email, subject, message }
+ */
+async function sendContactFormEmail({ name, email, subject, message }) {
+  const adminEmail = process.env.CONTACT_RECEIVER_EMAIL || process.env.EMAIL_USER || "malikabutalharaheem@gmail.com";
+  const user = process.env.EMAIL_USER || process.env.SMTP_USER || process.env.GMAIL_USER;
+  const transporter = getTransporter();
+
+  if (!transporter) {
+    console.warn("⚠️ [EmailService] No mail transporter configured. Contact email not sent.");
+    return { success: false, error: "Email transporter not configured in server." };
+  }
+
+  const senderAddress = user || "no-reply@bloomshop.com";
+  const formattedMessage = (message || "").replace(/\n/g, "<br/>");
+  const receivedAt = new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" });
+
+  const mailOptionsToAdmin = {
+    from: `"BloomShop Contact" <${senderAddress}>`,
+    to: adminEmail,
+    replyTo: `"${name}" <${email}>`,
+    subject: `📩 Contact Form Inquiry: ${subject} (from ${name})`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Contact Form Inquiry</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+          .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+          .header { background: #0f172a; padding: 24px 28px; text-align: left; }
+          .header h1 { margin: 0; color: #ffffff; font-size: 20px; font-weight: 800; }
+          .header span { color: #f59e0b; }
+          .badge { display: inline-block; background-color: #f59e0b; color: #0f172a; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; margin-bottom: 8px; }
+          .body { padding: 32px 28px; }
+          .info-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+          .info-table td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; }
+          .info-table td.label { font-weight: 700; color: #64748b; width: 130px; }
+          .info-table td.val { font-weight: 600; color: #0f172a; }
+          .msg-box { background-color: #f8fafc; border-left: 4px solid #f59e0b; padding: 18px 20px; border-radius: 0 12px 12px 0; margin: 16px 0 24px; font-size: 14px; line-height: 1.6; color: #334155; }
+          .btn-container { margin: 24px 0 12px; }
+          .btn { display: inline-block; background-color: #0f172a; color: #ffffff !important; text-decoration: none; font-weight: 700; font-size: 13px; padding: 12px 24px; border-radius: 10px; }
+          .footer { background: #f8fafc; padding: 18px 28px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; line-height: 1.5; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <span class="badge">BloomShop Support</span>
+            <h1>New Message from ${name}</h1>
+          </div>
+          <div class="body">
+            <table class="info-table">
+              <tr>
+                <td class="label">Full Name:</td>
+                <td class="val">${name}</td>
+              </tr>
+              <tr>
+                <td class="label">Customer Email:</td>
+                <td class="val"><a href="mailto:${email}" style="color: #0284c7; text-decoration: none;">${email}</a></td>
+              </tr>
+              <tr>
+                <td class="label">Subject:</td>
+                <td class="val"><strong>${subject}</strong></td>
+              </tr>
+              <tr>
+                <td class="label">Received:</td>
+                <td class="val">${receivedAt} (PKT)</td>
+              </tr>
+            </table>
+
+            <div style="font-weight: 700; font-size: 13px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px;">Message Details:</div>
+            <div class="msg-box">
+              ${formattedMessage}
+            </div>
+
+            <div class="btn-container">
+              <a href="mailto:${email}?subject=Re: ${encodeURIComponent(subject)}" class="btn">Reply to ${name} (${email}) →</a>
+            </div>
+          </div>
+          <div class="footer">
+            Submitted via BloomShop Contact Us form on ${receivedAt}.<br/>
+            Hit Reply on this email or click the button above to respond directly to the customer.
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  const mailOptionsToUser = {
+    from: `"BloomShop Support" <${senderAddress}>`,
+    to: email,
+    subject: `We've received your message: ${subject}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Message Received</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+          .container { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+          .header { background: #0f172a; padding: 24px 28px; text-align: center; }
+          .header h1 { margin: 0; color: #ffffff; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+          .header span { color: #f59e0b; }
+          .body { padding: 32px 28px; }
+          .title { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 12px; }
+          .text { font-size: 14px; line-height: 1.6; color: #475569; margin-bottom: 20px; }
+          .summary-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin: 20px 0; font-size: 13px; color: #334155; }
+          .footer { background: #f8fafc; padding: 18px 28px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>BLOOM<span>SHOP</span></h1>
+          </div>
+          <div class="body">
+            <h2 class="title">Thank you for reaching out, ${name}!</h2>
+            <p class="text">
+              We have received your message regarding "<strong>${subject}</strong>". Our support team has been notified and will review your inquiry shortly. We usually reply within 24 business hours.
+            </p>
+            <div class="summary-box">
+              <strong style="display:block; margin-bottom: 6px; color: #0f172a;">A copy of your message:</strong>
+              ${formattedMessage}
+            </div>
+            <p class="text" style="font-size: 13px; color: #64748b; margin-bottom: 0;">
+              If this is an urgent matter regarding an existing order, you can also reach us directly via WhatsApp at +92 347 6722423.
+            </p>
+          </div>
+          <div class="footer">
+            © ${new Date().getFullYear()} BloomShop. All rights reserved.
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    const adminInfo = await transporter.sendMail(mailOptionsToAdmin);
+    console.log(`✅ Contact inquiry delivered to ${adminEmail}! Message ID: ${adminInfo.messageId}`);
+
+    // Attempt to send copy to user (safely non-blocking)
+    transporter.sendMail(mailOptionsToUser).catch((err) => {
+      console.warn("⚠️ Customer receipt copy skipped:", err.message);
+    });
+
+    return {
+      success: true,
+      messageId: adminInfo.messageId,
+    };
+  } catch (err) {
+    console.error("❌ [EmailService] Failed to send contact email:", err.message);
+    return {
+      success: false,
+      error: err.message,
+    };
+  }
+}
+
 module.exports = {
   sendNewsletterVerificationEmail,
   sendNewProductToSubscribers,
   sendCampaignEmail,
+  sendContactFormEmail,
 };

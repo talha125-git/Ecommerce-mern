@@ -11,11 +11,13 @@ const AboutModel = require("./models/About");
 const SettingsModel = require("./models/Settings");
 // Real Gmail SMTP & Newsletter Subscriptions initialized
 const SubscriberModel = require("./models/Subscriber");
+const ContactModel = require("./models/Contact");
 const crypto = require("crypto");
 const {
     sendNewsletterVerificationEmail,
     sendNewProductToSubscribers,
-    sendCampaignEmail
+    sendCampaignEmail,
+    sendContactFormEmail
 } = require("./utils/emailService");
 
 const DEFAULT_ABOUT_SECTION = {
@@ -1794,6 +1796,71 @@ app.post("/api/admin/send-email", async (req, res) => {
     }
 });
 
+// POST /api/contact: Submit customer inquiry, store in DB, and send email notification to malikabutalharaheem@gmail.com
+app.post("/api/contact", async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body;
+
+        if (!name || !email || !subject || !message) {
+            return res.status(400).json({
+                success: false,
+                message: "Please fill in all fields (Full Name, Email Address, Subject, and Message)."
+            });
+        }
+
+        // 1. Save contact message in database
+        let newContact = null;
+        try {
+            newContact = await ContactModel.create({
+                name: name.trim(),
+                email: email.trim().toLowerCase(),
+                subject: subject.trim(),
+                message: message.trim(),
+                emailSent: false
+            });
+        } catch (dbErr) {
+            console.error("⚠️ Failed to store contact inquiry in MongoDB:", dbErr.message);
+        }
+
+        // 2. Dispatch email to malikabutalharaheem@gmail.com
+        const emailResult = await sendContactFormEmail({
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            subject: subject.trim(),
+            message: message.trim()
+        });
+
+        if (newContact && emailResult.success) {
+            newContact.emailSent = true;
+            await newContact.save().catch(() => {});
+        }
+
+        return res.json({
+            success: true,
+            message: "Your message has been sent successfully! We will get back to you shortly.",
+            emailSent: emailResult.success
+        });
+    } catch (err) {
+        console.error("❌ Error processing contact inquiry:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to send message. Please try again later.",
+            error: err.message
+        });
+    }
+});
+
+// GET /api/contact: Retrieve inquiries for admin panel
+app.get("/api/contact", async (req, res) => {
+    try {
+        const messages = await ContactModel.find().sort({ createdAt: -1 }).limit(100);
+        return res.json({ success: true, messages });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 module.exports = app;
+
 
 
