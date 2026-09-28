@@ -1,5 +1,5 @@
 git add .
 git commit -m "
-        feat: connect contact form to email notifications for malikabutalharaheem@gmail.com
+        feat: format sender display name and subject with customer name in contact email
 "
 git push origin main

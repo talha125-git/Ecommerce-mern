@@ -395,10 +395,10 @@ async function sendContactFormEmail({ name, email, subject, message }) {
   const receivedAt = new Date().toLocaleString("en-US", { timeZone: "Asia/Karachi" });
 
   const mailOptionsToAdmin = {
-    from: `"BloomShop Contact" <${senderAddress}>`,
+    from: `"${name} (BloomShop Inquiry)" <${senderAddress}>`,
     to: adminEmail,
     replyTo: `"${name}" <${email}>`,
-    subject: `📩 Contact Form Inquiry: ${subject} (from ${name})`,
+    subject: `📩 [Customer Message] ${name}: ${subject}`,
     html: `
       <!DOCTYPE html>
       <html>
