@@ -27,6 +27,7 @@ import {
   Share2,
   X,
   CheckCircle2,
+  ZoomIn,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isProductInWishlist, toggleWishlistItem } from "@/utils/wishlist";
@@ -50,6 +51,7 @@ export default function ProductDetailsPage() {
   const [stockWarning, setStockWarning] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [activeDetailsTab, setActiveDetailsTab] = useState("overview");
 
   const { addToCart, cart } = useCart();
@@ -220,6 +222,18 @@ export default function ProductDetailsPage() {
     const prevIdx = (activeIndex - 1 + allImages.length) % allImages.length;
     setActiveImage(allImages[prevIdx]);
   };
+
+  // Keyboard navigation for image lightbox (Esc to close, left/right arrows to browse)
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setIsLightboxOpen(false);
+      if (e.key === "ArrowLeft") handlePrevImage();
+      if (e.key === "ArrowRight") handleNextImage();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLightboxOpen, allImages, activeIndex]);
 
   const availableStock =
     product?.stock !== undefined && product?.stock !== null ? Number(product.stock) : 15;
@@ -398,16 +412,20 @@ export default function ProductDetailsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-8 sm:space-y-12 w-full max-w-full overflow-hidden">
-        {/* ── Main Product Display Grid (Left: Small Pic, Right: Details + Overview/Specs Tabs) ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start w-full">
+        {/* ── Main Product Display Grid (Balanced 50/50 Split) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
           {/* ========================================================================= */}
-          {/* LEFT: Compact Product Gallery + Trust Badges                              */}
+          {/* LEFT: Product Gallery + Trust Badges                                      */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-5 space-y-3 sm:space-y-4 w-full min-w-0">
-            {/* Primary Showcase Card (Compact Height, Object-Contain for whole shoe) */}
-            <div className="rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-50 dark:bg-card border border-border/80 h-72 sm:h-80 lg:h-96 relative group shadow-xs flex items-center justify-center w-full p-2.5">
+          <div className="lg:col-span-6 space-y-3 sm:space-y-4 w-full min-w-0">
+            {/* Primary Showcase Card (Well-proportioned aspect-square, high-res presentation, click-to-zoom) */}
+            <div
+              onClick={() => setIsLightboxOpen(true)}
+              className="rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-50 dark:bg-card border border-border/80 aspect-square relative group shadow-xs flex items-center justify-center w-full cursor-zoom-in"
+              title="Click to view full size"
+            >
               {/* Floating Badges */}
-              <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-10 flex flex-wrap gap-1.5 items-center">
+              <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 flex flex-wrap gap-1.5 items-center pointer-events-none">
                 {product.badge === "HOT" && (
                   <span className="inline-flex items-center gap-1 bg-red-600/95 backdrop-blur-md text-white text-[10px] sm:text-xs font-black px-2.5 py-0.5 sm:py-1 rounded-full shadow-md uppercase tracking-wider">
                     <Flame className="w-3 h-3 fill-current animate-pulse" /> HOT
@@ -432,9 +450,12 @@ export default function ProductDetailsPage() {
 
               {/* Wishlist Button on Image */}
               <button
-                onClick={handleToggleWishlist}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleToggleWishlist();
+                }}
                 className={cn(
-                  "absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md cursor-pointer",
+                  "absolute top-3 right-3 sm:top-4 sm:right-4 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md cursor-pointer",
                   isLiked ? "text-rose-500 scale-105" : "text-slate-600 hover:text-rose-500"
                 )}
                 title={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
@@ -444,35 +465,55 @@ export default function ProductDetailsPage() {
 
               {/* Liked Toast Popup */}
               {justLiked && (
-                <div className="absolute top-13 sm:top-16 right-2.5 sm:right-4 z-20 bg-rose-600 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-xl shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 whitespace-nowrap">
+                <div className="absolute top-14 sm:top-16 right-3 sm:right-4 z-20 bg-rose-600 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-xl shadow-lg animate-in fade-in slide-in-from-top-2 duration-200 whitespace-nowrap">
                   ♥ Added to Wishlist
                 </div>
               )}
 
-              {/* Main Product Image (Object-Contain so entire boot/shoe fits) */}
+              {/* Main Product Image */}
               <img
                 key={activeImage}
                 src={activeImage || product.image}
                 alt={product.name}
-                className="max-w-full max-h-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
+
+              {/* Zoom Pill Button */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsLightboxOpen(true);
+                }}
+                className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-10 inline-flex items-center gap-1.5 bg-slate-950/75 hover:bg-slate-950 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-md shadow-md transition-all duration-200 cursor-pointer hover:scale-105"
+                title="View full-size photo"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+                <span>Zoom</span>
+              </button>
 
               {/* Prev / Next Arrows */}
               {allImages.length > 1 && (
                 <>
                   <button
                     type="button"
-                    onClick={handlePrevImage}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePrevImage();
+                    }}
                     aria-label="Previous image"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/85 dark:bg-slate-900/85 hover:bg-white text-foreground backdrop-blur-md shadow-md flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:scale-105 cursor-pointer"
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/85 dark:bg-slate-900/85 hover:bg-white text-foreground backdrop-blur-md shadow-md flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:scale-105 cursor-pointer z-10"
                   >
                     <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   <button
                     type="button"
-                    onClick={handleNextImage}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNextImage();
+                    }}
                     aria-label="Next image"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/85 dark:bg-slate-900/85 hover:bg-white text-foreground backdrop-blur-md shadow-md flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:scale-105 cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/85 dark:bg-slate-900/85 hover:bg-white text-foreground backdrop-blur-md shadow-md flex items-center justify-center opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:scale-105 cursor-pointer z-10"
                   >
                     <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
@@ -481,15 +522,15 @@ export default function ProductDetailsPage() {
 
               {/* Image Counter Pill */}
               {allImages.length > 1 && (
-                <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 bg-slate-950/75 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full shadow">
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-slate-950/75 backdrop-blur-md text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 sm:py-1 rounded-full shadow">
                   {activeIndex + 1} / {allImages.length}
                 </div>
               )}
             </div>
 
-            {/* Thumbnail Strip (Compact size) */}
+            {/* Thumbnail Strip */}
             {allImages.length > 1 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar w-full">
+              <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 no-scrollbar w-full">
                 {allImages.map((imgUrl, idx) => {
                   const isActive = activeImage === imgUrl;
                   return (
@@ -498,7 +539,7 @@ export default function ProductDetailsPage() {
                       type="button"
                       onClick={() => setActiveImage(imgUrl)}
                       className={cn(
-                        "relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer bg-slate-50 dark:bg-muted p-1 shrink-0 flex items-center justify-center",
+                        "relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer bg-slate-50 dark:bg-muted shrink-0",
                         isActive
                           ? "border-primary ring-2 ring-primary/30 scale-102 shadow-sm"
                           : "border-border hover:border-primary/50 opacity-70 hover:opacity-100"
@@ -507,7 +548,7 @@ export default function ProductDetailsPage() {
                       <img
                         src={imgUrl}
                         alt={`${product.name} thumbnail ${idx + 1}`}
-                        className="max-w-full max-h-full object-contain"
+                        className="w-full h-full object-cover"
                       />
                     </button>
                   );
@@ -570,7 +611,7 @@ export default function ProductDetailsPage() {
           {/* ========================================================================= */}
           {/* RIGHT: Product Info, Price, Sizes, Cart & Overview/Specs Tabs             */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-5 w-full min-w-0">
+          <div className="lg:col-span-6 space-y-4 sm:space-y-5 w-full min-w-0">
             {/* Header: Category, Stock Badge, Title, Rating */}
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -1051,6 +1092,91 @@ export default function ProductDetailsPage() {
               Close Size Guide
             </Button>
           </div>
+        </div>
+      )}
+      {/* ── Fullscreen High-Resolution Lightbox Modal ── */}
+      {isLightboxOpen && (
+        <div
+          onClick={() => setIsLightboxOpen(false)}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-between p-3 sm:p-6 bg-slate-950/95 backdrop-blur-md animate-in fade-in duration-200"
+        >
+          {/* Top Bar: Title, Counter & Close */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-5xl flex items-center justify-between text-white py-2 z-10"
+          >
+            <div className="min-w-0 pr-4">
+              <h4 className="font-extrabold text-sm sm:text-base text-white truncate">{product.name}</h4>
+              <p className="text-xs text-white/70">
+                Image {activeIndex + 1} of {allImages.length} &bull; High Resolution View
+              </p>
+            </div>
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors cursor-pointer shrink-0"
+              title="Close (Esc)"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Center Showcase with Prev / Next */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex-1 w-full max-w-5xl flex items-center justify-center p-2"
+          >
+            {allImages.length > 1 && (
+              <button
+                type="button"
+                onClick={handlePrevImage}
+                aria-label="Previous image"
+                className="absolute left-1 sm:left-4 z-10 w-11 h-11 rounded-full bg-white/20 hover:bg-white/35 text-white backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-lg"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <img
+              src={activeImage || product.image}
+              alt={product.name}
+              className="max-h-[70vh] sm:max-h-[78vh] max-w-[92vw] object-contain rounded-2xl shadow-2xl transition-all duration-300"
+            />
+
+            {allImages.length > 1 && (
+              <button
+                type="button"
+                onClick={handleNextImage}
+                aria-label="Next image"
+                className="absolute right-1 sm:right-4 z-10 w-11 h-11 rounded-full bg-white/20 hover:bg-white/35 text-white backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer shadow-lg"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Strip */}
+          {allImages.length > 1 && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-2 overflow-x-auto py-2 px-4 bg-white/10 backdrop-blur-md rounded-2xl max-w-lg z-10 no-scrollbar"
+            >
+              {allImages.map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImage(imgUrl)}
+                  className={cn(
+                    "w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden border-2 transition-all cursor-pointer shrink-0 bg-black/40",
+                    activeImage === imgUrl
+                      ? "border-white ring-2 ring-white/50 scale-105"
+                      : "border-transparent opacity-60 hover:opacity-100"
+                  )}
+                >
+                  <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

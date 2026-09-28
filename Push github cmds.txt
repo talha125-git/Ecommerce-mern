@@ -1,3 +1,3 @@
 git add .
-git commit -m "feat: add ProductDetailsPage component for viewing individual product details and managing cart actions  "
+git commit -m " feat: add ProductDetailsPage component with image gallery and cart integration"
 git push origin main
