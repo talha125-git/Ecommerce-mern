@@ -555,57 +555,6 @@ export default function ProductDetailsPage() {
                 })}
               </div>
             )}
-
-            {/* ── Value & Trust Micro-Cards (Placed on Left under pic) ── */}
-            <div className="grid grid-cols-2 gap-2 pt-2">
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 rounded-xl bg-primary/10 text-primary shrink-0">
-                  <Truck className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">Free Shipping</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Over Rs. 5,000 &amp; Peshawar
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 rounded-xl bg-blue-500/10 text-blue-600 shrink-0">
-                  <RotateCcw className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">30-Day Returns</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Effortless exchange guarantee
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 rounded-xl bg-amber-500/10 text-amber-600 shrink-0">
-                  <Shield className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">1-Year Warranty</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Durability inspection passed
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
-                  <Award className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">100% Authentic</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Verified factory-direct pair
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* ========================================================================= */}
@@ -978,6 +927,57 @@ export default function ProductDetailsPage() {
                   </p>
                 </div>
               )}
+            </div>
+
+            {/* ── 4 Value & Trust Micro-Cards (Positioned to the Right of image, below Overview/Specs/Shipping tabs) ── */}
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-primary/10 text-primary shrink-0">
+                  <Truck className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">Free Shipping</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Over Rs. 5,000 &amp; Peshawar
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-blue-500/10 text-blue-600 shrink-0">
+                  <RotateCcw className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">30-Day Returns</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Effortless exchange guarantee
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-amber-500/10 text-amber-600 shrink-0">
+                  <Shield className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">1-Year Warranty</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Durability inspection passed
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
+                  <Award className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">100% Authentic</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Verified factory-direct pair
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,3 +1,5 @@
 git add .
-git commit -m " feat: add ProductDetailsPage component with image gallery and cart integration"
+git commit -m "
+        feat: add ProductDetailsPage component with image gallery and cart integration
+"
 git push origin main
