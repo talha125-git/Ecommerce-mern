@@ -384,8 +384,8 @@ export default function ProductList() {
         </div>
       )}
 
-      {/* Product Cards Grid (Up to 2 lines / rows) */}
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
+      {/* Product Cards Grid (2 products per line on mobile, 4 on desktop) */}
+      <div className="grid gap-3 sm:gap-6 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
         {displayedProducts.length > 0 ? (
           displayedProducts.map((product) => (
             <ProductCard key={product._id || product.id} product={product} />
