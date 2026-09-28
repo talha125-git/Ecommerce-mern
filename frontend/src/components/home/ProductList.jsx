@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import productsData from "@/data/products.json";
 import ProductCard from "./ProductCard";
-import { Flame, Sparkles, SlidersHorizontal, Search, Tag, Grid } from "lucide-react";
+import { Flame, Sparkles, SlidersHorizontal, Search, Tag, Grid, ArrowRight } from "lucide-react";
 
 // Default store categories fallback (if server is booting up)
 const DEFAULT_CAT_NAMES = ["All", "New Arrivals", "Men", "Women", "Kids", "Accessories", "School Shoes"];
@@ -27,7 +27,7 @@ export default function ProductList() {
           return ["All", ...names];
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return DEFAULT_CAT_NAMES;
   });
 
@@ -76,7 +76,7 @@ export default function ProductList() {
         try {
           const parsed = JSON.parse(e.newValue);
           syncCategories(parsed);
-        } catch (err) {}
+        } catch (err) { }
       }
     };
 
@@ -110,7 +110,7 @@ export default function ProductList() {
                   setProductsList(res.data.products);
                 }
               })
-              .catch(() => {});
+              .catch(() => { });
           }, 1500);
         });
     };
@@ -186,6 +186,39 @@ export default function ProductList() {
   const hotProductsCount = productsList.filter((p) => p.isHot || p.badge === "HOT" || p.badge === "BESTSELLER").length;
   const newArrivalsCount = productsList.filter((p) => p.isNew || p.badge === "NEW").length;
 
+  // Show up to 2 lines of products on home screen (4 columns * 2 rows = 8 products)
+  const MAX_HOME_PRODUCTS = 8;
+  const displayedProducts = useMemo(() => {
+    return filteredProducts.slice(0, MAX_HOME_PRODUCTS);
+  }, [filteredProducts]);
+
+  // Construct target URL for the "View More" button to move to the shop / catalog page
+  const viewMoreUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (selectedCategory && selectedCategory !== "All") {
+      const norm = selectedCategory.toLowerCase().trim();
+      if (norm === "new arrivals" || norm === "new") {
+        params.set("category", "new");
+      } else {
+        const slug = norm.replace(/[^a-z0-9]+/g, "-");
+        params.set("category", slug);
+      }
+    } else if (activeTab === "hot") {
+      params.set("category", "trending");
+    } else if (activeTab === "new") {
+      params.set("category", "new");
+    } else if (activeTab === "sale") {
+      params.set("category", "sale");
+    }
+
+    if (searchQuery && searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    }
+
+    const qs = params.toString();
+    return qs ? `/shop?${qs}` : "/shop";
+  }, [selectedCategory, activeTab, searchQuery]);
+
 
   return (
     <section id="products" className="py-12 space-y-10 scroll-mt-24">
@@ -207,11 +240,10 @@ export default function ProductList() {
       <div className="flex flex-wrap items-center justify-center gap-3 border-b border-border/80 pb-6">
         <button
           onClick={() => setActiveTab("all")}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${
-            activeTab === "all"
+          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${activeTab === "all"
               ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-105"
               : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
-          }`}
+            }`}
         >
           <Grid className="h-4 w-4" />
           <span>All Products</span>
@@ -223,11 +255,10 @@ export default function ProductList() {
         <button
           id="hot-products"
           onClick={() => setActiveTab("hot")}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${
-            activeTab === "hot"
+          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${activeTab === "hot"
               ? "bg-linear-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-500/25 scale-105"
               : "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100"
-          }`}
+            }`}
         >
           <Flame className="h-4 w-4 fill-current animate-pulse" />
           <span>Hot Products</span>
@@ -239,11 +270,10 @@ export default function ProductList() {
         <button
           id="new-arrivals"
           onClick={() => setActiveTab("new")}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${
-            activeTab === "new"
+          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${activeTab === "new"
               ? "bg-linear-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
               : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100"
-          }`}
+            }`}
         >
           <Sparkles className="h-4 w-4" />
           <span> New Arrivals</span>
@@ -254,11 +284,10 @@ export default function ProductList() {
 
         <button
           onClick={() => setActiveTab("sale")}
-          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${
-            activeTab === "sale"
+          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${activeTab === "sale"
               ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25 scale-105"
               : "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 hover:bg-purple-100"
-          }`}
+            }`}
         >
           <span>On Sale</span>
         </button>
@@ -276,11 +305,10 @@ export default function ProductList() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
-                  selectedCategory === cat
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === cat
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -356,10 +384,10 @@ export default function ProductList() {
         </div>
       )}
 
-      {/* Product Cards Grid */}
+      {/* Product Cards Grid (Up to 2 lines / rows) */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
+        {displayedProducts.length > 0 ? (
+          displayedProducts.map((product) => (
             <ProductCard key={product._id || product.id} product={product} />
           ))
         ) : (
@@ -385,6 +413,25 @@ export default function ProductList() {
           </div>
         )}
       </div>
+
+      {/* View More Button Section to Navigate to Shop Page */}
+      {displayedProducts.length > 0 && (
+        <div className="flex flex-col items-center justify-center pt-8 pb-4 text-center">
+          <Link
+            to={viewMoreUrl}
+            id="view-more-products-btn"
+            className="group inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-primary hover:bg-primary/90 text-primary-foreground font-black text-sm sm:text-base rounded-2xl shadow-lg shadow-primary/25 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+          >
+            <span>View More</span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+          </Link>
+          {filteredProducts.length > MAX_HOME_PRODUCTS && (
+            <p className="mt-3 text-xs sm:text-sm text-muted-foreground font-medium">
+              Showing {displayedProducts.length} of {filteredProducts.length} products
+            </p>
+          )}
+        </div>
+      )}
     </section>
   );
 }

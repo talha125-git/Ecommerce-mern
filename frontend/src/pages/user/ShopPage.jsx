@@ -47,6 +47,11 @@ const isCategoryMatch = (p, selectedCat, activeCategoryObj) => {
     return badge.includes("popular") || badge.includes("bestseller") || tags.includes("popular") || tags.includes("bestseller");
   }
 
+  if (s === "sale") {
+    const badge = normalize(p.badge || "");
+    return badge === "sale" || Boolean(p.originalPrice && p.originalPrice > p.price);
+  }
+
   // Gather target names from selected category object if available
   const targets = new Set([s]);
   if (activeCategoryObj) {
@@ -188,7 +193,11 @@ export default function ShopPage() {
     const subParam = searchParams.get("sub");
 
     if (catParam) {
-      setSelectedCategory(catParam);
+      const norm = normalize(catParam);
+      const matched = categories.find(
+        (c) => normalize(c.slug) === norm || normalize(c.name) === norm || normalize(c.id) === norm
+      );
+      setSelectedCategory(matched ? matched.slug : catParam);
     } else {
       setSelectedCategory("all");
     }
@@ -204,14 +213,14 @@ export default function ShopPage() {
     } else {
       setSubFilter("");
     }
-  }, [searchParams]);
+  }, [searchParams, categories]);
 
   // Safety fallback: If active category was deleted from Admin Dashboard, reset to "all"
   useEffect(() => {
     if (selectedCategory && selectedCategory !== "all") {
       const norm = normalize(selectedCategory);
       // Skip special system tags
-      if (["new", "new arrivals", "new-arrivals", "trending", "bestseller", "best sellers"].includes(norm)) {
+      if (["new", "new arrivals", "new-arrivals", "trending", "bestseller", "best sellers", "sale"].includes(norm)) {
         return;
       }
       const exists = categories.some(
