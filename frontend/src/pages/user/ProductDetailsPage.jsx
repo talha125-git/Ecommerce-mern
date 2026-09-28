@@ -398,14 +398,14 @@ export default function ProductDetailsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 space-y-8 sm:space-y-12 w-full max-w-full overflow-hidden">
-        {/* ── Main Product Display Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start w-full">
+        {/* ── Main Product Display Grid (Left: Small Pic, Right: Details + Overview/Specs Tabs) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start w-full">
           {/* ========================================================================= */}
-          {/* LEFT: Product Gallery                                                     */}
+          {/* LEFT: Compact Product Gallery + Trust Badges                              */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-7 space-y-3 sm:space-y-4 w-full min-w-0">
-            {/* Primary Showcase Card */}
-            <div className="rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-50 dark:bg-card border border-border/80 aspect-square relative group shadow-xs flex items-center justify-center w-full">
+          <div className="lg:col-span-5 space-y-3 sm:space-y-4 w-full min-w-0">
+            {/* Primary Showcase Card (Compact Height, Object-Contain for whole shoe) */}
+            <div className="rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-50 dark:bg-card border border-border/80 h-72 sm:h-80 lg:h-96 relative group shadow-xs flex items-center justify-center w-full p-2.5">
               {/* Floating Badges */}
               <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 z-10 flex flex-wrap gap-1.5 items-center">
                 {product.badge === "HOT" && (
@@ -449,12 +449,12 @@ export default function ProductDetailsPage() {
                 </div>
               )}
 
-              {/* Main Product Image */}
+              {/* Main Product Image (Object-Contain so entire boot/shoe fits) */}
               <img
                 key={activeImage}
                 src={activeImage || product.image}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                className="max-w-full max-h-full object-contain transition-transform duration-500 ease-out group-hover:scale-105"
               />
 
               {/* Prev / Next Arrows */}
@@ -487,9 +487,9 @@ export default function ProductDetailsPage() {
               )}
             </div>
 
-            {/* Thumbnail Strip */}
+            {/* Thumbnail Strip (Compact size) */}
             {allImages.length > 1 && (
-              <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 no-scrollbar w-full">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar w-full">
                 {allImages.map((imgUrl, idx) => {
                   const isActive = activeImage === imgUrl;
                   return (
@@ -498,7 +498,7 @@ export default function ProductDetailsPage() {
                       type="button"
                       onClick={() => setActiveImage(imgUrl)}
                       className={cn(
-                        "relative w-14 h-14 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer bg-muted shrink-0",
+                        "relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer bg-slate-50 dark:bg-muted p-1 shrink-0 flex items-center justify-center",
                         isActive
                           ? "border-primary ring-2 ring-primary/30 scale-102 shadow-sm"
                           : "border-border hover:border-primary/50 opacity-70 hover:opacity-100"
@@ -507,19 +507,70 @@ export default function ProductDetailsPage() {
                       <img
                         src={imgUrl}
                         alt={`${product.name} thumbnail ${idx + 1}`}
-                        className="w-full h-full object-cover"
+                        className="max-w-full max-h-full object-contain"
                       />
                     </button>
                   );
                 })}
               </div>
             )}
+
+            {/* ── Value & Trust Micro-Cards (Placed on Left under pic) ── */}
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-primary/10 text-primary shrink-0">
+                  <Truck className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">Free Shipping</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Over Rs. 5,000 &amp; Peshawar
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-blue-500/10 text-blue-600 shrink-0">
+                  <RotateCcw className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">30-Day Returns</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Effortless exchange guarantee
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-amber-500/10 text-amber-600 shrink-0">
+                  <Shield className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">1-Year Warranty</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Durability inspection passed
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
+                <div className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
+                  <Award className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">100% Authentic</h4>
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
+                    Verified factory-direct pair
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* ========================================================================= */}
-          {/* RIGHT: Product Details & Purchase Actions                                 */}
+          {/* RIGHT: Product Info, Price, Sizes, Cart & Overview/Specs Tabs             */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-5 space-y-4 sm:space-y-5 w-full min-w-0">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-5 w-full min-w-0">
             {/* Header: Category, Stock Badge, Title, Rating */}
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -535,17 +586,17 @@ export default function ProductDetailsPage() {
                 </div>
 
                 {isOutOfStock ? (
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-rose-700 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-full border border-rose-200">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-rose-700 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-0.5 rounded-full border border-rose-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                     Out of Stock
                   </span>
                 ) : isLowStock ? (
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-amber-800 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-full border border-amber-200 animate-pulse">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-amber-800 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-200 animate-pulse">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                     Only {availableStock} left
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     In Stock ({availableStock})
                   </span>
@@ -560,7 +611,7 @@ export default function ProductDetailsPage() {
               <div className="flex items-center gap-2 pt-0.5 flex-wrap">
                 <div className="flex items-center gap-0.5 text-amber-500">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                    <Star key={i} className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-current" />
                   ))}
                 </div>
                 <span className="text-xs sm:text-sm font-extrabold text-foreground">
@@ -690,7 +741,7 @@ export default function ProductDetailsPage() {
                     </Button>
                   </div>
 
-                  {/* Wishlist Button on Mobile (Placed neatly beside stepper) */}
+                  {/* Wishlist Button on Mobile */}
                   <Button
                     type="button"
                     variant="outline"
@@ -758,7 +809,7 @@ export default function ProductDetailsPage() {
                   )}
                   title={isLiked ? "Saved in Wishlist" : "Save to Wishlist"}
                 >
-                  <Heart className={cn("h-4 w-4", isLiked ? "fill-rose-500 text-rose-500" : "")} />
+                  <Heart className={cn("h-4 w-4", isLiked && "fill-rose-500 text-rose-500")} />
                   <span className="text-xs font-bold">{isLiked ? "Saved" : "Save"}</span>
                 </Button>
               </div>
@@ -772,171 +823,122 @@ export default function ProductDetailsPage() {
               )}
             </div>
 
-            {/* ── Value & Trust Micro-Cards ── */}
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-2">
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 sm:p-2 rounded-xl bg-primary/10 text-primary shrink-0">
-                  <Truck className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">Free Shipping</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Over Rs. 5,000 &amp; Peshawar
-                  </p>
-                </div>
+            {/* ══════════════════════════════════════════════════════════════════════════ */}
+            {/* OVERVIEW, SPECS & SHIPPING TABS (Placed directly to the RIGHT of the pic) */}
+            {/* ══════════════════════════════════════════════════════════════════════════ */}
+            <div className="bg-card border border-border/80 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-4 w-full mt-4">
+              <div className="flex items-center gap-1.5 sm:gap-2 border-b border-border pb-2.5 overflow-x-auto no-scrollbar w-full">
+                <button
+                  type="button"
+                  onClick={() => setActiveDetailsTab("overview")}
+                  className={cn(
+                    "px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
+                    activeDetailsTab === "overview"
+                      ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  )}
+                >
+                  Overview
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveDetailsTab("specs")}
+                  className={cn(
+                    "px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
+                    activeDetailsTab === "specs"
+                      ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  )}
+                >
+                  Specifications
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveDetailsTab("shipping")}
+                  className={cn(
+                    "px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
+                    activeDetailsTab === "shipping"
+                      ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  )}
+                >
+                  Shipping &amp; Delivery
+                </button>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 sm:p-2 rounded-xl bg-blue-500/10 text-blue-600 shrink-0">
-                  <RotateCcw className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">30-Day Returns</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Effortless exchange guarantee
+              {/* Tab 1: Overview */}
+              {activeDetailsTab === "overview" && (
+                <div className="space-y-3 text-xs sm:text-sm text-muted-foreground leading-relaxed animate-in fade-in duration-200">
+                  <p className="text-sm text-foreground font-medium">
+                    {product.description || "Premium footwear engineered for style, all-day support, and superior durability."}
                   </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                    <div className="flex items-center gap-2 text-foreground font-medium text-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Ultra-light shock-absorbing sole</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-foreground font-medium text-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Breathable &amp; scuff-resistant upper</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-foreground font-medium text-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Anatomical arch support comfort</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-foreground font-medium text-xs">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Non-slip traction rubber outsole</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 sm:p-2 rounded-xl bg-amber-500/10 text-amber-600 shrink-0">
-                  <Shield className="h-4 w-4" />
+              {/* Tab 2: Specifications */}
+              {activeDetailsTab === "specs" && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs animate-in fade-in duration-200">
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Department</span>
+                    <span className="font-bold text-foreground">{product.category || "Unisex"}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Subcategory</span>
+                    <span className="font-bold text-foreground">{product.subcategory || "Daily Wear"}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Sizes</span>
+                    <span className="font-bold text-foreground">{availableSizes.join(", ")}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Stock Status</span>
+                    <span className="font-bold text-emerald-600">{availableStock > 0 ? "In Stock" : "Out of Stock"}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Warranty</span>
+                    <span className="font-bold text-foreground">1-Year Guarantee</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/60">
+                    <span className="text-muted-foreground font-medium">Item Code / SKU</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{String(product._id || product.id).slice(-8).toUpperCase()}</span>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">1-Year Warranty</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Durability inspection passed
-                  </p>
-                </div>
-              </div>
+              )}
 
-              <div className="flex flex-col sm:flex-row items-start gap-2 p-2.5 sm:p-3 rounded-2xl bg-card border border-border/70 shadow-2xs min-w-0">
-                <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
-                  <Award className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-[11px] sm:text-xs font-bold text-foreground truncate">100% Authentic</h4>
-                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-snug line-clamp-2">
-                    Verified factory-direct pair
+              {/* Tab 3: Shipping */}
+              {activeDetailsTab === "shipping" && (
+                <div className="space-y-2 text-xs text-muted-foreground animate-in fade-in duration-200">
+                  <p>
+                    <strong className="text-foreground">Standard Delivery:</strong> 2 to 4 business days nationwide. Same-day delivery available across Peshawar.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Free Shipping:</strong> Automatically applied at checkout for orders over Rs. 5,000.
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Cash on Delivery:</strong> Available across all major cities and towns in Pakistan.
                   </p>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-        </div>
-
-        {/* ── Product Specifications & Details Tabs ── */}
-        <div className="bg-card border border-border/80 rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-xs space-y-5 w-full overflow-hidden">
-          <div className="flex items-center gap-1.5 sm:gap-2 border-b border-border pb-3 overflow-x-auto no-scrollbar w-full">
-            <button
-              type="button"
-              onClick={() => setActiveDetailsTab("overview")}
-              className={cn(
-                "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
-                activeDetailsTab === "overview"
-                  ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-              )}
-            >
-              Overview
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveDetailsTab("specs")}
-              className={cn(
-                "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
-                activeDetailsTab === "specs"
-                  ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-              )}
-            >
-              Specifications
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveDetailsTab("shipping")}
-              className={cn(
-                "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer",
-                activeDetailsTab === "shipping"
-                  ? "bg-slate-900 text-white dark:bg-primary dark:text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
-              )}
-            >
-              Shipping &amp; Delivery
-            </button>
-          </div>
-
-          {/* Tab 1: Overview */}
-          {activeDetailsTab === "overview" && (
-            <div className="space-y-4 text-xs sm:text-sm text-muted-foreground leading-relaxed animate-in fade-in duration-200">
-              <p className="text-sm sm:text-base text-foreground font-medium">
-                {product.description || "Premium footwear engineered for style, all-day support, and superior durability."}
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-2">
-                <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Ultra-lightweight shock-absorbing sole</span>
-                </div>
-                <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Breathable mesh &amp; scuff-resistant upper</span>
-                </div>
-                <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Anatomical arch support for all-day comfort</span>
-                </div>
-                <div className="flex items-center gap-2 text-foreground font-medium text-xs sm:text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Non-slip traction rubber outsole</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Specifications */}
-          {activeDetailsTab === "specs" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm animate-in fade-in duration-200">
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Department</span>
-                <span className="font-bold text-foreground">{product.category || "Unisex"}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Subcategory</span>
-                <span className="font-bold text-foreground">{product.subcategory || "Daily Wear"}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Available Sizes</span>
-                <span className="font-bold text-foreground">{availableSizes.join(", ")}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Stock Status</span>
-                <span className="font-bold text-emerald-600">{availableStock > 0 ? "In Stock" : "Out of Stock"}</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Warranty</span>
-                <span className="font-bold text-foreground">1-Year Quality Guarantee</span>
-              </div>
-              <div className="flex justify-between py-1.5 border-b border-border/60">
-                <span className="text-muted-foreground font-medium">Item Code / SKU</span>
-                <span className="font-mono text-[11px] text-muted-foreground">{String(product._id || product.id).slice(-8).toUpperCase()}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 3: Shipping */}
-          {activeDetailsTab === "shipping" && (
-            <div className="space-y-2.5 text-xs sm:text-sm text-muted-foreground animate-in fade-in duration-200">
-              <p>
-                <strong className="text-foreground">Standard Delivery:</strong> 2 to 4 business days nationwide. Same-day delivery available across Peshawar.
-              </p>
-              <p>
-                <strong className="text-foreground">Free Shipping:</strong> Automatically applied at checkout for orders over Rs. 5,000.
-              </p>
-              <p>
-                <strong className="text-foreground">Cash on Delivery:</strong> Available across all major cities and towns in Pakistan.
-              </p>
-            </div>
-          )}
         </div>
 
         {/* ── Related Products Carousel/Grid ── */}
