@@ -1,5 +1,5 @@
 git add .
 git commit -m "
-        feat: add ProductDetailsPage component with image gallery and cart integration
+        add currect year (2026) in footer 
 "
 git push origin main

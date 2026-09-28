@@ -169,13 +169,12 @@ export default function Footer() {
             {/* Newsletter Subscription Status Feedback */}
             {status && (
               <div
-                className={`mt-4 p-3.5 rounded-xl text-xs font-medium max-w-md mx-auto flex items-start gap-2.5 text-left border transition-all ${
-                  status.type === "success"
+                className={`mt-4 p-3.5 rounded-xl text-xs font-medium max-w-md mx-auto flex items-start gap-2.5 text-left border transition-all ${status.type === "success"
                     ? "bg-emerald-50 text-emerald-900 border-emerald-200"
                     : status.type === "info"
-                    ? "bg-blue-50 text-blue-900 border-blue-200"
-                    : "bg-rose-50 text-rose-900 border-rose-200"
-                }`}
+                      ? "bg-blue-50 text-blue-900 border-blue-200"
+                      : "bg-rose-50 text-rose-900 border-rose-200"
+                  }`}
               >
                 {status.type === "success" ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -308,7 +307,7 @@ export default function Footer() {
         <div className="py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>© 2025 BloomShop™. Made with</span>
+              <span>© {new Date().getFullYear()} BloomShop™. Made with</span>
               <Heart className="h-4 w-4 text-red-500 fill-current" />
               <span>All Rights Reserved.</span>
               <br />
