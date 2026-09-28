@@ -55,9 +55,9 @@ const DashboardRedirect = () => {
 
 // Layout wrapper for the public storefront (header + footer)
 const StoreLayout = () => (
-  <div className="antialiased flex flex-col min-h-screen">
+  <div className="antialiased flex flex-col min-h-screen overflow-x-hidden w-full">
     <Header />
-    <main className="grow">
+    <main className="grow overflow-x-hidden w-full">
       <Outlet />
     </main>
     <Footer />
