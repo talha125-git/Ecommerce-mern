@@ -226,7 +226,7 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Mail className="h-4 w-4 text-primary shrink-0" />
-                  <span>{storeSettings.supportEmail || "support@bloomshop.com"}</span>
+                  <span>{storeSettings.supportEmail || "malikabutalharaheem@gmail.com"}</span>
                 </div>
               </div>
 
@@ -312,7 +312,7 @@ export default function Footer() {
               <span>All Rights Reserved.</span>
               <br />
             </div>
-            <p className="text-sm text-muted-foreground">Developed by <a href="https://github.com/bloomtpl" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-primary transition-colors">Bloomtpl</a> • Distributed by <a href="https://themewagon.com" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-primary transition-colors">ThemeWagon</a></p>
+            <p className="text-sm text-muted-foreground">Developed by <a href="https://mern-protfolio1-jtr.vercel.app/" target="_blank" rel="noopener noreferrer" className="font-bold hover:text-primary transition-colors">Talha</a> • </p>
           </div>
 
           <div className="flex items-center gap-6 text-sm">

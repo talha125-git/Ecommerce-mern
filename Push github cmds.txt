@@ -1,5 +1,5 @@
 git add .
 git commit -m "
-        add email history page 
+        add talha portfolio at footer  
 "
 git push origin main
