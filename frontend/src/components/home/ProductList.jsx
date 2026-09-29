@@ -241,8 +241,8 @@ export default function ProductList() {
         <button
           onClick={() => setActiveTab("all")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${activeTab === "all"
-              ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-105"
-              : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+            ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20 scale-105"
+            : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
         >
           <Grid className="h-4 w-4" />
@@ -256,8 +256,8 @@ export default function ProductList() {
           id="hot-products"
           onClick={() => setActiveTab("hot")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${activeTab === "hot"
-              ? "bg-linear-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-500/25 scale-105"
-              : "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100"
+            ? "bg-linear-to-r from-red-600 to-amber-500 text-white shadow-lg shadow-red-500/25 scale-105"
+            : "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100"
             }`}
         >
           <Flame className="h-4 w-4 fill-current animate-pulse" />
@@ -271,8 +271,8 @@ export default function ProductList() {
           id="new-arrivals"
           onClick={() => setActiveTab("new")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 scroll-mt-28 ${activeTab === "new"
-              ? "bg-linear-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
-              : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100"
+            ? "bg-linear-to-r from-emerald-600 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105"
+            : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100"
             }`}
         >
           <Sparkles className="h-4 w-4" />
@@ -285,8 +285,8 @@ export default function ProductList() {
         <button
           onClick={() => setActiveTab("sale")}
           className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm transition-all duration-300 ${activeTab === "sale"
-              ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25 scale-105"
-              : "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 hover:bg-purple-100"
+            ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25 scale-105"
+            : "bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 hover:bg-purple-100"
             }`}
         >
           <span>On Sale</span>
@@ -306,8 +306,8 @@ export default function ProductList() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${selectedCategory === cat
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                   }`}
               >
                 {cat}

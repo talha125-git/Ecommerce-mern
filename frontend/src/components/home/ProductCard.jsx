@@ -209,8 +209,8 @@ export default function ProductCard({ product }) {
               isOutOfStock
                 ? "bg-gray-200 text-gray-500 hover:bg-gray-200 cursor-not-allowed shadow-none"
                 : justAdded
-                ? "bg-emerald-600 text-white hover:bg-emerald-600 shadow-emerald-500/20"
-                : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  ? "bg-emerald-600 text-white hover:bg-emerald-600 shadow-emerald-500/20"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
             onClick={handleAddToCart}
             disabled={isAdding || isOutOfStock}
