@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const SubscriberModel = require("../models/Subscriber");
+const EmailHistoryModel = require("../models/EmailHistory");
 
 /**
  * Creates a transporter for Gmail or custom SMTP.
@@ -266,15 +267,69 @@ async function sendNewProductToSubscribers(product) {
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log(`✅ New product alert sent to ${emailsList.length} subscribers! Message ID: ${info.messageId}`);
+
+    // Log to EmailHistory
+    try {
+      await EmailHistoryModel.create({
+        subject: `🔥 New Arrival: ${product.name} is now available at BloomShop!`,
+        heading: product.name,
+        message: product.description || `A brand-new exclusive style just landed on BloomShop: ${product.name}.`,
+        buttonText: "Shop This Drop Now →",
+        buttonLink: productUrl,
+        emailType: "product_alert",
+        sender: senderAddress,
+        targetAudience: `All Verified Subscribers (${emailsList.length})`,
+        totalRecipients: emailsList.length,
+        sentCount: emailsList.length,
+        failedCount: 0,
+        pendingCount: 0,
+        status: "sent",
+        recipients: emailsList.map((em) => ({
+          email: em,
+          status: "sent",
+          sentAt: new Date(),
+          error: null,
+        })),
+      });
+    } catch (logErr) {
+      console.warn("⚠️ Could not write product email to history:", logErr.message);
+    }
+
     return { success: true, count: emailsList.length, messageId: info.messageId };
   } catch (err) {
     console.error("❌ Failed to broadcast new product to subscribers:", err.message);
+
+    try {
+      await EmailHistoryModel.create({
+        subject: `🔥 New Arrival: ${product.name} is now available at BloomShop!`,
+        heading: product.name,
+        message: product.description || `A brand-new exclusive style just landed on BloomShop: ${product.name}.`,
+        buttonText: "Shop This Drop Now →",
+        buttonLink: productUrl,
+        emailType: "product_alert",
+        sender: senderAddress,
+        targetAudience: `All Verified Subscribers (${emailsList.length})`,
+        totalRecipients: emailsList.length,
+        sentCount: 0,
+        failedCount: emailsList.length,
+        pendingCount: 0,
+        status: "failed",
+        errorMessage: err.message,
+        recipients: emailsList.map((em) => ({
+          email: em,
+          status: "failed",
+          sentAt: null,
+          error: err.message,
+        })),
+      });
+    } catch (_) {}
+
     return { success: false, count: 0, error: err.message };
   }
 }
 
 /**
- * Sends a custom broadcast / campaign email to subscribers.
+ * Sends a custom broadcast / campaign email to subscribers and logs per-recipient history.
  * @param {object} params - { subject, heading, message, buttonText, buttonLink, targetEmails }
  */
 async function sendCampaignEmail({ subject, heading, message, buttonText, buttonLink, targetEmails }) {
@@ -288,15 +343,11 @@ async function sendCampaignEmail({ subject, heading, message, buttonText, button
   }
 
   if (recipients.length === 0) {
-    return { success: false, sentCount: 0, error: "No subscribers found to send to." };
+    return { success: false, sentCount: 0, failedCount: 0, error: "No subscribers found to send to." };
   }
 
   const user = process.env.EMAIL_USER || process.env.SMTP_USER || process.env.GMAIL_USER;
   const transporter = getTransporter();
-
-  if (!transporter) {
-    return { success: false, sentCount: 0, error: "Email transporter not configured." };
-  }
 
   const frontendUrl =
     process.env.FRONTEND_URL ||
@@ -308,72 +359,296 @@ async function sendCampaignEmail({ subject, heading, message, buttonText, button
   const ctaLink = buttonLink || `${frontendUrl}/shop`;
   const formattedMessage = (message || "").replace(/\n/g, "<br/>");
 
-  const mailOptions = {
-    from: `"BloomShop" <${senderAddress}>`,
-    to: senderAddress,
-    bcc: recipients,
-    subject: subject || "Update from BloomShop",
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${subject}</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
-          .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
-          .header { background: #0f172a; padding: 28px 24px; text-align: center; }
-          .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
-          .header span { color: #f59e0b; }
-          .body { padding: 36px 30px; }
-          .title { font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px; line-height: 1.3; }
-          .text { font-size: 15px; line-height: 1.7; color: #475569; margin-bottom: 28px; }
-          .btn-container { text-align: center; margin: 32px 0 20px; }
-          .btn { display: inline-block; background-color: #f59e0b; color: #0f172a !important; text-decoration: none; font-weight: 800; font-size: 15px; padding: 14px 34px; border-radius: 12px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25); }
-          .footer { background: #f8fafc; padding: 22px 28px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>BLOOM<span>SHOP</span></h1>
-          </div>
-          <div class="body">
-            <h2 class="title">${heading || subject}</h2>
-            <div class="text">
-              ${formattedMessage}
-            </div>
+  const audienceLabel = Array.isArray(targetEmails) && targetEmails.length > 0
+    ? `Custom Selection (${recipients.length})`
+    : `All Verified Subscribers (${recipients.length})`;
 
-            ${
-              buttonText
-                ? `
-              <div class="btn-container">
-                <a href="${ctaLink}" class="btn" target="_blank">${buttonText}</a>
-              </div>
-            `
-                : ""
-            }
-          </div>
-          <div class="footer">
-            You received this announcement because you are a verified BloomShop subscriber.<br/>
-            © ${new Date().getFullYear()} BloomShop. All rights reserved.
-          </div>
-        </div>
-      </body>
-      </html>
-    `,
-  };
-
+  // Initialize EmailHistory record as pending
+  let historyRecord = null;
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Campaign email sent to ${recipients.length} recipients! Message ID: ${info.messageId}`);
-    return { success: true, sentCount: recipients.length, messageId: info.messageId };
+    historyRecord = await EmailHistoryModel.create({
+      subject: subject || "Update from BloomShop",
+      heading: heading || subject || "",
+      message: message || "",
+      buttonText: buttonText || "",
+      buttonLink: buttonLink || "",
+      emailType: "broadcast",
+      sender: senderAddress,
+      targetAudience: audienceLabel,
+      totalRecipients: recipients.length,
+      sentCount: 0,
+      failedCount: 0,
+      pendingCount: recipients.length,
+      status: "pending",
+      recipients: recipients.map((email) => ({
+        email,
+        status: "pending",
+        sentAt: null,
+        error: null,
+      })),
+    });
   } catch (err) {
-    console.error("❌ Failed to send campaign email:", err.message);
-    return { success: false, sentCount: 0, error: err.message };
+    console.warn("⚠️ Failed to create initial EmailHistory record:", err.message);
   }
+
+  if (!transporter) {
+    if (historyRecord) {
+      historyRecord.status = "failed";
+      historyRecord.errorMessage = "Email transporter not configured.";
+      historyRecord.failedCount = recipients.length;
+      historyRecord.pendingCount = 0;
+      historyRecord.recipients.forEach((r) => {
+        r.status = "failed";
+        r.error = "Email transporter not configured.";
+      });
+      await historyRecord.save().catch(() => {});
+    }
+    return {
+      success: false,
+      sentCount: 0,
+      failedCount: recipients.length,
+      error: "Email transporter not configured.",
+      historyId: historyRecord?._id,
+    };
+  }
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${subject}</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 28px 24px; text-align: center; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
+        .header span { color: #f59e0b; }
+        .body { padding: 36px 30px; }
+        .title { font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px; line-height: 1.3; }
+        .text { font-size: 15px; line-height: 1.7; color: #475569; margin-bottom: 28px; }
+        .btn-container { text-align: center; margin: 32px 0 20px; }
+        .btn { display: inline-block; background-color: #f59e0b; color: #0f172a !important; text-decoration: none; font-weight: 800; font-size: 15px; padding: 14px 34px; border-radius: 12px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25); }
+        .footer { background: #f8fafc; padding: 22px 28px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>BLOOM<span>SHOP</span></h1>
+        </div>
+        <div class="body">
+          <h2 class="title">${heading || subject}</h2>
+          <div class="text">
+            ${formattedMessage}
+          </div>
+          ${
+            buttonText
+              ? `
+            <div class="btn-container">
+              <a href="${ctaLink}" class="btn" target="_blank">${buttonText}</a>
+            </div>
+          `
+              : ""
+          }
+        </div>
+        <div class="footer">
+          You received this announcement because you are a verified BloomShop subscriber.<br/>
+          © ${new Date().getFullYear()} BloomShop. All rights reserved.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  let sentCount = 0;
+  let failedCount = 0;
+
+  // Send individually in small concurrent batches so we track exact subscriber status
+  const batchSize = 5;
+  for (let i = 0; i < recipients.length; i += batchSize) {
+    const chunk = recipients.slice(i, i + batchSize);
+    await Promise.all(
+      chunk.map(async (rEmail) => {
+        const recipientIndex = historyRecord?.recipients.findIndex((r) => r.email === rEmail);
+        try {
+          await transporter.sendMail({
+            from: `"BloomShop" <${senderAddress}>`,
+            to: rEmail,
+            subject: subject || "Update from BloomShop",
+            html: htmlContent,
+          });
+          sentCount++;
+          if (historyRecord && recipientIndex !== -1 && recipientIndex !== undefined) {
+            historyRecord.recipients[recipientIndex].status = "sent";
+            historyRecord.recipients[recipientIndex].sentAt = new Date();
+            historyRecord.recipients[recipientIndex].error = null;
+          }
+        } catch (sendErr) {
+          console.error(`❌ Failed to send campaign email to ${rEmail}:`, sendErr.message);
+          failedCount++;
+          if (historyRecord && recipientIndex !== -1 && recipientIndex !== undefined) {
+            historyRecord.recipients[recipientIndex].status = "failed";
+            historyRecord.recipients[recipientIndex].sentAt = null;
+            historyRecord.recipients[recipientIndex].error = sendErr.message || "Delivery failed";
+          }
+        }
+      })
+    );
+  }
+
+  if (historyRecord) {
+    historyRecord.sentCount = sentCount;
+    historyRecord.failedCount = failedCount;
+    historyRecord.pendingCount = 0;
+    if (sentCount === recipients.length) {
+      historyRecord.status = "sent";
+    } else if (sentCount > 0 && failedCount > 0) {
+      historyRecord.status = "partial";
+    } else {
+      historyRecord.status = "failed";
+      historyRecord.errorMessage = "Failed to deliver to any recipient.";
+    }
+    await historyRecord.save().catch(() => {});
+  }
+
+  return {
+    success: sentCount > 0,
+    sentCount,
+    failedCount,
+    totalRecipients: recipients.length,
+    historyId: historyRecord?._id,
+  };
 }
+
+/**
+ * Resends a previously logged campaign to all or failed/single recipients.
+ */
+async function resendCampaignEmail(historyId, { targetType = "failed", targetEmail = null } = {}) {
+  const historyRecord = await EmailHistoryModel.findById(historyId);
+  if (!historyRecord) {
+    throw new Error("Email broadcast history record not found.");
+  }
+
+  const transporter = getTransporter();
+  if (!transporter) {
+    throw new Error("Email transporter not configured on server.");
+  }
+
+  const user = process.env.EMAIL_USER || process.env.SMTP_USER || process.env.GMAIL_USER;
+  const senderAddress = user || "no-reply@bloomshop.com";
+  const frontendUrl =
+    process.env.FRONTEND_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://your-production-domain.com"
+      : "http://localhost:5173");
+  const ctaLink = historyRecord.buttonLink || `${frontendUrl}/shop`;
+  const formattedMessage = (historyRecord.message || "").replace(/\n/g, "<br/>");
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${historyRecord.subject}</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+        .container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        .header { background: #0f172a; padding: 28px 24px; text-align: center; }
+        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; }
+        .header span { color: #f59e0b; }
+        .body { padding: 36px 30px; }
+        .title { font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 16px; line-height: 1.3; }
+        .text { font-size: 15px; line-height: 1.7; color: #475569; margin-bottom: 28px; }
+        .btn-container { text-align: center; margin: 32px 0 20px; }
+        .btn { display: inline-block; background-color: #f59e0b; color: #0f172a !important; text-decoration: none; font-weight: 800; font-size: 15px; padding: 14px 34px; border-radius: 12px; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25); }
+        .footer { background: #f8fafc; padding: 22px 28px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>BLOOM<span>SHOP</span></h1>
+        </div>
+        <div class="body">
+          <h2 class="title">${historyRecord.heading || historyRecord.subject}</h2>
+          <div class="text">
+            ${formattedMessage}
+          </div>
+          ${
+            historyRecord.buttonText
+              ? `
+            <div class="btn-container">
+              <a href="${ctaLink}" class="btn" target="_blank">${historyRecord.buttonText}</a>
+            </div>
+          `
+              : ""
+          }
+        </div>
+        <div class="footer">
+          You received this announcement because you are a verified BloomShop subscriber.<br/>
+          © ${new Date().getFullYear()} BloomShop. All rights reserved.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  let targets = [];
+  if (targetEmail) {
+    targets = historyRecord.recipients.filter((r) => r.email === targetEmail.trim().toLowerCase());
+  } else if (targetType === "all") {
+    targets = historyRecord.recipients;
+  } else {
+    // Only failed or pending
+    targets = historyRecord.recipients.filter((r) => r.status !== "sent");
+  }
+
+  if (targets.length === 0) {
+    return { success: true, newlySent: 0, message: "No matching recipients to resend to.", historyRecord };
+  }
+
+  let newlySent = 0;
+  for (const item of targets) {
+    try {
+      await transporter.sendMail({
+        from: `"BloomShop" <${senderAddress}>`,
+        to: item.email,
+        subject: historyRecord.subject,
+        html: htmlContent,
+      });
+      item.status = "sent";
+      item.sentAt = new Date();
+      item.error = null;
+      newlySent++;
+    } catch (err) {
+      item.status = "failed";
+      item.error = err.message || "Resend failed";
+    }
+  }
+
+  const sentCount = historyRecord.recipients.filter((r) => r.status === "sent").length;
+  const failedCount = historyRecord.recipients.filter((r) => r.status === "failed").length;
+  const pendingCount = historyRecord.recipients.filter((r) => r.status === "pending").length;
+
+  historyRecord.sentCount = sentCount;
+  historyRecord.failedCount = failedCount;
+  historyRecord.pendingCount = pendingCount;
+
+  if (sentCount === historyRecord.totalRecipients) {
+    historyRecord.status = "sent";
+  } else if (sentCount > 0 && failedCount > 0) {
+    historyRecord.status = "partial";
+  } else {
+    historyRecord.status = "failed";
+  }
+
+  await historyRecord.save();
+  return { success: true, newlySent, historyRecord };
+}
+
 
 /**
  * Sends a contact form notification email to admin (malikabutalharaheem@gmail.com)
@@ -546,5 +821,7 @@ module.exports = {
   sendNewsletterVerificationEmail,
   sendNewProductToSubscribers,
   sendCampaignEmail,
+  resendCampaignEmail,
   sendContactFormEmail,
 };
+

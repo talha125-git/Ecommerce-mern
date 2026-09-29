@@ -10,6 +10,7 @@ import OrdersTab from './OrdersTab';
 import CustomersTab from './CustomersTab';
 import SubscribersTab from './SubscribersTab';
 import SendEmailTab from './SendEmailTab';
+import EmailHistoryTab from './EmailHistoryTab';
 import SettingsTab from './SettingsTab';
 import ShippingTab from './ShippingTab';
 import SliderTab from './Setup/SliderTab';
@@ -456,7 +457,9 @@ const DashboardPage = () => {
       case 'subscribers':
         return <SubscribersTab />;
       case 'send-email':
-        return <SendEmailTab />;
+        return <SendEmailTab onGoToHistory={() => handleTabChange('email-history')} />;
+      case 'email-history':
+        return <EmailHistoryTab onCompose={() => handleTabChange('send-email')} />;
       case 'shipping':
         return <ShippingTab />;
       case 'settings':

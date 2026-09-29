@@ -12,11 +12,13 @@ const SettingsModel = require("./models/Settings");
 // Real Gmail SMTP & Newsletter Subscriptions initialized
 const SubscriberModel = require("./models/Subscriber");
 const ContactModel = require("./models/Contact");
+const EmailHistoryModel = require("./models/EmailHistory");
 const crypto = require("crypto");
 const {
     sendNewsletterVerificationEmail,
     sendNewProductToSubscribers,
     sendCampaignEmail,
+    resendCampaignEmail,
     sendContactFormEmail
 } = require("./utils/emailService");
 
@@ -1781,20 +1783,135 @@ app.post("/api/admin/send-email", async (req, res) => {
             targetEmails
         });
 
-        if (!result.success) {
-            return res.status(500).json({ message: result.error || "Failed to send email broadcast." });
+        if (!result.success && result.sentCount === 0) {
+            return res.status(500).json({
+                message: result.error || "Failed to send email broadcast.",
+                historyId: result.historyId,
+                failedCount: result.failedCount
+            });
         }
 
         return res.json({
             success: true,
-            message: `Email broadcast sent successfully to ${result.sentCount} subscriber${result.sentCount === 1 ? '' : 's'}!`,
-            sentCount: result.sentCount
+            message: `Email broadcast dispatched to ${result.sentCount} subscriber${result.sentCount === 1 ? '' : 's'}${result.failedCount ? ` (${result.failedCount} failed)` : ''}!`,
+            sentCount: result.sentCount,
+            failedCount: result.failedCount || 0,
+            totalRecipients: result.totalRecipients || result.sentCount,
+            historyId: result.historyId
         });
     } catch (err) {
         console.error("❌ Error sending campaign email:", err);
         return res.status(500).json({ message: "Failed to send campaign email", error: err.message });
     }
 });
+
+// GET /api/admin/email-history: Get sent email broadcast campaigns with aggregate statistics
+app.get("/api/admin/email-history", async (req, res) => {
+    try {
+        const { search, status, type } = req.query;
+        const filter = {};
+
+        if (status && status !== "all") {
+            filter.status = status;
+        }
+
+        if (type && type !== "all") {
+            filter.emailType = type;
+        }
+
+        if (search && search.trim()) {
+            const regex = new RegExp(search.trim(), "i");
+            filter.$or = [
+                { subject: regex },
+                { heading: regex },
+                { message: regex },
+                { "recipients.email": regex }
+            ];
+        }
+
+        const history = await EmailHistoryModel.find(filter).sort({ createdAt: -1 });
+
+        // Overall stats across all records
+        const allRecords = await EmailHistoryModel.find({}, "status sentCount failedCount pendingCount totalRecipients");
+        const totalCampaigns = allRecords.length;
+        const totalDelivered = allRecords.reduce((acc, curr) => acc + (curr.sentCount || 0), 0);
+        const totalFailed = allRecords.reduce((acc, curr) => acc + (curr.failedCount || 0), 0);
+        const totalPending = allRecords.reduce((acc, curr) => acc + (curr.pendingCount || 0), 0);
+        const totalAttempts = totalDelivered + totalFailed;
+        const deliveryRate = totalAttempts > 0 ? Math.round((totalDelivered / totalAttempts) * 100) : 100;
+
+        return res.json({
+            success: true,
+            history,
+            stats: {
+                totalCampaigns,
+                totalDelivered,
+                totalFailed,
+                totalPending,
+                deliveryRate
+            }
+        });
+    } catch (err) {
+        console.error("❌ Error fetching email history:", err);
+        return res.status(500).json({ success: false, message: "Failed to fetch email history", error: err.message });
+    }
+});
+
+// GET /api/admin/email-history/:id: Get single broadcast history details
+app.get("/api/admin/email-history/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const record = await EmailHistoryModel.findById(id);
+        if (!record) {
+            return res.status(404).json({ success: false, message: "Email history entry not found." });
+        }
+        return res.json({ success: true, email: record });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Error fetching email record", error: err.message });
+    }
+});
+
+// POST /api/admin/email-history/:id/resend: Resend campaign to all or failed/single recipients
+app.post("/api/admin/email-history/:id/resend", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { targetType, targetEmail } = req.body;
+        const result = await resendCampaignEmail(id, { targetType: targetType || "failed", targetEmail });
+        return res.json({
+            success: true,
+            message: `Resent to ${result.newlySent} recipient${result.newlySent === 1 ? '' : 's'}.`,
+            history: result.historyRecord
+        });
+    } catch (err) {
+        console.error("❌ Error resending email:", err);
+        return res.status(500).json({ success: false, message: err.message || "Failed to resend email." });
+    }
+});
+
+// DELETE /api/admin/email-history/:id: Delete single email history entry
+app.delete("/api/admin/email-history/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleted = await EmailHistoryModel.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Email history entry not found." });
+        }
+        return res.json({ success: true, message: "Email history record deleted successfully." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Failed to delete email record", error: err.message });
+    }
+});
+
+// DELETE /api/admin/email-history: Clear all email history
+app.delete("/api/admin/email-history", async (req, res) => {
+    try {
+        await EmailHistoryModel.deleteMany({});
+        return res.json({ success: true, message: "All email history entries cleared." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Failed to clear email history", error: err.message });
+    }
+});
+
 
 // POST /api/contact: Submit customer inquiry, store in DB, and send email notification to malikabutalharaheem@gmail.com
 app.post("/api/contact", async (req, res) => {

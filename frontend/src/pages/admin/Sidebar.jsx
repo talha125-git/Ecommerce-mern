@@ -18,6 +18,7 @@ import {
   MailCheck,
   Mail,
   Send,
+  History,
   ChevronDown
 } from 'lucide-react';
 
@@ -30,11 +31,18 @@ export default function Sidebar({
 }) {
   const { settings } = useSettings();
 
-  const isEmailActive = activeTab === 'subscribers' || activeTab === 'send-email';
+  const isEmailActive =
+    activeTab === 'subscribers' ||
+    activeTab === 'send-email' ||
+    activeTab === 'email-history';
   const [emailMenuOpen, setEmailMenuOpen] = useState(isEmailActive);
 
   useEffect(() => {
-    if (activeTab === 'subscribers' || activeTab === 'send-email') {
+    if (
+      activeTab === 'subscribers' ||
+      activeTab === 'send-email' ||
+      activeTab === 'email-history'
+    ) {
       setEmailMenuOpen(true);
     }
   }, [activeTab]);
@@ -176,6 +184,21 @@ export default function Sidebar({
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Send Emails</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setActiveTab('email-history');
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                      activeTab === 'email-history'
+                        ? 'bg-primary text-gray-950 font-bold shadow-sm'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <History className="w-3.5 h-3.5" />
+                    <span>Emails History</span>
                   </button>
                 </div>
               )}

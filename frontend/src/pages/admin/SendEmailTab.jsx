@@ -14,10 +14,11 @@ import {
   HelpCircle,
   UserCheck,
   Flame,
+  History,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function SendEmailTab() {
+export default function SendEmailTab({ onGoToHistory }) {
   const [subscribers, setSubscribers] = useState([]);
   const [verifiedCount, setVerifiedCount] = useState(0);
   const [loadingSubs, setLoadingSubs] = useState(true);
@@ -110,7 +111,7 @@ export default function SendEmailTab() {
 
     if (
       !window.confirm(
-        `Are you ready to send this broadcast email to ${recipientsCount} verified subscriber${
+        `Are you ready to send this email to ${recipientsCount} verified subscriber${
           recipientsCount === 1 ? "" : "s"
         }?`
       )
@@ -133,11 +134,11 @@ export default function SendEmailTab() {
 
       const res = await axios.post(`${API_URL}/api/admin/send-email`, payload);
 
-      showStatus("success", res.data.message || "Email broadcast dispatched successfully!");
+      showStatus("success", res.data.message || "Email dispatched successfully!");
     } catch (err) {
-      console.error("Failed to send broadcast:", err);
+      console.error("Failed to send email:", err);
       const errMsg =
-        err.response?.data?.message || err.message || "Failed to send email broadcast.";
+        err.response?.data?.message || err.message || "Failed to send email.";
       showStatus("error", errMsg);
     } finally {
       setSending(false);
@@ -158,6 +159,17 @@ export default function SendEmailTab() {
         </div>
 
         <div className="flex items-center gap-2">
+          {onGoToHistory && (
+            <button
+              type="button"
+              onClick={onGoToHistory}
+              className="px-3 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs"
+            >
+              <History className="w-3.5 h-3.5 text-primary" />
+              <span>Emails History</span>
+            </button>
+          )}
+
           <span className="px-3 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5">
             <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
             {loadingSubs ? "Loading..." : `${verifiedCount} Verified Subscribers`}
@@ -175,18 +187,29 @@ export default function SendEmailTab() {
       {/* Alert Banner */}
       {statusMsg.text && (
         <div
-          className={`p-3.5 rounded-2xl text-xs font-semibold border flex items-center gap-2.5 ${
+          className={`p-3.5 rounded-2xl text-xs font-semibold border flex items-center justify-between gap-2.5 ${
             statusMsg.type === "success"
               ? "bg-emerald-50 text-emerald-900 border-emerald-200"
               : "bg-rose-50 text-rose-900 border-rose-200"
           }`}
         >
-          {statusMsg.type === "success" ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          ) : (
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          <div className="flex items-center gap-2.5">
+            {statusMsg.type === "success" ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            )}
+            <span>{statusMsg.text}</span>
+          </div>
+          {statusMsg.type === "success" && onGoToHistory && (
+            <button
+              type="button"
+              onClick={onGoToHistory}
+              className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline cursor-pointer shrink-0 ml-2"
+            >
+              View in Emails History →
+            </button>
           )}
-          <span>{statusMsg.text}</span>
         </div>
       )}
 
@@ -375,7 +398,7 @@ export default function SendEmailTab() {
                 <>
                   <Send className="w-4 h-4 text-primary" />
                   <span>
-                    Send Broadcast to{" "}
+                    Send Email to{" "}
                     {targetMode === "all" ? `${verifiedCount} Subscribers` : `${selectedEmails.length} Selected`}
                   </span>
                 </>
